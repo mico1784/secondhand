@@ -15,9 +15,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public void saveUser(String displayname, String username, String email, String password, String phoneNumber, String address, String gender, int age) {
-        String encodedPassword = passwordEncoder.encode(password); // 비밀번호 해싱
+    // 사용자 정보를 저장하는 메소드
+    public void saveUser(String displayname, String username, String email, String password,
+                         String phoneNumber, String address, String gender, int age) {
+        // 비밀번호 해싱
+        String encodedPassword = passwordEncoder.encode(password);
 
+        // User 객체 생성 및 값 설정
         User user = new User();
         user.setDisplayname(displayname);
         user.setUsername(username);
@@ -27,7 +31,9 @@ public class UserService {
         user.setAddress(address);
         user.setGender(gender);
         user.setAge(age);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now()); // 현재 시간으로 가입 날짜 설정
+
+        // 사용자 정보 저장
         userRepository.save(user);
     }
 
