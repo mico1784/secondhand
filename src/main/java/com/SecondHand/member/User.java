@@ -17,9 +17,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username; // 이름
+    private String name; // 이름
 
-    private String displayname; // 아이디
+    private String username; // 아이디
 
     private String password; // 비밀번호
 

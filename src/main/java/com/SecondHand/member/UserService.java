@@ -14,17 +14,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     // 사용자 정보를 저장하는 메소드
-    public void saveUser(String displayname, String username, String email, String password,
+    public void saveUser(String username, String email, String password,
                          String phoneNumber, String address, String gender, int age) {
         // 비밀번호 해싱
         String encodedPassword = passwordEncoder.encode(password);
 
         // User 객체 생성 및 값 설정
         User user = new User();
-        user.setDisplayname(displayname);
-        user.setUsername(username);
+        user.setUsername(username); // username으로 변경
         user.setEmail(email);
         user.setPassword(encodedPassword);
         user.setPhoneNumber(phoneNumber);
@@ -44,6 +42,5 @@ public class UserService {
         // 사용자 없음 또는 비밀번호 불일치
         // BCryptPasswordEncoder를 사용하여 비밀번호 확인
         return user.filter(value -> passwordEncoder.matches(password, value.getPassword())).isPresent();
-
     }
 }
