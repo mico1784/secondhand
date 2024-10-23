@@ -9,6 +9,12 @@
 
 <div class="container">
   <h2>로그인</h2>
+
+  <!-- 오류 메시지 표시 영역 -->
+  <div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+  </div>
+
   <form action="/login" method="POST">
     <label for="username">이름 또는 이메일</label>
     <input type="text" id="username" name="username" required>

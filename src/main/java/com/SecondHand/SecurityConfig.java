@@ -35,7 +35,7 @@ public class SecurityConfig {
         // 요청 인증 설정
         http.authorizeHttpRequests((authorize) ->
                 authorize
-                        .requestMatchers("/login", "/register","/add", "/home").permitAll() // 로그인, 회원가입, 루트, 홈 URL은 인증 없이 접근 가능
+                        .requestMatchers("/login", "/register","/add", "/home","/css/**").permitAll() // 로그인, 회원가입, 루트, 홈 URL은 인증 없이 접근 가능
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
         );
 
