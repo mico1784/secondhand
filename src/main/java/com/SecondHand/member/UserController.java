@@ -19,11 +19,16 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    // 홈 페이지 GET 매핑
     @GetMapping("/home")
-    public String home(Model model) {
-        model.addAttribute("message", "Welcome to the Home Page!");
-        return "home"; // home.html 뷰로 이동
+    public String home(Model model, Principal principal) {
+        // 사용자가 로그인한 상태인지 확인
+        if (principal != null) {
+            model.addAttribute("isLoggedIn", true); // 로그인 상태를 모델에 추가
+            model.addAttribute("username", principal.getName());
+        } else {
+            model.addAttribute("isLoggedIn", false);
+        }
+        return "index"; // home.html 뷰로 이동
     }
 
     // 로그인 페이지를 표시하는 메소드
@@ -48,7 +53,7 @@ public class UserController {
         boolean authenticated = userService.authenticateUser(username, password);
 
         if (authenticated) {
-            return "redirect:/home"; // 로그인 성공 시 홈으로 리다이렉트
+            return "redirect:/index"; // 로그인 성공 시 홈으로 리다이렉트
         } else {
             model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
             return "login"; // 로그인 실패 시 로그인 페이지로 다시 리턴
