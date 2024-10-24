@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -65,19 +66,32 @@ public class UserController {
         }
         return "register"; // register.html 파일을 반환
     }
-
     // 사용자 저장
     @PostMapping("/add")
-    public String createUser(@ModelAttribute User user) {
-        userService.saveUser(
-                user.getUsername(), // displayname을 username으로 변경
-                user.getEmail(),
-                user.getPassword(), // 해싱은 UserService에서 처리됩니다.
-                user.getPhoneNumber(),
-                user.getAddress(),
-                user.getGender(),
-                user.getAge()
-        );
-        return "redirect:/login"; // 가입 후 로그인 페이지로 리다이렉트
+    public String createUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+        try {
+            userService.saveUser(
+                    user.getName(),
+                    user.getUsername(), // displayname을 username으로 변경
+                    user.getEmail(),
+                    user.getPassword(), // 해싱은 UserService에서 처리됩니다.
+                    user.getPhoneNumber(),
+                    user.getAddress(),
+                    user.getGender(),
+                    user.getAge()
+            );
+
+            // 성공 메시지 설정
+            redirectAttributes.addFlashAttribute("message", "회원가입이 성공적으로 완료되었습니다!");
+
+            return "redirect:/login"; // 가입 후 로그인 페이지로 리다이렉트
+
+        } catch (IllegalArgumentException e) {
+            // 예외 메시지를 에러 메시지로 설정
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/register";
+        }
     }
+
 }
+

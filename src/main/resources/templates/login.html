@@ -10,6 +10,11 @@
 <div class="container">
   <h2>로그인</h2>
 
+  <!-- 성공 메시지 표시 영역 -->
+  <div th:if="${message}" style="color: green;">
+    <p th:text="${message}"></p>
+  </div>
+
   <!-- 오류 메시지 표시 영역 -->
   <div th:if="${error}" style="color: red;">
     <p th:text="${error}"></p>
