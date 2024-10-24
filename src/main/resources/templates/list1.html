@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>List</title>
+</head>
+<body>
+<div th:fragment="list1" id="list-container">
+<h1 id="header-title">뭐쩌라고</h1>
+<ul id="category-list">
+  <li><a href="/list?category=1">카테고리1</a></li>
+  <li><a href="/list?category=2">카테고리2</a></li>
+</ul>
+<div id="list-box">
+  <div id="item-list" th:each="i : ${items}">
+    <h4 th:text="${i.title}" id="item-title"></h4>
+    <h4 th:text="${i.price}" id="item-price"></h4>
+  </div>
+  <div th:if="${totalPage > 1}" id="pagination-container">
+    <nav>
+      <ul class="pagination" id="pagination">
+        <li th:class="${currentPage == 1} ? 'disabled'" id="prev-page">
+          <a th:href="${currentPage == 1 ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage - 1) : '/list?page=' + (currentPage - 1))}">
+            prev
+          </a>
+        </li>
+        <li th:each="page : ${#numbers.sequence(1, totalPage)}"
+            th:class="${page == currentPage} ? 'active'" id="page-item">
+          <a th:href="${category != null ? '/list?category=' + category + '&page=' + page : '/list?page=' + page}" th:text="${page}">
+          </a>
+        </li>
+        <li th:class="${currentPage >= totalPage} ? 'disabled'" id="next-page">
+          <a th:href="${currentPage >= totalPage ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage + 1) : '/list?page=' + (currentPage + 1))}">
+            next
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 상세 정보</title>
+</head>
+<body>
+<div class="item-detail-container">
+  <h1 th:text="${item.title}">상품 이름</h1>
+
+  <div class="item-image">
+    <img th:src="${item.imgURL}" alt="상품 이미지" />
+  </div>
+
+  <div class="item-description">
+    <h2>상품 설명</h2>
+    <p th:text="${item.itemDesc}">상품 설명</p>
+  </div>
+
+  <div class="item-price">
+    <h2>가격</h2>
+    <p th:text="${item.price}">가격</p>
+  </div>
+
+  <div class="item-upload-date">
+    <h2>등록 날짜</h2>
+    <p>등록일: <span th:text="${formattedDate}"></span></p>
+  </div>
+
+  <div class="item-actions">
+    <a href="/item/list">목록으로 돌아가기</a>
+  </div>
+</div>

@@ -1,9 +1,9 @@
 <section class="content-slider" th:fragment="content">
   <div class="container">
     <ul class="slider-container simple-list" id="slider">
-      <li class="slide"> <!-- items 리스트를 반복 -->
+      <li class="slide" th:each="item : ${items}"> <!-- items 리스트를 반복 -->
         <div class="items">
-          <div class="card" th:each="item : ${items}">
+          <div class="card" >
             <a th:href="@{/item/{id}(id=${item.id})}">
               <img th:src="${item.imgURL}" alt="상품 이미지"> <!-- 이미지 URL -->
               <div class="text-box">

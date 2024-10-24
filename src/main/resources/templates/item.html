@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 등록</title>
+</head>
+<body>
+<h1>상품 등록</h1>
+<form action="/item/add" method="post" enctype="multipart/form-data">
+    <label for="title">상품명:</label><br>
+    <input type="text" id="title" name="title" required><br>
+
+    <label for="price">가격:</label><br>
+    <input type="number" id="price" name="price" required><br>
+
+    <label for="imgFile">이미지 파일:</label><br>
+    <input type="file" id="imgFile" name="imgFile" required><br>
+
+    <label for="desc">설명:</label><br>
+    <textarea id="desc" name="desc" required></textarea><br>
+
+    <button type="submit">등록</button>
+</form>
+</body>
+</html>
