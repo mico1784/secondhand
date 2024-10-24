@@ -27,6 +27,29 @@
     .user-info div {
         margin: 10px 0;
     }
+    .wishlist {
+        margin-top: 30px;
+    }
+    .wishlist-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        display: flex; /* 이미지와 텍스트를 가로로 배치 */
+        align-items: center; /* 수직 정렬 */
+    }
+    .wishlist-item img {
+        max-width: 100px;
+        margin-right: 10px;
+    }
+    .delete-button {
+        background-color: #ff4c4c; /* 삭제 버튼 색상 */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -40,7 +63,41 @@
     <div><strong>성별:</strong> <span th:text="${user.gender}">성별</span></div>
     <div><strong>주소:</strong> <span th:text="${user.address}">주소</span></div>
     <p>가입일: <span th:text="${formattedDate}"></span></p>
-  <a href="/editProfile">프로필 수정</a> <!-- 프로필 수정 페이지로 링크 -->
+    <a href="/editProfile">프로필 수정</a> <!-- 프로필 수정 페이지로 링크 -->
+  </div>
+
+  <div class="wishlist">
+    <h2>내 찜 목록</h2>
+    <div th:if="${wishlist != null && !wishlist.isEmpty()}">
+      <div th:each="wl : ${wishlist}" class="wishlist-item">
+        <img th:src="${wl.itemImgURL}" alt="상품 이미지" />
+        <strong th:text="${wl.itemTitle}"></strong>
+        <p th:text="${wl.itemPrice} + ' 원'"></p>
+        <button class="delete-button"
+                th:onclick="'deleteItem(' + ${wl.id} + ')'">삭제</button>
+      </div>
+    </div>
+    <div th:if="${wishlist == null || wishlist.isEmpty()}">
+      <p>찜한 상품이 없습니다.</p>
+    </div>
+  </div>
 </div>
+<script>
+  function deleteItem(id) {
+      fetch('/wishlist/delete?id=' + id, { method: 'DELETE' })
+          .then(response => {
+              if (response.ok) {
+                  alert('삭제 완료');
+                  window.location.href = '/my-page'; // 마이페이지로 리다이렉트
+              } else {
+                  alert('삭제 실패');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('삭제 중 오류 발생');
+          });
+  }
+</script>
 </body>
 </html>

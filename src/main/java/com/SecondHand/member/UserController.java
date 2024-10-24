@@ -2,6 +2,8 @@ package com.SecondHand.member;
 
 import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemService;
+import com.SecondHand.wishList.WishList;
+import com.SecondHand.wishList.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final ItemService itemService;
+    private final WishListRepository wishListRepository;
 
     @GetMapping("/home")
     public String home(Model model, Principal principal,
@@ -127,8 +130,13 @@ public class UserController {
         String formattedDate = createdAt.format(formatter);
         model.addAttribute("formattedDate", formattedDate); // 포맷된 날짜 추가
 
+        // 찜 목록 가져오기
+        List<WishList> wishList = wishListRepository.findByUser(user);
+        model.addAttribute("wishlist", wishList); // 찜 목록을 모델에 추가
+
         return "my-page"; // mypage.html 파일을 반환
     }
+
 
     // 사용자 저장
     @PostMapping("/add")

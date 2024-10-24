@@ -16,7 +16,7 @@
     <th:block th:each="item : ${items}">
         <tr>
             <td>
-                <a th:href="@{/item/detail/{id}(id=${item.id})}" th:text="${item.title}">상품명</a>
+                <a th:href="@{/item/{id}(id=${item.id})}" th:text="${item.title}">상품명</a>
             </td>
             <td th:text="${item.price}"></td>
             <td><img th:src="${item.imgURL}" alt="상품 이미지" width="100"></td>
