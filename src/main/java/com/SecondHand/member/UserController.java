@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -106,6 +108,28 @@ public class UserController {
         }
         return "register"; // register.html 파일을 반환
     }
+
+    @GetMapping("/my-page")
+    public String myPage(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login"; // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+        }
+
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        model.addAttribute("user", user); // 사용자 정보를 모델에 추가
+
+        // createdAt 필드 포맷팅
+        LocalDateTime createdAt = user.getCreatedAt();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = createdAt.format(formatter);
+        model.addAttribute("formattedDate", formattedDate); // 포맷된 날짜 추가
+
+        return "my-page"; // mypage.html 파일을 반환
+    }
+
     // 사용자 저장
     @PostMapping("/add")
     public String createUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
@@ -131,6 +155,8 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/register";
         }
+
+
     }
 
 }

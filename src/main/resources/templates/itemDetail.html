@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="item-detail-container">
-  <h1 th:text="${item.title}">상품 이름</h1>
+  <span th:text="${item?.title}">Item Title</span>
 
   <div class="item-image">
     <img th:src="${item.imgURL}" alt="상품 이미지" />
@@ -24,10 +24,18 @@
 
   <div class="item-upload-date">
     <h2>등록 날짜</h2>
-    <p>등록일: <span th:text="${formattedDate}"></span></p>
+    <span th:text="${formattedDate} != null ? formattedDate : '날짜 정보 없음'"></span>
   </div>
 
   <div class="item-actions">
     <a href="/item/list">목록으로 돌아가기</a>
+    <a th:href="@{/item/edit/{id}(id=${item.id})}">수정하기</a>
+
+    <form th:action="@{/item/delete(id=${item.id})}" method="post" style="display:inline;">
+      <input type="hidden" name="id" th:value="${item.id}"/>
+      <button type="submit">삭제하기</button>
+    </form>
+
   </div>
 </div>
+</body>

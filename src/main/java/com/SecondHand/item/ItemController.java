@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -66,24 +67,31 @@ public class ItemController {
         } else {
             redirectAttributes.addFlashAttribute("error", "아이템을 찾을 수 없습니다.");
         }
-        return "redirect:/list";
+        return "redirect:/home"; // 목록 페이지로 리다이렉트
     }
+
 
     // 상품 상세 정보 페이지로 이동
     @GetMapping("/item/{id}")
     public String showItemDetail(@PathVariable Long id, Model model) {
         Item item = itemService.getItemById(id);
         if (item != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            String formattedDate = item.getUploadDate().format(formatter);
+            // uploadDate가 null이 아닐 경우에만 포맷팅
+            if (item.getUploadDate() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                String formattedDate = item.getUploadDate().format(formatter);
+                model.addAttribute("formattedDate", formattedDate); // 포맷된 날짜 전달
+            } else {
+                model.addAttribute("formattedDate", "날짜 정보 없음"); // 대체 문자열 추가
+            }
             model.addAttribute("item", item);
-            model.addAttribute("formattedDate", formattedDate); // 포맷된 날짜 전달
             return "itemDetail"; // 디테일 페이지로 이동
         } else {
             model.addAttribute("error", "아이템을 찾을 수 없습니다.");
             return "itemList"; // 목록 페이지로 돌아감
         }
     }
+
 
     // S3 presigned URL 생성
     @GetMapping("/presigned-url")
@@ -93,6 +101,59 @@ public class ItemController {
         System.out.println(result);
         return result;
     }
+
+    // 아이템 수정 폼 보여주기
+    @GetMapping("/item/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Item item = itemService.getItemById(id);
+        if (item != null) {
+            model.addAttribute("item", item);
+            return "itemEdit"; // 수정 페이지로 이동
+        } else {
+            model.addAttribute("error", "아이템을 찾을 수 없습니다.");
+            return "itemList"; // 목록 페이지로 돌아감
+        }
+    }
+
+
+    // 아이템 수정 처리
+    @PostMapping("/item/edit/{id}")
+    public String updateItem(@PathVariable Long id,
+                             @ModelAttribute Item item,
+                             @RequestParam(value = "imgFile", required = false) MultipartFile file,
+                             RedirectAttributes redirectAttributes) throws IOException {
+        // 기존 아이템 조회
+        Item existingItem = itemService.getItemById(id); // id를 사용하여 조회
+
+        // 파일이 업로드된 경우
+        if (file != null && !file.isEmpty()) {
+            try {
+                // S3에서 기존 이미지 삭제
+                if (existingItem.getImgURL() != null) {
+                    String fileName = existingItem.getImgURL().substring(existingItem.getImgURL().lastIndexOf("/") + 1);
+                    s3Service.deleteFile("SecondHand/" + fileName); // 기존 이미지 삭제
+                }
+                // 새 이미지 업로드
+                String imgURL = s3Service.uploadFile(file);
+                item.setImgURL(imgURL); // 새 이미지 URL 설정
+            } catch (RuntimeException e) {
+                redirectAttributes.addFlashAttribute("error", "파일 업로드 중 오류 발생: " + e.getMessage());
+                return "redirect:/item/edit/" + id; // 오류 발생 시 수정 페이지로 돌아감
+            }
+        } else {
+            // 파일이 업로드되지 않은 경우, 기존 이미지 URL 유지
+            item.setImgURL(existingItem.getImgURL());
+        }
+
+        // 아이템 업데이트
+        item.setId(existingItem.getId()); // 아이템의 ID를 설정 (필수)
+        itemService.updateItem(item);
+
+        // 수정 완료 후 상세 페이지로 리다이렉트
+        redirectAttributes.addFlashAttribute("message", "아이템이 성공적으로 수정되었습니다.");
+        return "redirect:/item/" + existingItem.getId(); // 상세 페이지로 리다이렉트
+    }
+
 
     // 목록
     @GetMapping("/list")

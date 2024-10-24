@@ -3,10 +3,11 @@ package com.SecondHand.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,25 +20,35 @@ public class ItemService {
     }
 
     public List<Item> getAllItems() {
-        return itemRepository.findAll(); // 모든 아이템 목록을 반환
+        return itemRepository.findAll();
     }
 
-    // 전체 아이템을 페이지네이션으로 가져오는 메소드 추가
     public Page<Item> getAllItems(Pageable pageable) {
-        return itemRepository.findAll(pageable); // 페이지네이션된 아이템 목록을 반환
+        return itemRepository.findAll(pageable);
     }
 
-    // 카테고리별 아이템을 페이지네이션으로 가져오는 메소드 추가
     public Page<Item> getItemsByCategory(String category, Pageable pageable) {
-        return itemRepository.findPageByCategory(category, pageable); // 카테고리별로 페이지네이션된 아이템 목록 반환
+        return itemRepository.findPageByCategory(category, pageable);
     }
 
     public Item getItemById(Long id) {
-        Optional<Item> item = itemRepository.findById(id); // 아이템 조회
-        return item.orElse(null); // 아이템이 없으면 null 반환
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다."));
     }
 
     public void deleteItem(Long id) {
-        itemRepository.deleteById(id); // 아이템을 데이터베이스에서 삭제
+        itemRepository.deleteById(id);
+    }
+
+    public Item updateItem(Item item) {
+        if (item.getId() == null) {
+            throw new IllegalArgumentException("아이템 ID는 null일 수 없습니다.");
+        }
+
+        if (itemRepository.existsById(item.getId())) {
+            return itemRepository.save(item);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다.");
+        }
     }
 }
