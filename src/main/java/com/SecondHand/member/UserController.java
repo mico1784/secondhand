@@ -1,6 +1,11 @@
 package com.SecondHand.member;
 
+import com.SecondHand.item.Item;
+import com.SecondHand.item.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,18 +24,47 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final ItemService itemService;
 
     @GetMapping("/home")
-    public String home(Model model, Principal principal) {
-        // 사용자가 로그인한 상태인지 확인
-        if (principal != null) {
-            model.addAttribute("isLoggedIn", true); // 로그인 상태를 모델에 추가
+    public String home(Model model, Principal principal,
+                       @RequestParam(required = false, defaultValue = "") String category,
+                       @RequestParam(defaultValue = "1") Integer page) {
+        // 사용자가 로그인한 상태인지 확인하고 상태에 따른 정보 추가
+        boolean isLoggedIn = principal != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
+
+        if (isLoggedIn) {
             model.addAttribute("username", principal.getName());
-        } else {
-            model.addAttribute("isLoggedIn", false);
         }
+
+        // 아이템 목록을 모델에 추가
+        Page<Item> itemList;
+
+        try {
+            if (category.isEmpty()) { // 정해진 카테고리가 없으면 전체 목록을 반환
+                itemList = itemService.getAllItems(PageRequest.of(page - 1, 3, Sort.by(Sort.Direction.DESC, "id")));
+            } else { // 정해진 카테고리가 있다면
+                itemList = itemService.getItemsByCategory(category, PageRequest.of(page - 1, 3, Sort.by(Sort.Direction.DESC, "id")));
+                model.addAttribute("category", category);
+            }
+
+            model.addAttribute("items", itemList.getContent());
+            model.addAttribute("hasPrevious", itemList.hasPrevious());
+            model.addAttribute("hasNext", itemList.hasNext());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPage", itemList.getTotalPages());
+
+        } catch (Exception e) {
+            model.addAttribute("error", "아이템 목록을 가져오는 중 오류가 발생했습니다: " + e.getMessage());
+            // 기본적으로 빈 리스트를 반환할 수 있습니다.
+            model.addAttribute("items", List.of());
+            model.addAttribute("totalPage", 0);
+        }
+
         return "index"; // home.html 뷰로 이동
     }
+
 
     // 로그인 페이지를 표시하는 메소드
     @GetMapping("/login")

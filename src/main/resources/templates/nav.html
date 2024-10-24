@@ -29,8 +29,9 @@
             <li><a>메뉴1</a></li>
             <li><a>메뉴1</a></li>
           </div>
-          <form class="search-btn" method="">
-            <input type="search" placeholder="검색어를 입력하세요">
+          <form class="search-btn" method="POST">
+            <input type="search" id="searchText" name="searchText" placeholder="검색어" th:value="${searchText}">
+            <button type="submit">검색</button>
             <i class="icon-search"></i>
           </form>
         </div>
