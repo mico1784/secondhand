@@ -1,0 +1,39 @@
+<div th:fragment="navbar" class="wrap">
+
+    <header>
+      <!-- 메뉴 -->
+      <nav>
+        <div class="menu-top">
+          <div class="logo">
+            <a href="/home" class="logo">SecondHand</a>
+          </div>
+          <div class="join" id="#">
+            <li th:if="${!isLoggedIn}"><a th:href="@{/login}">로그인</a></li>
+            <li th:if="${!isLoggedIn}"><a th:href="@{/register}">회원가입</a></li>
+            <li th:if="${isLoggedIn}">
+              <span th:text="'환영합니다, ' + ${username} + '!'"></span>
+              <a th:href="@{/logout}">로그아웃</a>
+            </li>
+            <li><a href="/">마이페이지</a></li>
+            <li><a href="/">채팅하기</a></li>
+            <li><a href="/">메뉴4</a></li>
+            <li><a href="/">메뉴5</a></li>
+          </div>
+        </div>
+        <div class="menu-bot">
+          <div class="Category">
+            <li><a>메뉴1</a></li>
+            <li><a>메뉴1</a></li>
+            <li><a>메뉴1</a></li>
+            <li><a>메뉴1</a></li>
+            <li><a>메뉴1</a></li>
+            <li><a>메뉴1</a></li>
+          </div>
+          <form class="search-btn" method="">
+            <input type="search" placeholder="검색어를 입력하세요">
+            <i class="icon-search"></i>
+          </form>
+        </div>
+      </nav>
+    </header>
+</div>
