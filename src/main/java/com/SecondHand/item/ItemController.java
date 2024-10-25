@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -25,6 +26,8 @@ public class ItemController {
     // 아이템 작성 폼 보여주기
     @GetMapping("/item")
     public String showWriteForm(Model model) {
+
+
         model.addAttribute("item", new Item());
         return "item";
     }

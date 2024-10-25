@@ -87,18 +87,18 @@ public class UserController {
         return "login"; // login.html 파일을 반환
     }
 
-    // 로그인 요청 처리
+   /* // 로그인 요청 처리
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, Model model) { // displayname을 username으로 변경
         boolean authenticated = userService.authenticateUser(username, password);
 
         if (authenticated) {
-            return "redirect:/index"; // 로그인 성공 시 홈으로 리다이렉트
+            return "redirect:/home"; // 로그인 성공 시 홈으로 리다이렉트
         } else {
             model.addAttribute("error", "아이디 또는 비밀번호가 잘못되었습니다.");
             return "login"; // 로그인 실패 시 로그인 페이지로 다시 리턴
         }
-    }
+    }*/
 
     // 사용자 등록 페이지를 위한 GET 메서드
     @GetMapping("/register")
