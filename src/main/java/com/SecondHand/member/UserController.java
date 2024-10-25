@@ -48,7 +48,7 @@ public class UserController {
 
         try {
             if (category.isEmpty()) { // 정해진 카테고리가 없으면 전체 목록을 반환
-                itemList = itemService.getAllItems(PageRequest.of(page - 1, 3, Sort.by(Sort.Direction.DESC, "id")));
+                itemList = itemService.getAllItems(PageRequest.of(page - 1, 5, Sort.by(Sort.Direction.DESC, "id")));
             } else { // 정해진 카테고리가 있다면
                 itemList = itemService.getItemsByCategory(category, PageRequest.of(page - 1, 3, Sort.by(Sort.Direction.DESC, "id")));
                 model.addAttribute("category", category);

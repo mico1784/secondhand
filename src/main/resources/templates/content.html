@@ -3,9 +3,9 @@
     <div class="item-grid" style="display: flex; flex-wrap: wrap; gap: 20px;"> <!-- 플렉스박스 설정 -->
       <div class="card" th:each="item : ${items}" style="flex: 1 1 calc(20% - 20px); box-sizing: border-box;"> <!-- 5개씩 나열되도록 설정 -->
         <a th:href="@{/item/{id}(id=${item.id})}">
-          <img th:src="${item.imgURL}" alt="상품 이미지" style="width: 100%;"> <!-- 이미지 URL 및 크기 조정 -->
-          <div class="text-box" style="padding: 10px;">
-            <h5 th:text="${item.title}">상품이름입니다</h5> <!-- 상품 이름 -->
+          <img th:src="${item.imgURL}" alt="상품 이미지"> <!-- 이미지 URL 및 크기 조정 -->
+          <div class="text-box">
+            <h5 th:text="${item.title}" style="">상품이름입니다</h5> <!-- 상품 이름 -->
             <span th:text="${item.price}">가격입니다</span> <!-- 가격 -->
             <p th:text="${item.itemDesc}">추가 설명</p> <!-- 설명 -->
           </div>

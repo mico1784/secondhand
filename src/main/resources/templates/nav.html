@@ -1,4 +1,4 @@
-<div th:fragment="navbar" class="wrap">
+<div th:fragment="navbar" class="navbar">
 
     <header>
       <!-- 메뉴 -->
@@ -31,7 +31,6 @@
           </div>
           <form class="search-btn" method="POST">
             <input type="search" id="searchText" name="searchText" placeholder="검색어" th:value="${searchText}">
-            <button type="submit">검색</button>
             <i class="icon-search"></i>
           </form>
         </div>
