@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/list1.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+  <title>Document</title>
+</head>
+<body>
+<div th:replace="~{nav.html::navbar}"></div>
+<div class="wrap">
+<div th:replace="~{slider.html::slider}"></div>
+</div>
+
+<div class="main">    <!-- 아이템 -->
+    <h2 class="main-title">첫번째 목록</h2>
+    <div th:replace="~{content.html::content}"></div>
+    <h2 class="main-title">두번째 목록</h2>
+    <div th:replace="~{content.html::content}"></div>
+    <h2 class="main-title">세번째 목록</h2>
+    <div th:replace="~{content.html::content}"></div>
+    <h2 class="main-title">네번째 목록</h2>
+    <div th:replace="~{content.html::content}"></div>
+</div>
+
+<footer th:replace="~{footer.html::footer}"></footer>
+<script src="/js/slide.js" defer></script>
+<script src="/js/search.js" defer></script>
+</body>
+</html>

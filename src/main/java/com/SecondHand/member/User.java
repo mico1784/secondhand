@@ -19,6 +19,7 @@ public class User {
 
     private String name; // 이름
 
+    @Column(unique = true)
     private String username; // 아이디
 
     private String password; // 비밀번호
@@ -28,6 +29,7 @@ public class User {
 
     private int age; // 나이
 
+    @Column(unique = true)
     private String phoneNumber; // 전화번호
 
     private String gender; // 성별

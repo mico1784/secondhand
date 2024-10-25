@@ -4,11 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인</title>
+  <link rel="stylesheet" href="/css/nav.css">
+
 </head>
 <body>
 
 <div class="container">
+  <div th:replace="~{nav.html::navbar}"></div>
+
   <h2>로그인</h2>
+
+  <!-- 성공 메시지 표시 영역 -->
+  <div th:if="${message}" style="color: green;">
+    <p th:text="${message}"></p>
+  </div>
+
+  <!-- 오류 메시지 표시 영역 -->
+  <div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+  </div>
+
   <form action="/login" method="POST">
     <label for="username">이름 또는 이메일</label>
     <input type="text" id="username" name="username" required>

@@ -1,0 +1,54 @@
+ body {
+        font-family: Arial, sans-serif;
+    }
+
+#list-container {
+    /* 전체 리스트를 감싸는 컨테이너 스타일 */
+}
+
+#list-box{
+    display: flex;
+    justify-content: space-between;
+}
+
+#header-title {
+    /* 제목 스타일 */
+}
+
+#category-list {
+    /* 카테고리 목록 스타일 */
+         display: flex;
+        justify-content: space-around;
+}
+
+#item-list {
+    /* 아이템 리스트를 감싸는 부분 스타일 */
+}
+
+#item-title {
+    /* 각 아이템의 제목 스타일 */
+}
+
+#item-price {
+    /* 각 아이템의 가격 스타일 */
+}
+
+#pagination-container {
+    /* 페이지네이션 전체를 감싸는 부분 스타일 */
+}
+
+#pagination {
+    /* 페이지네이션 버튼들 스타일 */
+}
+
+#prev-page {
+    /* 이전 페이지 버튼 스타일 */
+}
+
+#next-page {
+    /* 다음 페이지 버튼 스타일 */
+}
+
+#page-item {
+    /* 각 페이지 버튼 스타일 */
+}

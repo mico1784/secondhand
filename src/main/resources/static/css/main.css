@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* 전체 */
+* {list-style: none;
+       margin: 0 auto;
+       padding: 0;
+       box-sizing: border-box;
+       font-family: Arial, sans-serif;
+   }
+
+
+/* a 태그 */
+a {
+  text-decoration: none;
+}
+
+/* .wrap */
+.wrap {
+   margin: 0 100px;
+   margin-bottom: 50px;
+}
+
+
+
+
+.main{
+margin:0 100px;
+}
+
+/* 슬라이더 */
+.content {
+    border: 1px solid;
+}
+
+section {
+    border: 1px solid;
+}
+
+.slideshow-container {
+}
+
+.mySlides {
+}
+
+.prev, .next {
+}
+
+.next {
+}
+
+.prev:hover, .next:hover {
+}
+
+.text {
+}
+
+.numbertext {
+}
+
+.dot {
+}
+
+.active, .dot:hover {
+}
+
+.fade {
+}
+
+@-webkit-keyframes fade {
+}
+
+@keyframes fade {
+}
+
+.main-title{
+    text-align: center;
+    margin: 80px;
+}
+
+/* content */
+.content-slider {
+   border: 1px solid;
+       width: 1262px;
+       overflow: hidden;
+       height: 400px;
+}
+
+.container {
+    border: 1px solid;
+}
+
+.slider-container {
+
+}
+
+/* card */
+.card {
+
+}
+
+.card > a > img {
+    width: 100%;
+    height: 60%;
+    object-fit: inherit;
+}
+
+.text-box {
+
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+}
+
+.text-box h5 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.items {
+
+}
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 수정</title>
+    <link rel="stylesheet" href="/css/nav.css">
+
+</head>
+<body>
+<h1>상품 수정</h1>
+<div th:replace="~{nav.html::navbar}"></div>
+
+<form th:action="@{/item/edit/{id}(id=${item.id})}" method="post" enctype="multipart/form-data">
+    <label for="title">상품명:</label><br>
+    <input type="text" id="title" name="title" th:value="${item.title}" required><br>
+
+    <label for="price">가격:</label><br>
+    <input type="number" id="price" name="price" th:value="${item.price}" required><br>
+
+    <label for="imgFile">이미지 파일:</label><br>
+    <input type="file" id="imgFile" name="imgFile"><br>
+    <small>기존 이미지: <img th:src="${item.imgURL}" alt="상품 이미지" width="100"></small><br>
+
+    <label for="desc">설명:</label><br>
+    <textarea id="desc" name="itemDesc" required th:text="${item.itemDesc}"></textarea><br>
+
+    <button type="submit">수정</button>
+</form>
+</body>
+</html>

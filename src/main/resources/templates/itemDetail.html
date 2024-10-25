@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 상세 정보</title>
+  <link rel="stylesheet" href="/css/nav.css">
+
+</head>
+<body>
+<div th:replace="~{nav.html::navbar}"></div>
+
+<div class="item-detail-container">
+  <span th:text="${item?.title}">Item Title</span>
+
+  <div class="item-image">
+    <img th:src="${item.imgURL}" alt="상품 이미지" />
+  </div>
+
+  <div class="item-description">
+    <h2>상품 설명</h2>
+    <p th:text="${item.itemDesc}">상품 설명</p>
+  </div>
+
+  <div class="item-price">
+    <h2>가격</h2>
+    <p th:text="${item.price}">가격</p>
+  </div>
+
+  <div class="item-upload-date">
+    <p>등록일: <span th:text="${formattedDate}"></span></p>
+  </div>
+
+  <div class="item-actions">
+    <a href="/item/list">목록으로 돌아가기</a>
+    <a th:href="@{/item/edit/{id}(id=${item.id})}">수정하기</a>
+
+
+    <form action="/wishlist/add" method="post">
+      <input name="itemId" th:value="${item.id}" style="display:none">
+      <input name="itemTitle" th:value="${item.title}" style="display:none">
+      <input name="itemImgURL" th:value="${item.imgURL}" style="display:none">
+      <input name="itemPrice" th:value="${item.price}" style="display:none">
+      <input name="itemUploadedDate" th:value="${item.uploadDate}" style="display:none">
+      <button type="submit">찜하기</button>
+    </form>
+
+
+    <form th:action="@{/item/delete(id=${item.id})}" method="post" style="display:inline;">
+      <input type="hidden" name="id" th:value="${item.id}"/>
+      <button type="submit">삭제하기</button>
+    </form>
+
+  </div>
+</div>
+</body>

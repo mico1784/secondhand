@@ -1,0 +1,62 @@
+   /* 전체 컨테이너 */
+        #container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 폼 제목 */
+        #container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* 폼 필드 스타일 */
+        #container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #container input, #container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* 제출 버튼 스타일 */
+        #submit-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #submit-button:hover {
+            background-color: #218838;
+        }
+
+        /* 회원가입 링크 */
+        #container p {
+            text-align: center;
+        }
+
+        /* 링크 스타일 */
+        #container a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #container a:hover {
+            text-decoration: underline;
+        }
