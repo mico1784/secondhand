@@ -1,0 +1,39 @@
+ body {
+        font-family: Arial, sans-serif;
+    }
+
+/* footer */
+footer{
+      width: 100%;
+      margin: 0 auto;
+      font-size: 0.8rem;
+      margin-top: 166px;
+      background-color: #F36B3B;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 214px;
+      justify-content: center;
+      align-items:center;
+}
+
+.text-footer{
+   margin-bottom: 20px;
+   display: flex;
+   gap: 26px;
+}
+
+.text-footer > li{
+    font-weight: bold;
+}
+
+.list-footer{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.list-footer > li > a{
+    padding: 10px 15px 10px 0;
+    font-weight: bold;
+}

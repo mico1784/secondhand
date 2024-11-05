@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="/css/style2.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/my-page.js" defer></script>
+
+</head>
+<body class="body-k">
+<div class="fix">
+  <div th:replace="~{nav.html::navbar}"></div>
+</div>
+
+<div class="wrap-k">
+  <!-- 왼쪽 사이드바 -->
+  <div class="side-k">
+    <h2 class="title-k">마이 페이지</h2>
+    <div class="section-k">
+      <h3 class="subtitle-k">거래 정보</h3>
+      <ul class="menu-k">
+        <li><a href="javascript:void(0)" onclick="toggleSalesHistory()">판매내역</a></li>
+        <li><a href="javascript:void(0)" onclick="togglePurchaseHistory()">구매내역</a></li>
+        <li><a href="javascript:void(0)" onclick="toggleWishlist()">찜한 상품</a></li>
+      </ul>
+    </div>
+    <hr class="divider-k">
+    <div class="section-k">
+      <h3 class="subtitle-k">내 정보</h3>
+      <ul class="menu-k">
+        <li><a href="javascript:void(0)" onclick="toggleAccountPanel()">계정 관리</a></li>
+        <li><a href="javascript:void(0)" onclick="toggleReviewPanel()">거래 후기</a></li>
+        <li><a href="javascript:void(0)" onclick="toggleWithdrawalPanel()">탈퇴하기</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 메인 콘텐츠 -->
+  <div class="main-k">
+    <div class="header-k">
+      <div>
+        <h2 class="page-title-k" th:text="${user.username} + '#' + ${formattedUserId}">중고나라#10413076</h2>
+      </div>
+      <div class="trust-k">
+        <span class="score-k" th:text="'신뢰지수 ' + ${user.trustGuage}"></span>
+        <div class="progress-k">
+          <div class="fill-k"th:style="'width: ' + ${user.trustGuage} + '%;'" ></div>
+        </div>
+        <span class="goal-k">100</span>
+      </div>
+    </div>
+
+    <!-- 통계 정보 및 카페 자동 등록 컨테이너 -->
+    <div class="stats-and-register-k">
+      <!-- 통계 정보 -->
+      <div class="stats-k">
+        <div><p class="value-k">0</p><p>안전거래</p></div>
+        <div><p class="value-k">0</p><p>거래후기</p></div>
+      </div>
+
+    <!-- 내 상품 -->
+    <div class="products-k">
+      <h3 class="products-title-k">내 상품</h3>
+      <div class="tabs-k">
+        <a href="#" class="tab-k active-k" data-situ="total">전체</a>
+        <a href="#" class="tab-k" data-situ="onSale">판매중</a>
+        <a href="#" class="tab-k" data-situ="soldOut">판매완료</a>
+      </div>
+      <p class="count-k">총 0 개</p>
+      <div class="empty-message-k">선택된 조건에 해당하는 상품이 없습니다.</div>
+    </div>
+
+    <!-- 정렬 옵션 -->
+    <div class="sort-options-k">
+      <a href="#" class="sort-k" data-sort="latest">최신순</a>
+      <a href="#" class="sort-k" data-sort="priceLow">낮은가격순</a>
+      <a href="#" class="sort-k" data-sort="priceHigh">높은가격순</a>
+    </div>
+
+    <table class="msl-k">
+      <tbody>
+        <!-- 리스트가 나올 자리 -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 오른쪽에서 슬라이드되는 구매 내역 패널 -->
+<div id="purchase-history-panel" class="purchase-history-panel">
+  <div class="panel-header">
+    <h2>구매내역</h2>
+    <button class="close-button" onclick="togglePurchaseHistory()">X</button>
+  </div>
+  <div class="panel-content">
+    <input type="text" placeholder="상품명을 입력해주세요." class="search-input">
+    <button class="filter-button">상세필터</button>
+    <p class="no-history-message">최근 구매 내역이 없습니다.</p>
+  </div>
+</div>
+
+<!-- 판매 내역 패널 -->
+<div id="sales-history-panel" class="sales-history-panel">
+  <div class="panel-header">
+    <h2>판매내역</h2>
+    <button class="close-button" onclick="toggleSalesHistory()">X</button>
+  </div>
+  <div class="panel-content">
+    <input type="text" placeholder="상품명을 입력해주세요." class="search-input">
+    <button class="filter-button">상세필터</button>
+    <div class="soldlist">
+      <!-- 판매 내역 -->
+    </div>
+    <p class="no-sales-history-message">최근 판매 내역이 없습니다.</p>
+  </div>
+</div>
+
+<!-- 찜한 상품 패널 -->
+<div id="wishlist-panel" class="wishlist-panel">
+  <div class="panel-header">
+    <h2>찜한 상품</h2>
+    <button class="close-button" onclick="toggleWishlist()">X</button>
+  </div>
+  <div class="panel-content">
+    <input type="text" placeholder="상품명을 입력해주세요." class="search-input" oninput="searchWishList()">
+    <button class="filter-button">상세필터</button>
+    <div class="wishlist">
+      <!-- 찜 목록 -->
+    </div>
+    <p class="no-wishlist-message">찜한 상품이 없습니다.</p>
+  </div>
+</div>
+
+<!-- 계정 관리 패널 -->
+<div id="account-panel" class="account-panel">
+  <div class="panel-header">
+    <h2>계정 관리</h2>
+    <button class="close-button" onclick="toggleAccountPanel()">X</button>
+  </div>
+  <div class="panel-content">
+    <div class="user-info">
+      <!-- 유저 정보가 들어갈 자리 -->
+    </div>
+  </div>
+</div>
+
+<!-- 거래 후기 패널 -->
+<div id="review-panel" class="review-panel">
+  <div class="panel-header">
+    <h2>후기</h2>
+    <button class="close-button" onclick="toggleReviewPanel()">X</button>
+  </div>
+  <div class="panel-content">
+    <!-- 첫 번째 섹션: 받은 평가가 없습니다 -->
+    <div class="review-section">
+      <h3 class="review-title">이런 점이 좋았어요</h3>
+      <div class="review-content">
+        <img src="/images/placeholder-icon.png" alt="평가 아이콘" class="review-icon">
+        <p class="no-review-message">받은 평가가 없습니다.</p>
+      </div>
+    </div>
+
+    <!-- 두 번째 섹션: 작성된 후기가 없습니다 -->
+    <div class="review-section">
+      <h3 class="review-title">상세한 후기도 있어요</h3>
+      <div class="review-content">
+        <img src="/images/placeholder-icon.png" alt="후기 아이콘" class="review-icon">
+        <p class="no-review-message">작성된 후기가 없습니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 탈퇴하기 패널 -->
+<div id="withdrawal-panel" class="withdrawal-panel">
+  <div class="panel-header">
+    <h2>회원 탈퇴</h2>
+    <button class="close-button" onclick="toggleWithdrawalPanel()">X</button>
+  </div>
+  <div class="panel-content">
+    <p>탈퇴 사유를 알려주시면 개선을 위해 노력하겠습니다</p>
+    <p>다중 선택이 가능해요.</p>
+    <form>
+      <label><input type="checkbox" name="reason" value="lowUsage"> 사용 빈도가 낮고 개인정보 및 보안 우려</label><br>
+      <label><input type="checkbox" name="reason" value="inconvenience"> 비매너 사용자들로 인한 불편 (사기 등)</label><br>
+      <label><input type="checkbox" name="reason" value="featureIssues"> 서비스 기능 불편 (상품등록/거래 등)</label><br>
+      <label><input type="checkbox" name="reason" value="temporary"> 이벤트 등의 목적으로 한시 사용</label><br>
+      <label><input type="checkbox" name="reason" value="others"> 기타</label><br>
+
+      <textarea placeholder="상세 사유 작성 (예 : 타 서비스 이용)" maxlength="200"></textarea>
+    </form>
+
+    <h3>유의 사항을 확인해주세요!</h3>
+    <ul class="caution-list">
+      <li>01 탈퇴 신청일로부터 30일 이내에 동일한 아이디와 휴대폰 번호로 가입 불가하며 재가입 시, 신규 가입 혜택은 적용되지 않습니다.</li>
+      <li>02 회원 탈퇴 시 본인 계정에 등록된 게시물 또는 작성한 게시물은 삭제됩니다. 단, 다른 회원에 의해 스크랩되거나 공유된 게시물은 삭제되지 않습니다.</li>
+      <li>03 전자 상거래 등에서의 소비자 보호에 관한 법률 규정에 따라 아래와 같이 기록을 보관하며, 법률 위반 경우 외 다른 목적으로 이용되지 않습니다.</li>
+    </ul>
+
+    <!-- 기록 보관 테이블 -->
+    <table class="record-table">
+      <tr>
+        <td>표시 광고에 대한 기록</td>
+        <td>6개월</td>
+      </tr>
+      <tr>
+        <td>계약 또는 청약철회, 대금결제 및 재화 등의 공급에 관한 기록</td>
+        <td>5년</td>
+      </tr>
+      <tr>
+        <td>소비자의 불만 또는 분쟁처리에 관한 기록</td>
+        <td>3년</td>
+      </tr>
+      <tr>
+        <td>로그인 기록</td>
+        <td>3개월</td>
+      </tr>
+      <tr>
+        <td>전자금융거래기록</td>
+        <td>5년</td>
+      </tr>
+    </table>
+
+    <ul class="caution-list">
+      <li>04 탈퇴 신청 후 72시간(3일) 이내 동일한 계정으로 로그인 시 탈퇴 신청이 자동으로 철회됩니다.</li>
+    </ul>
+
+    <!-- 회원 탈퇴 버튼 -->
+    <button class="withdrawal-button">회원 탈퇴</button>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세 정보</title>
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/itemDetail.css">
+    <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/js/nav.js" defer></script>
+</head>
+<body>
+<div class="fix">
+    <div th:replace="~{nav.html::navbar}"></div>
+</div>
+<!-- item Detail 상세페이지  -->
+
+<div class="main-container-e">
+    <!-- 상품페이지 -->
+    <div class="item-detail-container">
+        <!-- 상세페이지 목록버튼 -->
+        <button class="list-back-btn" href="/item/list">
+            <span>&#10094;</span>
+            <span>목록으로 돌아가기</span>
+        </button>
+        <div class="detail-content">
+            <div class="detail-img">
+                <img th:src="${item.imgURL}" alt="이미지"> <!--이미지 사이즈 수정해야함!-->
+            </div>
+            <div class="d-text-content">
+                <div class="item-category">
+                    <p>카테고리: <span th:text="${item.category}">핸드폰</span></p> <!-- 카테고리 추가 -->
+                    <p><span>&#10095;</span></p>
+                    <p>서브 카테고리: 삼성 <span th:text="${item.subcategory}"></span></p> <!-- 서브 카테고리 추가 -->
+                </div>
+                <div class="detail-text-box">
+                    <h3 class="de-item-title" th:text="${item?.title}">핸드폰이 자가증식을 해서 몸집이 점점 커지는데 이거 어떻게 하는거지  </h3>
+                    <h4 class="de-item-price" th:text="${item.price + '원'}">450,000원</h4>
+                    <div class="item-upload-date">
+                        <p>등록일: <span th:text="${formattedDate}"></span></p>
+                    </div>
+                    <!-- 거래 지역 추가-->
+                    <span id="" class="de-location">거래지역:</span>
+                </div>
+                <div class="detail-actions-btn">
+                    <!--찜하기, 채팅하기-->
+                    <div class="detail-btn-left">
+                        <form class="point-form" action="/wishlist/add" method="post">
+                            <input name="itemId" th:value="${item.id}" style="display:none">
+                            <input name="itemTitle" th:value="${item.title}" style="display:none">
+                            <input name="itemImgURL" th:value="${item.imgURL}" style="display:none">
+                            <input name="itemPrice" th:value="${item.price}" style="display:none">
+                            <input name="itemUploadedDate" th:value="${item.uploadDate}" style="display:none">
+                            <button class="point-btn detail-btn" type="submit">찜하기</button>
+                        </form>
+                        <button class="chat-btn detail-btn">채팅하기</button>
+                    </div>
+
+                    <!-- 리뷰 작성 버튼 추가 -->
+                    <form action="#" th:action="@{/item/review/{id}(id=${item.id})}" method="get">
+                        <button type="submit" class="review-btn detail-btn">리뷰 작성</button>
+                    </form>
+
+                    <!--수정 삭제 버튼-->
+                    <div class="detail-btn-right">
+                        <button class="edit-btn detail-btn" th:href="@{/item/edit/{id}(id=${item.id})}">수정하기</button>
+                        <form th:action="@{/item/delete(id=${item.id})}" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${item.id}" />
+                            <button class="del-btn detail-btn" type="submit">삭제하기</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--상품정보 및 회원의 상품 추가-->
+        <div class="detail-content-bot">
+            <!-- 상품 정보 (상품 등록 제목 및 내용)-->
+            <div class="de-text-left">
+                <h4 id="">상품 정보</h4>
+                <div class="detail-text-box" id="" th:text="${item.itemDesc}">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl tincidunt eget nullam non. Quis hendrerit dolor magna eget est lorem ipsum dolor sit
+                </div>
+            </div>
+            <div class="line"></div>
+            <!--판매자 정보 추가-->
+            <div class="de-text-right">
+                <h4 id="">판매 회원 정보</h4>
+                <div class="member-box">
+                    <div id="" class="member-img">
+                        <img src="https://placehold.co/300" alt="이미지">
+                    </div>
+                    <div class="member-text">
+                        <span id="" class="user-id">아이디:주절주절</span>
+                        <a href="" id="my-item-list">상품</a>
+                        <span>|</span>
+                        <span id="" class="follow-right">팔로워</span>
+                    </div>
+                </div>
+                <button class="follow-btn" id="">
+                    팔로우 +
+                </button>
+
+                <div class="de-item-box">
+                    <!-- 가격, 이미지 묶음 -->
+                    <div id="" class="detail-item-list">
+                        <div class="detail-item-img">
+                            <img id="" src="https://placehold.co/300" alt="상품이미지">
+                        </div>
+                        <span id="">가격</span>
+                    </div>
+                </div>
+                <button class="d-add-item-btn">상품 더보기</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

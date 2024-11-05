@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 수정</title>
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/itemEdit.css">
+    <script src="/js/nav.js" defer></script>
+
+</head>
+<body>
+<div class="fix">
+    <div th:replace="~{nav.html::navbar}"></div>
+</div>
+<div class="main-e">
+    <div class="edit-container">
+        <h1>상품 수정</h1>
+        <form class="item-edit-form" th:action="@{/item/edit/{id}(id=${item.id})}" method="post" enctype="multipart/form-data">
+            <label for="category">카테고리</label><br>
+            <select id="category" name="category" onchange="updateSubcategories()" required>
+                <option value="">선택하세요</option>
+                <option value="휴대폰">휴대폰</option>
+                <option value="패드">패드</option>
+                <option value="워치">워치</option>
+            </select><br>
+
+            <label for="subcategory">서브 카테고리</label><br>
+            <select id="subcategory" name="subcategory" required>
+                <option value="">카테고리 먼저 선택</option>
+            </select><br>
+            <label for="title">상품명</label><br>
+            <input class="edit" type="text" id="title" name="title" th:value="${item.title}" required><br>
+
+            <label for="price">가격</label><br>
+            <input class="edit" type="number" id="price" name="price" th:value="${item.price}" required><br>
+
+            <!-- 거래지역 추가 -->
+            <label for="location">거래지역</label><br>
+            <input class="edit" type="text" id="location" name="location" th:value="" required><br>
+
+            <label for="imgFile">이미지 파일</label><br>
+            <input class="edit" type="file" id="imgFile" name="imgFile"><br>
+            <small><span>기존 이미지</span> <img src="https://placehold.co/300" th:src="${item.imgURL}" alt="상품 이미지" width="100"></small><br>
+
+            <label for="desc">설명</label><br>
+            <textarea  id="desc" name="itemDesc" required th:text="${item.itemDesc}"></textarea><br>
+
+            <button class="edit-btn" type="submit">수정</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

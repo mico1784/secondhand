@@ -1,0 +1,99 @@
+/* 전체 스타일 */
+* {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* a 태그 스타일 */
+a {
+    text-decoration: none;
+}
+
+/* 로고 스타일 */
+.logo {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #F36A3C;
+    margin: 40px 0;
+}
+
+/* 회원가입 컨테이너 */
+.register-container {
+    width: 400px; /* 컨테이너 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 회원가입 제목 */
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 회원가입 입력 양식 */
+.register-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 입력 필드 라벨 */
+.register-form label {
+    margin-bottom: 5px;
+}
+
+/* 입력 필드 스타일 */
+.register-form input,
+.register-form select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 회원가입 버튼 스타일 */
+.submit-button {
+    padding: 10px;
+    background-color: #F36A3C;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* 버튼 호버 효과 */
+.submit-button:hover {
+    background-color: #d68d0e;
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* 푸터 링크 스타일 */
+.footer-links {
+    text-align: center;
+    margin-top: 100px;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.footer-links p {
+    margin: 5px 0;
+}
+
+/* 미디어 쿼리 예시 */
+@media (max-width: 600px) {
+    .register-container {
+        width: 90%; /* 작은 화면에서 너비 조정 */
+    }
+}

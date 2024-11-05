@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 등록</title>
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/item.css">
+  <script type="text/javascript" src="js/category.js"></script>
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/js/nav.js" defer></script>
+</head>
+<body>
+<div class="fix">
+  <div th:replace="~{nav.html::navbar}"></div>
+</div>
+<div class="main-e">
+  <div class="add-container">
+    <h1>상품 등록</h1>
+    <form class="item-add-form" action="/item/add" method="post" enctype="multipart/form-data">
+      <label for="category">카테고리</label><br>
+      <select id="category" name="category" onchange="updateSubcategories()" required>
+        <option value="">선택하세요</option>
+        <option value="휴대폰">휴대폰</option>
+        <option value="패드">패드</option>
+        <option value="워치">워치</option>
+      </select><br>
+
+      <label for="subcategory">서브 카테고리</label><br>
+      <select id="subcategory" name="subcategory" required>
+        <option value="">카테고리 먼저 선택</option>
+      </select><br>
+
+      <label for="title">상품명</label><br>
+      <input class="add" type="text" id="title" name="title" required><br>
+
+      <label for="price">가격</label><br>
+      <input class="add" type="number" id="price" name="price" required><br>
+
+
+      <!-- 거래지역 추가 -->
+      <label for="location">거래지역</label><br>
+      <input class="add" type="text" id="location" name="location" required><br>
+
+      <label for="imgFile">이미지 파일</label><br>
+      <input class="add" type="file" id="imgFile" name="imgFile" required><br>
+
+      <label for="desc">설명</label><br>
+      <textarea id="desc" name="itemDesc" required></textarea><br>
+
+      <button class="add-btn" type="submit">등록</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

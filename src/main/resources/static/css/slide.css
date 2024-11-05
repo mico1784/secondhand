@@ -1,0 +1,67 @@
+.mySlides {
+    display: none; /* 기본적으로 모든 슬라이드를 숨김 */
+}
+
+.fade {
+    animation: fade 1.5s; /* 페이드 애니메이션 */
+}
+
+@keyframes fade {
+    from { opacity: .4 }
+    to { opacity: 1 }
+}
+
+/* 배너 및 슬라이더 dot 스타일 */
+.dots {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* 배너 dot 스타일 */
+.banner-dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #ddd; /* 기본 dot 색상 */
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.banner-dot.active {
+    background-color: #333; /* 활성화된 배너 dot 색상 */
+    width:30px;
+    border-radius: 14px;
+    transition: background-color 0.3s ease;
+
+}
+
+
+
+
+
+.slide-box{
+   position: relative;
+   cursor: pointer;
+}
+
+.prev {
+    position: absolute;
+    left: 0%;
+    top: 45%;
+    color: black;
+    font-size: 40px;
+}
+
+.next {
+    position: absolute;
+    right: 0%;
+    top: 45%;
+    color: black;
+    font-size: 40px;
+}
+
+@media screen and (max-width: 767px){
+  .mySlides > img {height:350px; }
+}

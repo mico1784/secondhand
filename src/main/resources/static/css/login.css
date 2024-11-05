@@ -1,0 +1,111 @@
+/* 전체 */
+* {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* a 태그 */
+a {
+    text-decoration: none;
+}
+
+/* 로고 스타일 */
+.logo {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #F36A3C;
+    margin: 40px 0;
+}
+
+/* 로그인 컨테이너 */
+.login-container {
+    width: 400px; /* 컨테이너 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 로그인 제목 */
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 로그인 입력 양식 */
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 로그인 라벨 */
+.login-label {
+    margin-bottom: 5px;
+}
+
+/* 로그인 입력 필드 */
+.login-input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 로그인 버튼 */
+.login-button {
+    padding: 10px;
+    background-color: #F36A3C;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+/* 버튼 호버 효과 */
+.login-button:hover {
+    background-color: #d68d0e;
+}
+
+/* 등록 프롬프트 */
+.register-prompt {
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* 푸터 링크 스타일 */
+.footer-links {
+       position: absolute;
+       text-align: center;
+       margin-top: 20px;
+       padding: 10px;
+       bottom: 0;
+       left: 50%;
+       transform: translate(-50%, -50%);
+}
+
+.footer-links p {
+    margin: 5px 0;
+}
+
+/* 미디어 쿼리 예시 */
+@media (max-width: 600px) {
+    .login-container {
+        width: 90%; /* 작은 화면에서 너비 조정 */
+    }
+
+    .footer-links{
+        width: 90%;
+    }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 작성</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .rating {
+            direction: rtl;
+            display: inline-block;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating label {
+            font-size: 24px;
+            color: grey;
+            cursor: pointer;
+        }
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: gold;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<form th:action="@{/item/review}" method="post">
+    <input type="hidden" name="itemId" th:value="${item.id}"/>
+    <input type="hidden" name="userId" th:value="${user.id}"/>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> <!-- CSRF 토큰 추가 -->
+
+    <textarea name="content" required placeholder="리뷰를 작성하세요"></textarea>
+
+    <div>
+        <label>평점:</label>
+        <span class="rating">
+            <input type="radio" id="rating5" name="rating" value="5">
+            <label for="rating5">★</label>
+
+            <input type="radio" id="rating4" name="rating" value="4">
+            <label for="rating4">★</label>
+
+            <input type="radio" id="rating3" name="rating" value="3">
+            <label for="rating3">★</label>
+
+            <input type="radio" id="rating2" name="rating" value="2">
+            <label for="rating2">★</label>
+
+            <input type="radio" id="rating1" name="rating" value="1">
+            <label for="rating1">★</label>
+        </span>
+    </div>
+
+    <button type="submit">리뷰 작성</button>
+</form>
+
+<h2>리뷰</h2>
+<ul>
+    <c:forEach var="review" items="${reviews}">
+        <li>
+            ${review.content} - ${review.user.username}
+            <span>${review.rating}★</span> <!-- 평점 표시 -->
+            <span>${review.createdAt}</span> <!-- 작성일 표시 -->
+        </li>
+    </c:forEach>
+</ul>
+<script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+    const ratingChecked = document.querySelector('input[name="rating"]:checked');
+    if (!ratingChecked) {
+        alert("평점을 선택해 주세요.");
+        e.preventDefault();
+    }
+});
+</script>
+</body>
+</html>

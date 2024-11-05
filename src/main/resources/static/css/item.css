@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* 전체 */
+
+
+/* a 태그 */
+a {
+  text-decoration: none;
+}
+
+/* .wrap */
+.wrap-e {
+   margin: 0 100px;
+   margin-bottom: 50px;
+}
+
+
+
+
+.main-e{
+margin:0 100px;
+}
+
+/* colors - 영역*/
+
+.main-container{
+border: 1px solid blue;
+}
+
+.wrap{
+border: 1px solid green;
+}
+
+section{
+border: 1px solid #9b59b6;
+}
+
+footer{
+border: 1px solid #e67e22;
+}
+
+/*상품 등록 */
+
+.add-container{
+    width: 600px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    margin: 0 auto;
+}
+
+/* 상품등록 */
+.add-container > h1{
+    margin-bottom: 28px;
+    text-align: center;
+    padding-bottom: 20px;
+
+}
+
+
+/* form 사이즈 */
+.item-add-form{
+    width: 100%;
+    height: 100%;
+    padding: 20px 40px;
+}
+
+.add{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #bdc3c7;
+}
+
+.item-add-form > small > img{
+    width: 200px;
+    height: 200px;
+    border-radius: 5px;
+}
+
+textarea[name="itemDesc"]{
+    width: 100%;
+    height: 250px;
+    border-radius: 5px;
+}
+
+.add-btn{
+    padding: 10px 20px;
+    border: 1px solid black;
+    background-color: white;
+    float: right;
+}
+
+button:hover{
+    color: white;
+    background-color: black;
+}
+
+/* 셀렉트 카테고리 */
+select[name="category"], select[name="subcategory"]{
+    width: 200px;
+    padding: 10px 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #bdc3c7;
+}

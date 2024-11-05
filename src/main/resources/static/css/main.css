@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900&display=swap');
+
+/* 전체 */
+* {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', Arial, sans-serif;
+}
+
+/* a 태그 */
+a {
+    text-decoration: none;
+}
+
+/* 배너 섹션 */
+.wrap {
+    width: 90%;
+    max-width: 1300px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.slide-box {
+    position: relative;
+}
+
+.banner-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* 배너의 이전, 다음 버튼 스타일 */
+.slide-box .prev, .slide-box .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+}
+
+.slide-box .prev {
+    left: 10px;
+}
+
+.slide-box .next {
+    right: 10px;
+}
+
+
+
+/* 메인 섹션 */
+.main-s {
+    width: 90%;
+    max-width: 1300px;
+    margin: 50px auto;
+    padding: 10px 0;
+    border-bottom: 1px solid #E8E8ED;
+    border-left: 1px solid #E8E8ED;
+    border-right: 1px solid #E8E8ED;
+    text-align: left;
+}
+
+.category-title {
+    margin-bottom: 40px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 슬라이더 컨테이너 */
+.slider-container {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 1300px;
+}
+
+/* 슬라이드 전환 효과 */
+.item-slider {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.5s ease;
+    height: 320px;
+}
+
+/* 카드 스타일 */
+.card {
+    flex: 1 1 calc(20% - 20px);
+    box-sizing: border-box;
+    height: 340px;
+    margin: 0 10px;
+}
+
+.card > a > img {
+    width: 85%;
+    height: 60%;
+    border-radius: 5px;
+}
+
+/* 텍스트 박스 */
+.text-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.text-box h5 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 슬라이드 버튼 스타일 - 슬라이더 하단 좌우 배치 */
+.slider-container .slide-prev,
+.slider-container .slide-next {
+    position: absolute;
+    color: black;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    outline: none;
+    bottom:-4%;
+}
+
+/* 각각의 버튼 위치를 좌우로 이동 */
+.slider-container .slide-prev {
+    left: -7px; /* 왼쪽 끝 */
+}
+
+.slider-container .slide-next {
+    right: -3px; /* 오른쪽 끝 */
+}
+
+
+/* 화면 크기별 여백 및 크기 조정 */
+@media screen and (min-width: 1200px) {
+    .main-s, .slider-container, .wrap {
+         /* 여백을 좀 더 넓게 */
+    }
+}
+
+@media screen and (max-width: 1199px) and (min-width: 1024px) {
+    .main-s, .slider-container, .wrap {
+        width: 90%;
+    }
+    .card {
+        height: 300px;
+    }
+}
+
+@media screen and (max-width: 1023px) and (min-width: 768px) {
+    .main-s, .slider-container, .wrap {
+        width: 92%;
+    }
+    .card {
+        height: 280px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .main-s, .slider-container, .wrap {
+        width: 95%;
+    }
+    .card {
+        height: 240px;
+        flex: 1 1 calc(100% - 20px);
+        margin: 10px 0;
+    }
+    .card > a > img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+    .text-box h5 {
+        font-size: 14px;
+    }
+}

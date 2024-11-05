@@ -1,0 +1,66 @@
+<div th:fragment="navbar" class="navbar">
+  <header>
+    <nav>
+      <div class="menu-top">
+        <div class="logo">
+          <img src="/images/logo.jpg" style="width: 41px; position: absolute; left: -22%; top: 2%;">
+          <a href="/home" class="logo">SecondHand</a>
+        </div>
+        <div class="join" id="#">
+          <li th:if="${isLoggedIn == null || !isLoggedIn}"><a th:href="@{/login}">로그인</a></li>
+          <li th:if="${isLoggedIn == null || !isLoggedIn}"><a th:href="@{/register}">회원가입</a></li>
+          <li th:if="${isLoggedIn}">
+            <span th:text="'환영합니다, ' + ${username} + '!'"></span>
+            <a th:href="@{/logout}">로그아웃</a>
+          </li>
+          <li><a href="/mypage">마이페이지</a><i class="fa-regular fa-user"></i></li>
+        </div>
+      </div>
+      <div class="menu-bot">
+        <div class="Category">
+          <!-- 햄버거 버튼 추가 -->
+          <div class="hamburger-button">
+            <div class="hamburger-icon">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <li><a href="/item">판매하기</a></li>
+          <li><a href="/list">아이템 리스트</a></li>
+          <li><a href="/map">지도</a></li>
+          <li><a href="/chat">채팅하기</a></li>
+          <li><a href="#">작업중</a></li>
+        </div>
+        <form class="search-btn" method="POST">
+          <input type="search" id="searchText" name="searchText" placeholder="검색어" th:value="${searchText}">
+          <i class="fas fa-search"></i>
+        </form>
+      </div>
+    </nav>
+  </header>
+  <!-- 드롭다운 메뉴 -->
+  <div class="dropdown-menu" id="dropdownMenu">
+    <div class="column">
+      <h3>패션잡화</h3>
+      <a href="#">뷰티</a>
+      <a href="#">출산/유아동</a>
+      <a href="#">모바일/네트워크</a>
+      <a href="#">가전제품</a>
+      <a href="#">노트북/PC</a>
+    </div>
+    <div class="column">
+      <h3>운동화</h3>
+      <a href="#">런닝화/워킹화</a>
+      <a href="#">단화/캐주얼화</a>
+      <a href="#">기타 운동화/관련 용품</a>
+    </div>
+    <div class="column">
+      <h3>가방/핸드백</h3>
+      <a href="#">숄더백</a>
+      <a href="#">크로스백</a>
+      <a href="#">토트백</a>
+    </div>
+  </div>
+</div>
+

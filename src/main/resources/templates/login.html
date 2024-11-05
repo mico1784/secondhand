@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인</title>
+  <link href="/css/login.css" rel="stylesheet">
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+<div class="logo">
+  <a href="/home" class="logo">SecondHand</a>
+</div>
+
+<div class="login-container">
+  <h2>로그인</h2>
+
+  <!-- 성공 메시지 표시 영역 -->
+  <div class="success-message" th:if="${message}" style="color: green;">
+    <p th:text="${message}"></p>
+  </div>
+
+  <!-- 오류 메시지 표시 영역 -->
+  <div class="error-message" th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+  </div>
+
+  <form action="/login" method="POST" class="login-form">
+    <label for="username" class="login-label">아이디 또는 전화번호</label>
+    <input type="text" id="username" name="username" class="login-input" required>
+
+    <label for="password" class="login-label">비밀번호</label>
+    <input type="password" id="password" name="password" class="login-input" required>
+
+    <div class="login-options">
+      <label>
+        <input type="checkbox" name="stayLoggedIn"> Remember Me
+      </label>
+      <span class="ip-security">IP 보안: <strong>ON</strong></span>
+    </div>
+
+    <input type="submit" value="로그인" class="login-button">
+  </form>
+
+  <p class="register-prompt">
+    비밀번호 찾기 | 아이디 찾기 | <a href="/register" class="register-link">회원가입</a>
+  </p>
+</div>
+
+<div class="footer-links">
+  <p>
+    <a href="/">이용약관</a> |
+    <a href="/">개인정보처리방침</a> |
+    <a href="/">책임의 한계와 법적 고지</a> |
+    <a href="/">고객센터</a>
+  </p>
+  <p>Copyright © SecondHand Corp. All Rights Reserved.</p>
+</div>
+
+</body>
+</html>

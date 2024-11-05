@@ -1,0 +1,75 @@
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>List</title>
+  <link href="/css/list1.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/nav.css">
+  <script src="/js/nav.js" defer></script>
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="main-container-e">
+  <div class="fix">
+    <div class="nav" th:replace="~{nav.html::navbar}"></div>
+  </div>
+  <div th:fragment="list1" class="list-container">
+    <h1 id="header-title"></h1>
+    <!-- 카테고리 추가 -->
+    <ul id="category-list" class="category-list">
+      <li><a href="/list?category=1">카테고리1</a></li>
+      <li><span>&#10095;</span></li>
+      <li><a href="/list?category=2">카테고리2</a></li>
+    </ul>
+    <!--아이템 목록-->
+    <div id="item-list-box" class="item-list-box">
+      <!--아이템 박스-->
+      <a th:href="@{'/item/' + ${i.id}}" id="item-link" class="item-list-box-test" th:each="i : ${items}">
+        <div id="item-list" class="item-list">
+          <div class="item-list-img">
+            <img th:src="${i.imgURL}" alt="이미지">
+          </div>
+          <div class="list-text-box">
+            <h4 class="list-title" th:text="${i.title}" id="item-title">타이틀 타이틀텀블러텀블러</h4>
+            <h4 th:text="${i.price}" id="item-price">4500원</h4>
+          </div>
+          <!--지도추가-->
+          <span id="" class="location-pin">
+            <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0yRxr%2FbtsKmL5rJa7%2FkUXcovSEN2t6dSziK95FTk%2Fimg.png" alt="지도 핀">
+            <p id="">부산광역시 동구 00동</p>
+          </span> <!-- 이 부분이 잘못되어 수정됨 -->
+        </div>
+      </a>
+    </div>
+  </div>
+  <!--페이징네이션-->
+  <div th:if="${totalPage > 1}" id="pagination-container" class="pagination-container">
+    <nav>
+      <ul class="pagination" id="pagination">
+        <li th:class="${currentPage == 1} ? 'disabled'" id="prev-page">
+          <a th:href="${currentPage == 1 ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage - 1) : '/list?page=' + (currentPage - 1))}">
+            prev
+          </a>
+        </li>
+        <li th:each="page : ${#numbers.sequence(1, totalPage)}"
+            th:class="${page == currentPage} ? 'active'" id="page-item">
+          <a th:href="${category != null ? '/list?category=' + category + '&page=' + page : '/list?page=' + page}" th:text="${page}">
+          </a>
+        </li>
+        <li th:class="${currentPage >= totalPage} ? 'disabled'" id="next-page">
+          <a th:href="${currentPage >= totalPage ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage + 1) : '/list?page=' + (currentPage + 1))}">
+            next
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</body>
+</html>
