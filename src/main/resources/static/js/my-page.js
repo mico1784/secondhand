@@ -9,12 +9,16 @@ const panels = [
 ];
 
 // 특정 패널을 열 때 다른 모든 패널을 닫는 함수
-function togglePanel(panelId) {
+function togglePanel(panelId, callback) {
   panels.forEach(id => {
     const panel = document.getElementById(id);
     if (id === panelId) {
       // 지정된 패널 ID라면 'active' 클래스를 토글
+      const isActive = panel.classList.contains('active');
       panel.classList.toggle('active');
+      if(!isActive && typeof callback === 'function'){
+        callback(); // 패널이 닫혀있을 때만 요청 보냄
+      }
     } else {
       // 다른 모든 패널은 'active' 클래스를 제거하여 닫음
       panel.classList.remove('active');
@@ -28,22 +32,19 @@ function togglePurchaseHistory() {
 }
 
 function toggleSalesHistory() {
-  togglePanel('sales-history-panel');
-  loadSoldList();
+  togglePanel('sales-history-panel', loadSoldList);
 }
 
 function toggleWishlist() {
-  togglePanel('wishlist-panel');
-  loadWishList();
+  togglePanel('wishlist-panel', loadWishList);
 }
 
 function toggleAccountPanel() {
-  togglePanel('account-panel');
-  loadUserInfo();
+  togglePanel('account-panel', loadUserInfo);
 }
 
 function toggleReviewPanel() {
-  togglePanel('review-panel');
+  togglePanel('review-panel', loadReviews);
   loadReviews();
 }
 

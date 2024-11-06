@@ -27,6 +27,8 @@ public class User {
 
     private String password; // 비밀번호
 
+    private String profileImgURL;   // 프사
+
     @Column(unique = true)
     private String email; // 이메일
 
