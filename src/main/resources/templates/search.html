@@ -21,23 +21,8 @@
 
   <div class="search-container-e">
 
-    <!-- 검색창 -->
-    <form id="searchForm" class="search-Form" method="post">
-      <input type="search" id="searchText" name="searchText" placeholder="검색어를 입력하세요" th:value="${searchText}">
-      <button class="search-page-btn" type="submit">검색</button>
-    </form>
-
-    <script src="/js/search.js" defer></script>
-
     <!--해당 제품 검색 결과 추가-->
     <h4 class="search-result" id="">해당 제품에 대해 검색한 결과 : <span>124개</span></h4>
-
-    <!--카테고리 추가-->
-    <ul class="search-category">
-      <li><a href="/list?category=1">카테고리1</a></li>
-      <li><span>&#10095;</span></li>
-      <li><a href="/list?category=2">카테고리2</a></li>
-    </ul>
 
     <!--아이템 박스-->
     <div class="search-item-grid">

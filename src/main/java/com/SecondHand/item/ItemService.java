@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
+    @Transactional // 트랜잭션 관리
     public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
@@ -36,10 +38,12 @@ public class ItemService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다."));
     }
 
+    @Transactional // 트랜잭션 관리
     public void deleteItem(Long id) {
         itemRepository.deleteById(id);
     }
 
+    @Transactional // 트랜잭션 관리
     public Item updateItem(Item item) {
         if (item.getId() == null) {
             throw new IllegalArgumentException("아이템 ID는 null일 수 없습니다.");
@@ -50,5 +54,13 @@ public class ItemService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다.");
         }
+    }
+
+    @Transactional // 트랜잭션 관리
+    public void updateItemSituation(Long itemId, Item.ItemSituation situation) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+        item.updateSituation(situation);
+        itemRepository.save(item); // 변경 사항 저장
     }
 }

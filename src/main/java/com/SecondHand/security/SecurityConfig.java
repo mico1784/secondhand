@@ -33,23 +33,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
-                .formLogin(form -> form.loginPage("/login").permitAll())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/oauth/kakao/**", "/login", "/register", "/css/**", "/images/**", "/home", "/").permitAll()
+                        .requestMatchers("/mypage").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .permitAll()
+                )
                 .rememberMe(rememberMe -> rememberMe
                         .key("remKey")
                         .rememberMeParameter("stayLoggedIn")
                         .userDetailsService(userDetailsService)
                         .tokenRepository(persistentTokenRepository())
                         .tokenValiditySeconds(60 * 60 * 24 * 28)
-                        .useSecureCookie(false)) // Secure 쿠키 사용
-                .logout(logout -> logout.permitAll())
+                        .useSecureCookie(false)
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/home")
+                        .permitAll()
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .maximumSessions(1) // 동일한 사용자 세션 최대 개수
-                        .expiredUrl("/login?expired"))
-        ;
-
-        // 세션 고정 공격 방지를 위한 설정
+                        .maximumSessions(1)
+                        .expiredUrl("/login?expired")
+                );
 
         return http.build();
     }

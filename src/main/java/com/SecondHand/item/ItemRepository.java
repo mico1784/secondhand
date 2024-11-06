@@ -25,5 +25,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findBySellerOrderByPriceAsc(User seller);
     List<Item> findBySellerOrderByPriceDesc(User seller);
     List<Item> findBySellerOrderByUploadDateDesc(User seller);
-    List<Item> findBySellerAndSituation(User seller, String situation);
+    List<Item> findBySellerAndSituation(User seller,
+                                        Item.ItemSituation situation);
 }

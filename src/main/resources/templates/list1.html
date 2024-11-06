@@ -30,7 +30,7 @@
     <!--아이템 목록-->
     <div id="item-list-box" class="item-list-box">
       <!--아이템 박스-->
-      <a th:href="@{'/item/' + ${i.id}}" id="item-link" class="item-list-box-test" th:each="i : ${items}">
+      <a th:href="@{/item/{id}(id=${i.id})}" id="item-link" class="item-list-box-test" th:each="i : ${items}">
         <div id="item-list" class="item-list">
           <div class="item-list-img">
             <img th:src="${i.imgURL}" alt="이미지">

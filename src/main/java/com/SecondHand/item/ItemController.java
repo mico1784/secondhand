@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -102,6 +105,16 @@ public class ItemController {
         }
     }
 
+    // 상품 존재 여부
+    @GetMapping("/item/{id}/exists")
+    public ResponseEntity<Void> checkItemExists(@PathVariable Long id) {
+        boolean itemExists = itemRepository.existsById(id);
+        if (itemExists) {
+            return ResponseEntity.ok().build(); // 아이템이 존재하면 200 OK 응답
+        } else {
+            return ResponseEntity.notFound().build(); // 아이템이 존재하지 않으면 404 Not Found 응답
+        }
+    }
 
     // S3 presigned URL 생성
     @GetMapping("/presigned-url")
@@ -218,8 +231,22 @@ public class ItemController {
         return processSearchList(m, searchText, page);
     }
 
+    @PutMapping("/item/{id}/situation")
+    public ResponseEntity<String> updateItemSituation(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String situationString = request.get("situation");
 
-    private String test(){
-        return null;
+        if (situationString == null) {
+            return ResponseEntity.badRequest().body("Situation value cannot be null");
+        }
+
+        try {
+            Item.ItemSituation situation = Item.ItemSituation.valueOf(situationString);
+            itemService.updateItemSituation(id, situation);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid situation value");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating situation");
+        }
     }
 }

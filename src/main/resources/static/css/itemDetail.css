@@ -4,6 +4,7 @@
 /* 전체 */
 *{
   box-sizing: border-box;
+  margin: 0;
 }
 li{
   list-style: none;
@@ -138,7 +139,7 @@ border: 1px solid #e67e22;
 /* 컨텐츠 텍스트 */
 .d-text-content{
   width: 480px;
-  height:330px;
+  height:350px;
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -155,9 +156,36 @@ border: 1px solid #e67e22;
 
 .de-item-price{
   font-size: 2.3rem;
-  padding-bottom: 40px;
 }
 
+/*등록일, 거래지역 */
+.item-desc-box{
+  width: 100%;
+  height: 100px;
+  position: absolute;
+  bottom: 20px;
+}
+
+.item-desc-box > .item-upload-date{
+  padding-bottom: 10px;
+}
+
+/*판매중-판매완료 셀렉트 추가*/
+.de-select-flex{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  height: 40px;
+}
+
+.detail-select{
+  width: 150px;
+  height: 50px;
+  padding: 10px 5px;
+  border-radius: 5px;
+  font-size: 1.1rem;
+}
 
 /* 카테고리 */
 .item-category{
@@ -170,7 +198,7 @@ border: 1px solid #e67e22;
   padding-right: 10px;
 }
 
-/* 상세페이지 btn 모음 */
+/* btn */
 .detail-actions-btn{
   width: 100%;
   display: flex;
@@ -180,17 +208,14 @@ border: 1px solid #e67e22;
   bottom: 0;
 }
 
-/* 왼쪽의 찜하기, 채팅하기 */
 .detail-btn-left{
   display: flex;
 }
 
-/* 공통된 버튼 */
 .detail-btn{
   padding: 10px 20px;
 }
 
-/* 찜하기, 채팅하기 버튼 */
 .point-btn, .chat-btn{
   color: #e67e22;
   background-color: white;
@@ -202,14 +227,13 @@ border: 1px solid #e67e22;
   color: white;
 }
 
-/* 수정, 삭제 버튼 */
-.del-btn, .edit-btn{
+.del-btn, .edit-btn, .review-btn{
   background-color: white;
   color: black;
   border: 1px solid black;
 }
 
-.del-btn:hover, .edit-btn:hover{
+.del-btn:hover, .edit-btn:hover, .review-btn:hover{
   background-color: black;
   color: white;
   border: 1px solid black;
@@ -355,7 +379,7 @@ padding:10px;
   background-color: white;
   border: 1px solid #b3b3b3;
   color: #b3b3b3;
-
+  margin-bottom: 20px;
 
 }
 
@@ -363,5 +387,73 @@ padding:10px;
 .line{
   border-right: 1px solid #ccc;
   height: 100%;
-  weight: 0;
+  width: 0;
 }
+
+/* 구매자 리뷰 */
+
+.review-box{
+  width: 100%;
+  border: 1px solid #b3b3b3;
+  padding: 10px;
+  margin: 0px;
+  }
+
+  .detail-item-review{
+    border: 1px solid #b3b3b3;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .rev-profile-content{
+    display: flex;
+    align-items: flex-start;
+    padding: 5px;
+    border-bottom: 1px solid #b3b3b3;
+    margin-bottom: 10px;
+  }
+
+  .review-writer{
+    height: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .rev-profile-box{
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .review-profile-img{
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    border-radius: 50px;
+    margin-right: 10px;
+  }
+
+  .review-profile-img > img{
+    object-fit: cover;
+    width: 60px;
+    height: 60px;
+  }
+
+  .d-add-review-btn{
+    width: 100%;
+    padding: 5px 0;
+    background-color: white;
+    border: 1px solid #b3b3b3;
+    color: #b3b3b3;
+  }
+
+  /* line */
+  .line{
+    border-right: 1px solid #ccc;
+    height: 100%;
+    width:0;
+  }

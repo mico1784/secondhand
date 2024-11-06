@@ -1,5 +1,5 @@
-
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>상품 상세 정보</title>
@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="/js/nav.js" defer></script>
 </head>
+
 <body>
 <div class="fix">
     <div th:replace="~{nav.html::navbar}"></div>
@@ -25,22 +26,35 @@
         </button>
         <div class="detail-content">
             <div class="detail-img">
-                <img th:src="${item.imgURL}" alt="이미지"> <!--이미지 사이즈 수정해야함!-->
+                <img id="" th:src="${item.imgURL}" alt="상품 이미지">
             </div>
             <div class="d-text-content">
                 <div class="item-category">
                     <p>카테고리: <span th:text="${item.category}">핸드폰</span></p> <!-- 카테고리 추가 -->
                     <p><span>&#10095;</span></p>
-                    <p>서브 카테고리: 삼성 <span th:text="${item.subcategory}"></span></p> <!-- 서브 카테고리 추가 -->
+                    <p>서브 카테고리: <span th:text="${item.subcategory}"></span></p> <!-- 서브 카테고리 추가 -->
                 </div>
                 <div class="detail-text-box">
-                    <h3 class="de-item-title" th:text="${item?.title}">핸드폰이 자가증식을 해서 몸집이 점점 커지는데 이거 어떻게 하는거지  </h3>
-                    <h4 class="de-item-price" th:text="${item.price + '원'}">450,000원</h4>
-                    <div class="item-upload-date">
-                        <p>등록일: <span th:text="${formattedDate}"></span></p>
+                    <h3 class="de-item-title" th:text="${item?.title}">핸드폰이 자가증식을 해서 몸집이 점점 커지는데 이거 어떻게 하는거지 </h3>
+                    <div class="de-select-flex">
+                        <h4 class="de-item-price" th:text="${item.price + '원'}">450,000원</h4>
+
+                        <!-- 예약중-판매완료 추가 -->
+                        <label style="display: none;" for="situation">상황 선택:</label>
+                        <select class="detail-select" id="situation" name="situation" required>
+                            <option value="onSale">판매중</option>
+                            <option value="booked">예약중</option>
+                            <option value="soldOut">판매완료</option>
+                        </select>
+                        <div style="display: none;">현재 상태: <span id="currentSituation" th:text="${item.situation}"></span></div>
                     </div>
-                    <!-- 거래 지역 추가-->
-                    <span id="" class="de-location">거래지역:</span>
+                    <div class="item-desc-box">
+                        <div class="item-upload-date">
+                            등록일: <span th:text="${formattedDate}"></span>
+                        </div>
+                        <!-- 거래 지역 추가-->
+                        <span id="" class="de-location">거래지역:</span>
+                    </div>
                 </div>
                 <div class="detail-actions-btn">
                     <!--찜하기, 채팅하기-->
@@ -63,7 +77,9 @@
 
                     <!--수정 삭제 버튼-->
                     <div class="detail-btn-right">
-                        <button class="edit-btn detail-btn" th:href="@{/item/edit/{id}(id=${item.id})}">수정하기</button>
+                        <form th:action="@{/item/edit/{id}(id=${item.id})}" method="get" style="display:inline;">
+                            <button type="submit" class="edit-btn detail-btn">수정하기</button>
+                        </form>
                         <form th:action="@{/item/delete(id=${item.id})}" method="post" style="display:inline;">
                             <input type="hidden" name="id" th:value="${item.id}" />
                             <button class="del-btn detail-btn" type="submit">삭제하기</button>
@@ -71,6 +87,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
         <!--상품정보 및 회원의 상품 추가-->
         <div class="detail-content-bot">
@@ -87,11 +104,11 @@
                 <h4 id="">판매 회원 정보</h4>
                 <div class="member-box">
                     <div id="" class="member-img">
-                        <img src="https://placehold.co/300" alt="이미지">
+                        <img th:src="${item.imgURL}" alt="이미지">
                     </div>
                     <div class="member-text">
-                        <span id="" class="user-id">아이디:주절주절</span>
-                        <a href="" id="my-item-list">상품</a>
+                        <span id="" class="user-id" th:text="'아이디: ' + ${item.seller.username}">아이디:주절주절</span>
+                        <a href="" id="my-item-list" th:text="'상품: ' + ${item.title}">상품</a>
                         <span>|</span>
                         <span id="" class="follow-right">팔로워</span>
                     </div>
@@ -104,15 +121,87 @@
                     <!-- 가격, 이미지 묶음 -->
                     <div id="" class="detail-item-list">
                         <div class="detail-item-img">
-                            <img id="" src="https://placehold.co/300" alt="상품이미지">
+                            <img id="" th:src="${item.imgURL}" alt="상품이미지">
                         </div>
                         <span id="">가격</span>
                     </div>
                 </div>
                 <button class="d-add-item-btn">상품 더보기</button>
+                <!-- 구매자 상품 리뷰 추가 -->
+                <div class="review-box">
+                    <!--리뷰 보여지는 칸-->
+                    <div class="detail-item-review">
+                        <div class="rev-profile-content">
+                            <div class="review-profile-img">
+                                <img th:src="${item.imgURL}" alt="">
+                            </div>
+                            <div class="rev-profile-box">
+                  <span id="해당 상품 제목" class="d-review-name">
+                    닉네임
+                  </span>
+                                <span id="별점">
+                    ★★★★☆
+                  </span>
+                            </div>
+                        </div>
+                        <div id="" class="review-writer">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                                dolore magna aliqua. Nisl tincidunt eget nullam non. Quis hendrerit dolor magna eget est lorem ipsum
+                                dolor sit
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <button class="d-add-review-btn" id="">리뷰 더보기</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const situationSelect = document.getElementById('situation');
+        const currentSituationElement = document.getElementById('currentSituation');
+
+        // 페이지 로드 시 현재 상태 설정
+        const currentSituation = currentSituationElement.innerText.trim(); // 현재 상태 텍스트 가져오기
+        if (currentSituation) {
+            situationSelect.value = currentSituation; // 현재 상태에 맞춰 선택
+        }
+
+        situationSelect.addEventListener('change', function() {
+            const situation = this.value;
+            const itemId = [[${item.id}]];
+
+            if (!itemId) {
+                alert('아이템 ID가 유효하지 않습니다.'); // 에러 처리
+                return;
+            }
+
+            fetch(`/item/${itemId}/situation`, {
+                method: 'PUT', // PUT 대신 POST를 사용할 수 있음
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ situation: situation })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('아이템 상태가 성공적으로 업데이트되었습니다.');
+                    // 현재 상태 업데이트
+                    currentSituationElement.innerText = situation;
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+            })
+            .catch(error => {
+                alert('상태 업데이트 중 오류가 발생했습니다: ' + error);
+            });
+        });
+    });
+</script>
 </body>
 </html>

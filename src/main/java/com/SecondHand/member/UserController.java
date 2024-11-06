@@ -3,8 +3,12 @@ package com.SecondHand.member;
 import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.ItemService;
+import com.SecondHand.review.Review;
+import com.SecondHand.review.ReviewDTO;
+import com.SecondHand.review.ReviewRepository;
 import com.SecondHand.wishList.WishList;
 import com.SecondHand.wishList.WishListRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,14 +25,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
+@SessionAttributes("user")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -35,22 +38,31 @@ public class UserController {
     private final ItemService itemService;
     private final ItemRepository itemRepository;
     private final WishListRepository wishListRepository;
+    private final ReviewRepository reviewRepository;
 
     @GetMapping("/")
     public String index(){return "redirect:/home";}
 
     @GetMapping("/home")
-    public String home(Model model, Principal principal,
+    public String home(Model model, Principal principal, HttpSession session,
                        @RequestParam(defaultValue = "1") Integer page) {
-        boolean isLoggedIn = principal != null;
+
+        // 로그인 여부 확인: Principal 또는 세션에 사용자 정보가 있는지 확인
+        boolean isLoggedIn = principal != null || session.getAttribute("username") != null;
         model.addAttribute("isLoggedIn", isLoggedIn);
 
-        if (isLoggedIn) {
-            model.addAttribute("username", principal.getName());
+        // 사용자 이름을 설정: 일반 로그인 사용자는 Principal, 카카오 로그인 사용자는 세션에서 가져옴
+        String username = null;
+        if (principal != null) {
+            username = principal.getName();
+        } else if (session.getAttribute("username") != null) {
+            username = (String) session.getAttribute("username");
         }
 
+        model.addAttribute("username", username);
+
         try {
-            // 전체 아이템 페이지네이션
+            // 전체 아이템 페이지네이션 처리
             Page<Item> itemList = itemService.getAllItems(PageRequest.of(page - 1, 5, Sort.by(Sort.Direction.DESC, "id")));
             model.addAttribute("items", itemList.getContent());
             model.addAttribute("hasPrevious", itemList.hasPrevious());
@@ -58,15 +70,14 @@ public class UserController {
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPage", itemList.getTotalPages());
 
-            // 첫 페이지의 카테고리별 아이템 설정
+            // 카테고리별 아이템 설정
             model.addAttribute("phoneItems", itemService.getItemsByCategory("휴대폰", PageRequest.of(0, 5)).getContent());
             model.addAttribute("padItems", itemService.getItemsByCategory("패드", PageRequest.of(0, 5)).getContent());
             model.addAttribute("watchItems", itemService.getItemsByCategory("워치", PageRequest.of(0, 5)).getContent());
 
         } catch (Exception e) {
             model.addAttribute("error", "아이템 목록을 가져오는 중 오류가 발생했습니다: " + e.getMessage());
-            // 기본적으로 빈 리스트를 반환할 수 있습니다.
-            model.addAttribute("items", List.of());
+            model.addAttribute("items", List.of()); // 기본적으로 빈 리스트 반환
         }
 
         return "index";
@@ -87,10 +98,6 @@ public class UserController {
 
 
     }
-
-
-
-
 
     // 로그인 페이지를 표시하는 메소드
     @GetMapping("/login")
@@ -134,24 +141,36 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public String mypage(Model model, Principal principal){
-        if (principal == null) {
-            return "redirect:/login"; // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+    public String mypage(Model model, Principal principal, HttpSession session) {
+        String username;
+        User user;
+        long reviewCnt;
+
+        if (principal != null) {
+            // 일반 로그인 사용자
+            username = principal.getName();
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        } else if (Boolean.TRUE.equals(session.getAttribute("isLoggedIn"))) {
+            // 카카오 로그인 사용자 확인
+            username = (String) session.getAttribute("username");
+            if (username == null) {
+                return "redirect:/login"; // 세션에 username 없으면 로그인 페이지로 리다이렉트
+            }
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        } else {
+            return "redirect:/login"; // 인증되지 않은 경우 로그인 페이지로 리다이렉트
         }
 
-            String username = principal.getName();
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        reviewCnt = reviewRepository.countByBoughtItem_Seller(user);
 
-            model.addAttribute("user", user); // 사용자 정보를 모델에 추가
-
-        // 포맷 처리된 유저ID
+        model.addAttribute("reviewCnt", reviewCnt);
+        model.addAttribute("user", user);
         model.addAttribute("formattedUserId", String.format("%08d", user.getId()));
-        model.addAttribute("user", user); // 사용자 정보를 모델에 추가
 
         return "my-page";
     }
-
 
     @GetMapping("/mypage/items")
     @ResponseBody
@@ -165,10 +184,10 @@ public class UserController {
 
         switch (situ){
             case "onSale":
-                mySaleList = itemRepository.findBySellerAndSituation(user, "onSale");
+                mySaleList = itemRepository.findBySellerAndSituation(user, Item.ItemSituation.onSale);
                 break;
             case "soldOut":
-                mySaleList = itemRepository.findBySellerAndSituation(user, "soldOut");
+                mySaleList = itemRepository.findBySellerAndSituation(user, Item.ItemSituation.soldOut);
                 break;
             default:
                 mySaleList = itemRepository.findBySeller(user);
@@ -228,13 +247,51 @@ public class UserController {
 
     @GetMapping("/mypage/soldlist")
     @ResponseBody
-    public Map<String, Object> getSoldList(Principal principal){
+    public Map<String, Object> getSoldList(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("사용자가 로그인되어 있지 않습니다.");
+        }
+
         String username = principal.getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        List<Item> soldlist = itemRepository.findBySellerAndSituation(user, "soldOut");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // "soldOut" 대신 ItemSituation.SOLD_OUT 사용
+        List<Item> soldlist = itemRepository.findBySellerAndSituation(user, Item.ItemSituation.soldOut);
+        if (soldlist == null) {
+            soldlist = new ArrayList<>();  // 빈 리스트로 초기화
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("soldlist", soldlist);
+
+        return response;
+    }
+
+    @GetMapping("/mypage/reviews")
+    @ResponseBody
+    public Map<String, Object> getReviews(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("사용자가 로그인되어 있지 않습니다.");
+        }
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        List<Review> reviewsWri = reviewRepository.findByReviewer(user);
+        List<Review> reviewsRec = reviewRepository.findByBoughtItem_Seller(user);
+
+        // Review 엔티티 리스트를 ReviewDTO 리스트로 변환
+        List<ReviewDTO> reviewsWriDTO = reviewsWri.stream()
+                .map(ReviewDTO::new)
+                .collect(Collectors.toList());
+        List<ReviewDTO> reviewsRecDTO = reviewsRec.stream()
+                .map(ReviewDTO::new)
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("reviewsWri", reviewsWriDTO);
+        response.put("reviewsRec", reviewsRecDTO);
 
         return response;
     }
@@ -265,10 +322,6 @@ public class UserController {
             return "redirect:/register";
         }
 
-    }
-    @GetMapping("/withdraw")
-    public String withdraw(){
-        return "withdraw";
     }
 
     @GetMapping("/editProfile")

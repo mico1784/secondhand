@@ -44,6 +44,7 @@ function toggleAccountPanel() {
 
 function toggleReviewPanel() {
   togglePanel('review-panel');
+  loadReviews();
 }
 
 function toggleWithdrawalPanel() {
@@ -101,7 +102,7 @@ function loadSortedItems(situType, sortType){   // 클릭시 요청할 url을 �
                                     ${item.title}
                                 </a>
                             </td>
-                            <td>${item.price}</td>
+                            <td>${item.price} 원</td>
                         </tr>
                     `;
                     itemContainer.innerHTML += itemRow;
@@ -157,10 +158,10 @@ function displayWishList(items) {
         items.forEach(item => {
             const itemRow = `
                 <div class="wishlist-item">
-                    <a href="/item/${item.itemId}">
+                    <a href="#" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
                         <img src="${item.itemImgURL}" alt="상품 이미지" class="wishlist-img"/>
                     </a>
-                    <a href="/item/${item.itemId}">
+                    <a href="#" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
                         <strong class="wishlist-title">${item.itemTitle}</strong>
                     </a>
                     <p class="wishlist-price">${item.itemPrice} 원</p>
@@ -170,6 +171,24 @@ function displayWishList(items) {
             wishListContainer.innerHTML += itemRow;
         });
     }
+}
+
+// 상품 디테일 페이지로 이동하기 전에 확인하는 함수
+function checkItemBeforeRedirect(itemId) {
+    fetch(`/item/${itemId}/exists`) // 존재 여부를 확인하는 API 엔드포인트
+        .then(response => {
+            if (response.ok) {
+                // 상품이 존재하면 디테일 페이지로 이동
+                window.location.href = `/item/${itemId}`;
+            } else {
+                // 상품이 삭제되었으면 경고 메시지 표시
+                alert("원본 게시물이 삭제되었습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("Error checking item existence: ", error);
+            alert("상품 정보를 확인할 수 없습니다.");
+        });
 }
 
 // 검색 기능
@@ -232,7 +251,7 @@ function loadSoldList(){
                                     ${item.title}
                                 </a>
                             </td>
-                            <td>${item.price}</td>
+                            <td>${item.price} 원</td>
                         </tr>
                     `;
                     soldListContainer.innerHTML += itemRow;
@@ -242,3 +261,62 @@ function loadSoldList(){
         .catch(error => console.error('Error loading user info: ', error));
 };
 
+// 레이팅을 별로 표시하는 함수
+function displayRating(rating) {
+    let starsHtml = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            starsHtml += '<span>★</span>';
+        } else {
+            starsHtml += '<span>☆</span>';
+        }
+    }
+    return starsHtml;
+}
+
+// 거래 후기 불러오기
+function loadReviews(){
+    fetch("/mypage/reviews")
+        .then(response => response.json())
+        .then(data => {
+            const reviewWriContainer = document.querySelector(".review-panel .revWri");
+            const WriEmptyMessage = document.querySelector(".no-reviewWri-message");
+            reviewWriContainer.innerHTML = "";
+            if(data.reviewsWri.length === 0) {
+                WriEmptyMessage.style.display = "block";
+            }else {
+                WriEmptyMessage.style.display = "none";
+                data.reviewsWri.forEach(item => {
+                    const itemRow = `
+                        <div class="reviewWri">
+                            <h4>${item.createdAt}</h4>
+                            <div>${displayRating(item.rating)}</div>
+                            <h4>${item.content}</h4>
+                        </div>
+                    `;
+                    reviewWriContainer.innerHTML += itemRow;
+                });
+            }
+
+            const reviewRecContainer = document.querySelector(".review-panel .revRec");
+            const RecEmptyMessage = document.querySelector(".no-reviewRec-message");
+            reviewRecContainer.innerHTML = "";
+            if(data.reviewsRec.length === 0) {
+                RecEmptyMessage.style.display = "block";
+            }else {
+                RecEmptyMessage.style.display = "none";
+                data.reviewsRec.forEach(item => {
+                    const itemRow = `
+                        <div class="reviewRec">
+                            <h4>${item.reviewerUsername}</h4>
+                            <div>${displayRating(item.rating)}</div>
+                            <h4>${item.createdAt}</h4>
+                            <h4>${item.content}</h4>
+                        </div>
+                    `;
+                    reviewRecContainer.innerHTML += itemRow;
+                });
+            }
+        })
+        .catch(error => console.error('Error loading reviews: ', error));
+};

@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,6 +32,8 @@ public class User {
 
     private int age; // 나이
 
+    private String role;
+
     @Column(unique = true)
     private String phoneNumber; // 전화번호
 
@@ -50,6 +52,13 @@ public class User {
     @OneToMany(mappedBy = "reviewer")
     private List<Review> reviews;
 
+    // 카카오 ID 필드 추가 (카카오 사용자 식별용)
+    @Column(unique = true)
+    private Long kakaoId;
+
+    // 카카오 사용자 여부 확인 필드
+    private boolean isKakaoUser = false;
+
     @Override
     public String toString() {
         return "User{" +
@@ -57,5 +66,4 @@ public class User {
                 ", username='" + username + '\'' +
                 '}';
     }
-
 }
