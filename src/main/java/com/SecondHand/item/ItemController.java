@@ -206,10 +206,14 @@ public class ItemController {
 
         if (category.isEmpty()) { // 카테고리가 없을 때 전체 목록 페이지네이션
             list = itemRepository.findAll(PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "id")));
+            list.forEach(item -> item.setFormattedPrice(String.format("%,d", item.getPrice())));
         } else { // 카테고리가 있을 때 해당 카테고리의 목록만 페이지네이션
             list = itemRepository.findPageByCategory(category, PageRequest.of(page - 1, 5, Sort.by(Sort.Direction.DESC, "id")));
+            list.forEach(item -> item.setFormattedPrice(String.format("%,d", item.getPrice())));
             m.addAttribute("category", category);
         }
+
+
 
         m.addAttribute("items", list.getContent()); // 현재 페이지의 아이템 목록
         m.addAttribute("hasPrevious", list.hasPrevious());

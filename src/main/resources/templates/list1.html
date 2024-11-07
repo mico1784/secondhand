@@ -37,7 +37,7 @@
           </div>
           <div class="list-text-box">
             <h4 class="list-title" th:text="${i.title}" id="item-title">타이틀 타이틀텀블러텀블러</h4>
-            <h4 th:text="${i.price}" id="item-price">4500원</h4>
+            <h4 th:text="${i.formattedPrice} + ' 원'" id="item-price">4500원</h4>
           </div>
           <!--지도추가-->
           <span id="" class="location-pin">
