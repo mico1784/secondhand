@@ -212,6 +212,10 @@ border: 1px solid #e67e22;
   display: flex;
 }
 
+.detail-btn-right{
+  display: flex;
+}
+
 .detail-btn{
   padding: 10px 20px;
 }

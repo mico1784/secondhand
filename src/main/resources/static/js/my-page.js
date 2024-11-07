@@ -28,7 +28,7 @@ function togglePanel(panelId, callback) {
 
 // 각 패널을 여는 함수들
 function togglePurchaseHistory() {
-  togglePanel('purchase-history-panel');
+  togglePanel('purchase-history-panel', loadPurchaseList);
 }
 
 function toggleSalesHistory() {
@@ -45,7 +45,6 @@ function toggleAccountPanel() {
 
 function toggleReviewPanel() {
   togglePanel('review-panel', loadReviews);
-  loadReviews();
 }
 
 function toggleWithdrawalPanel() {
@@ -103,7 +102,7 @@ function loadSortedItems(situType, sortType){   // 클릭시 요청할 url을 �
                                     ${item.title}
                                 </a>
                             </td>
-                            <td>${item.price} 원</td>
+                            <td>${item.formattedPrice} 원</td>
                         </tr>
                     `;
                     itemContainer.innerHTML += itemRow;
@@ -165,7 +164,7 @@ function displayWishList(items) {
                     <a href="#" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
                         <strong class="wishlist-title">${item.itemTitle}</strong>
                     </a>
-                    <p class="wishlist-price">${item.itemPrice} 원</p>
+                    <p class="wishlist-price">${item.formattedPrice} 원</p>
                     <button class="delete-button" onclick="deleteItem(${item.id})">삭제</button>
                 </div>
             `;
@@ -192,26 +191,6 @@ function checkItemBeforeRedirect(itemId) {
         });
 }
 
-// 검색 기능
-function searchWishList() {
-    const searchInput = document.querySelector('.wishlist-panel .search-input');
-    const searchTerm = searchInput.value.toLowerCase(); // 소문자로 변환하여 비교
-    const filteredItems = wishListItems.filter(item =>
-        item.itemTitle.toLowerCase().includes(searchTerm) // 제목에 검색어가 포함되는지 확인
-    );
-
-    displayWishList(filteredItems); // 필터링된 목록을 표시
-}
-
-// DOMContentLoaded 이벤트 안에서 초기화
-document.addEventListener("DOMContentLoaded", function() {
-    // 검색 입력 이벤트 리스너 추가
-    const searchInput = document.querySelector('.wishlist-panel .search-input');
-    searchInput.addEventListener('input', searchWishList);
-
-    // 초기 찜 목록 불러오기
-    loadWishList();
-});
 // 찜 목록 삭제
 function deleteItem(id) {
     fetch(`/wishlist/delete?id=${id}`, { method: 'DELETE' })
@@ -225,6 +204,43 @@ function deleteItem(id) {
     })
     .catch(error => console.error('삭제 중 오류 발생', error));
 }
+
+// 구매내역 불러오기
+function loadPurchaseList(){
+    fetch('/mypage/cart')
+        .then(response => response.json())
+        .then(data => {
+            const purchaseListContainer = document.querySelector('.purchase-history-panel .purchaselist');
+            const emptyMessage = document.querySelector('.no-purchase-history-message');
+            purchaseListContainer.innerHTML = "";
+
+            if(data.purchaseList.length === 0) {
+                emptyMessage.style.display = "block";
+            }else {
+                emptyMessage.style.display = "none";
+                data.purchaseList.forEach(item => {
+                    const itemRow = `
+                        <div class= >
+                        <tr>
+                            <td>
+                                <a href="/item/${item.itemId}">
+                                    <img src="${item.itemImgURL}">
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/item/${item.itemId}">
+                                    ${item.itemTitle}
+                                </a>
+                            </td>
+                            <td>${item.purchaseDate}</td>
+                        </tr>
+                    `;
+                    soldListContainer.innerHTML += itemRow;
+                });
+            }
+        })
+        .catch(error => console.error('Error loading user info: ', error));
+};
 
 // 판매내역 불러오기
 function loadSoldList(){
@@ -252,7 +268,7 @@ function loadSoldList(){
                                     ${item.title}
                                 </a>
                             </td>
-                            <td>${item.price} 원</td>
+                            <td>${item.formattedPrice} 원</td>
                         </tr>
                     `;
                     soldListContainer.innerHTML += itemRow;

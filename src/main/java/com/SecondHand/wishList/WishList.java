@@ -28,4 +28,15 @@ public class WishList {
     private String itemImgURL;      // 제품 이미지
     private Integer itemPrice;      // 제품 가격
     private LocalDateTime itemUploadedDate; // 제품 등록일
+
+    @Transient
+    private String formattedPrice; // 천 단위 구분 기호가 포함된 가격 (가상 필드)
+
+    public String getFormattedPrice() {
+        return formattedPrice;
+    }
+
+    public void setFormattedPrice(String formattedPrice) {
+        this.formattedPrice = formattedPrice;
+    }
 }

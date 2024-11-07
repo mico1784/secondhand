@@ -40,22 +40,31 @@
                         <h4 class="de-item-price" th:text="${item.price + '원'}">450,000원</h4>
 
                         <!-- 예약중-판매완료 추가 -->
-                        <label style="display: none;" for="situation">상황 선택:</label>
-                        <select class="detail-select" id="situation" name="situation" required>
-                            <option value="onSale">판매중</option>
-                            <option value="booked">예약중</option>
-                            <option value="soldOut">판매완료</option>
+                        <!-- 상황 선택 부분 (상태 변경은 판매자가 할 수 있음) -->
+                        <label style="display: none;" for="situation"></label>
+                        <select class="detail-select" id="situation" name="situation" required
+                                th:style="${item.seller.username == currentUsername ? 'display:block;' : 'display:none;'}">
+                            <option value="판매중" th:selected="${item.situation == '판매중'}">판매중</option>
+                            <option value="예약중" th:selected="${item.situation == '예약중'}">예약중</option>
+                            <option value="판매완료" th:selected="${item.situation == '판매완료'}">판매완료</option>
                         </select>
-                        <div style="display: none;">현재 상태: <span id="currentSituation" th:text="${item.situation}"></span></div>
-                    </div>
-                    <div class="item-desc-box">
-                        <div class="item-upload-date">
-                            등록일: <span th:text="${formattedDate}"></span>
+
+                        <!-- 현재 상태 표시 -->
+                        <div th:style="${item.seller.username != currentUsername ? 'display:block;' : 'display:none;'}">
+                            <span id="currentSituation" th:text="${item.situation}"></span>
                         </div>
-                        <!-- 거래 지역 추가-->
-                        <span id="" class="de-location">거래지역:</span>
+
+                        <!-- 등록일 표시 부분 -->
+                        <div class="item-desc-box">
+                            <div class="item-upload-date">
+                                등록일: <span th:text="${formattedDate}"></span>
+                            </div>
+                            <span id="" class="de-location">거래지역:</span>
+                        </div>
                     </div>
                 </div>
+                <!-- 거래 지역 추가-->
+
                 <div class="detail-actions-btn">
                     <!--찜하기, 채팅하기-->
                     <div class="detail-btn-left">
@@ -68,26 +77,28 @@
                             <button class="point-btn detail-btn" type="submit">찜하기</button>
                         </form>
                         <button class="chat-btn detail-btn">채팅하기</button>
-                    </div>
 
-                    <!-- 리뷰 작성 버튼 추가 -->
-                    <form action="#" th:action="@{/item/review/{id}(id=${item.id})}" method="get">
-                        <button type="submit" class="review-btn detail-btn">리뷰 작성</button>
-                    </form>
+                        <!-- 리뷰 작성 버튼 추가 -->
+                        <form action="#" th:action="@{/item/review/{id}(id=${item.id})}" method="get">
+                            <button type="submit" class="review-btn detail-btn">리뷰 작성</button>
+                        </form>
 
                     <!--수정 삭제 버튼-->
                     <div class="detail-btn-right">
-                        <form th:action="@{/item/edit/{id}(id=${item.id})}" method="get" style="display:inline;">
+                        <!-- 수정 버튼 (판매자만 보이게) -->
+                        <form th:action="@{/item/edit/{id}(id=${item.id})}" method="get"
+                              th:if="${item.seller.username == currentUsername}">
                             <button type="submit" class="edit-btn detail-btn">수정하기</button>
                         </form>
-                        <form th:action="@{/item/delete(id=${item.id})}" method="post" style="display:inline;">
+                        <!-- 삭제 버튼 (판매자만 보이게) -->
+                        <form th:action="@{/item/delete}" method="post" th:if="${item.seller.username == currentUsername}">
                             <input type="hidden" name="id" th:value="${item.id}" />
                             <button class="del-btn detail-btn" type="submit">삭제하기</button>
                         </form>
                     </div>
                 </div>
             </div>
-
+        </div>
         </div>
         <!--상품정보 및 회원의 상품 추가-->
         <div class="detail-content-bot">

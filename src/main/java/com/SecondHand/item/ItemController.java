@@ -34,7 +34,6 @@ public class ItemController {
     // 아이템 작성 폼 보여주기
     @GetMapping("/item")
     public String showWriteForm(Model model, Principal principal) {
-
         model.addAttribute("item", new Item());
         return "item";
     }
@@ -60,11 +59,17 @@ public class ItemController {
         return "redirect:/list";
     }
 
-    // 아이템 삭제
+    // 아이템 삭제 (판매자만 가능)
     @PostMapping("/item/delete")
-    public String deleteItem(@RequestParam Long id, RedirectAttributes redirectAttributes) {
+    public String deleteItem(@RequestParam Long id, Principal principal, RedirectAttributes redirectAttributes) {
         Item item = itemService.getItemById(id); // 아이템 조회
         if (item != null) {
+            // 판매자만 삭제 가능
+            if (!item.getSeller().getUsername().equals(principal.getName())) {
+                redirectAttributes.addFlashAttribute("error", "삭제 권한이 없습니다.");
+                return "redirect:/home"; // 권한이 없는 경우 홈 페이지로 리다이렉트
+            }
+
             try {
                 // S3에서 파일 삭제
                 String fileName = item.getImgURL().substring(item.getImgURL().lastIndexOf("/") + 1); // 파일 이름 추출
@@ -83,22 +88,25 @@ public class ItemController {
         return "redirect:/home"; // 목록 페이지로 리다이렉트
     }
 
-
     // 상품 상세 정보 페이지로 이동
     @GetMapping("/item/{id}")
-    public String showItemDetail(@PathVariable Long id, Model model) {
+    public String showItemDetail(@PathVariable Long id, Model model, Principal principal) {
         Item item = itemService.getItemById(id);
         if (item != null) {
-            // uploadDate가 null이 아닐 경우에만 포맷팅
+            // 현재 로그인한 사용자의 username
+            String currentUsername = principal.getName();
+
+            // 등록된 날짜 포맷팅
             if (item.getUploadDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 String formattedDate = item.getUploadDate().format(formatter);
-                model.addAttribute("formattedDate", formattedDate); // 포맷된 날짜 전달
+                model.addAttribute("formattedDate", formattedDate);
             } else {
-                model.addAttribute("formattedDate", "날짜 정보 없음"); // 대체 문자열 추가
+                model.addAttribute("formattedDate", "날짜 정보 없음");
             }
             model.addAttribute("item", item);
-            return "itemDetail"; // 디테일 페이지로 이동
+            model.addAttribute("currentUsername", currentUsername);  // currentUsername을 템플릿에 전달
+            return "itemDetail";  // 디테일 페이지로 이동
         } else {
             model.addAttribute("error", "아이템을 찾을 수 없습니다.");
             return "itemList"; // 목록 페이지로 돌아감
@@ -127,9 +135,14 @@ public class ItemController {
 
     // 아이템 수정 폼 보여주기
     @GetMapping("/item/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
+    public String showEditForm(@PathVariable Long id, Model model, Principal principal) {
         Item item = itemService.getItemById(id);
         if (item != null) {
+            // 판매자만 수정 가능하도록 권한 체크
+            if (!item.getSeller().getUsername().equals(principal.getName())) {
+                return "redirect:/home"; // 권한이 없으면 홈으로 리다이렉트
+            }
+
             model.addAttribute("item", item);
             return "itemEdit"; // 수정 페이지로 이동
         } else {
@@ -144,9 +157,16 @@ public class ItemController {
     public String updateItem(@PathVariable Long id,
                              @ModelAttribute Item item,
                              @RequestParam(value = "imgFile", required = false) MultipartFile file,
+                             Principal principal,  // Principal을 매개변수로 추가
                              RedirectAttributes redirectAttributes) throws IOException {
         // 기존 아이템 조회
         Item existingItem = itemService.getItemById(id); // id를 사용하여 조회
+
+        // 판매자만 수정 가능하도록 권한 체크
+        if (!existingItem.getSeller().getUsername().equals(principal.getName())) {
+            redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다.");
+            return "redirect:/home"; // 권한이 없으면 홈으로 리다이렉트
+        }
 
         // 파일이 업로드된 경우
         if (file != null && !file.isEmpty()) {
@@ -199,7 +219,6 @@ public class ItemController {
 
         return "list1.html";
     }
-
 
     // 검색
     private String processSearchList(Model m, String searchText, Integer page) {

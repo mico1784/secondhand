@@ -14,18 +14,29 @@ public class GlobalControllerAdvice {
     public void addAttributes(HttpServletRequest request, Principal principal) {
         HttpSession session = request.getSession();
 
-        // 로그인 여부 확인: 일반 로그인 또는 카카오 로그인 세션 체크
+        // 로그인 여부 확인
         boolean isLoggedIn = (principal != null || session.getAttribute("username") != null);
         request.setAttribute("isLoggedIn", isLoggedIn);
 
-        // 사용자 이름 설정: 일반 로그인은 principal, 카카오는 세션에서 가져옴
+        // 사용자 정보 설정
         String username = null;
+        boolean isGoogleUser = session.getAttribute("isGoogleUser") != null
+                && (boolean) session.getAttribute("isGoogleUser");
+        String name = null;
+
         if (principal != null) {
+            // 일반 로그인 또는 구글 로그인 사용자 처리
             username = principal.getName();
+            name = isGoogleUser ? (String) session.getAttribute("name") : username;
         } else if (session.getAttribute("username") != null) {
+            // 카카오 로그인 사용자
             username = (String) session.getAttribute("username");
+            name = isGoogleUser ? (String) session.getAttribute("name") : username;
         }
 
+        // 속성 추가
         request.setAttribute("username", username);
+        request.setAttribute("isGoogleUser", isGoogleUser);
+        request.setAttribute("name", name);
     }
 }

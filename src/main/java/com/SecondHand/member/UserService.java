@@ -19,7 +19,8 @@ public class UserService {
     // 일반 사용자 저장 메서드
     public void saveUser(String name, String username, String email, String password,
                          String phoneNumber, String address, String gender, int age) {
-        String encodedPassword = passwordEncoder.encode(password);
+
+        String encodedPassword = passwordEncoder.encode(password); // 비밀번호 암호화
 
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
@@ -35,12 +36,11 @@ public class UserService {
         user.setName(name);
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(encodedPassword);
+        user.setPassword(encodedPassword); // 암호화된 비밀번호 저장
         user.setPhoneNumber(phoneNumber);
         user.setAddress(address);
         user.setGender(gender);
         user.setAge(age);
-        user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
     }
@@ -81,4 +81,30 @@ public class UserService {
     public String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
+
+    // 구글 사용자 저장 또는 업데이트 메소드
+    public User saveOrUpdateGoogleUser(String googleId, String name, String email) {
+        Optional<User> existingUser = userRepository.findByGoogleId(googleId);
+
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setName(name);
+            user.setEmail(email);
+            userRepository.save(user); // 업데이트된 사용자 정보 저장
+            return user;
+        } else {
+            User newUser = new User();
+            newUser.setGoogleId(googleId); // 고유한 구글 ID를 저장
+            newUser.setUsername("google_" + googleId); // 구글 ID를 포함한 username 설정
+            newUser.setName(name);
+            newUser.setEmail(email);
+            newUser.setPassword(""); // 소셜 로그인 사용자는 비밀번호를 비워둠
+            newUser.setGoogleUser(true);
+            newUser.setCreatedAt(LocalDateTime.now());
+            userRepository.save(newUser);
+            return newUser;
+        }
+    }
+
+
 }

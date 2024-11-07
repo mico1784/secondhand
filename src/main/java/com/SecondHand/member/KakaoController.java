@@ -1,12 +1,12 @@
 package com.SecondHand.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +24,7 @@ public class KakaoController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    @Qualifier("principalDetailsService")
     private UserDetailsService userDetailsService;
 
 
@@ -34,7 +35,6 @@ public class KakaoController {
     private String redirectUri;
 
     // 카카오 로그인 요청 메서드
-
     @GetMapping("/oauth/kakao")
     public String kakaoLogin() {
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize?client_id="
@@ -61,8 +61,8 @@ public class KakaoController {
                     "", // 비밀번호는 빈 문자열로 설정
                     List.of(new SimpleGrantedAuthority("ROLE_USER"))
             );
-            kakaoUser.username = kakaoUsername;
-            kakaoUser.id = kakaoId;
+            kakaoUser.setCustomUsername(kakaoUsername); // 수정된 부분
+            kakaoUser.setId(kakaoId);
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     kakaoUser,
@@ -85,8 +85,4 @@ public class KakaoController {
             return "redirect:/login?error=exception"; // 예외 발생 시 로그인 페이지로 리다이렉트
         }
     }
-
-
-
-
 }

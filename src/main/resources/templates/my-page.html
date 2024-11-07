@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Page</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="/css/style2.css">
   <link rel="stylesheet" href="/css/nav.css">
   <script src="/js/nav.js" defer></script>
@@ -41,52 +42,50 @@
 
   <!-- 메인 콘텐츠 -->
   <div class="main-k">
+    <!-- 헤더: 페이지 제목과 신뢰지수 -->
     <div class="header-k">
-      <div>
-        <h2 class="page-title-k" th:text="${user.username} + '#' + ${formattedUserId}">중고나라#10413076</h2>
-      </div>
+      <h2 class="page-title-k" th:text="${user.username} + '#' + ${formattedUserId}">중고나라#10413076</h2>
       <div class="trust-k">
         <span class="score-k" th:text="'신뢰지수 ' + ${user.trustGuage}"></span>
         <div class="progress-k">
-          <div class="fill-k"th:style="'width: ' + ${user.trustGuage} + '%;'" ></div>
+          <div class="fill-k" th:style="'width: ' + ${user.trustGuage} + '%;'" ></div>
         </div>
         <span class="goal-k">100</span>
       </div>
     </div>
 
-    <!-- 통계 정보 및 카페 자동 등록 컨테이너 -->
-    <div class="stats-and-register-k">
-      <!-- 통계 정보 -->
-      <div class="stats-k">
-        <div><p class="value-k" th:text="${reviewCnt}">0</p><p>거래후기</p></div>
-      </div>
+    <!-- 통계 정보 -->
+    <div class="stats-k">
+      <div><p class="value-k" th:text="${reviewCnt}" onclick="toggleReviewPanel()">0</p><p>거래후기</p></div>
+    </div>
 
-      <!-- 내 상품 -->
-      <div class="products-k">
-        <h3 class="products-title-k">내 상품</h3>
-        <div class="tabs-k">
-          <a href="#" class="tab-k active-k" data-situ="total">전체</a>
-          <a href="#" class="tab-k" data-situ="onSale">판매중</a>
-          <a href="#" class="tab-k" data-situ="soldOut">판매완료</a>
-        </div>
-        <p class="count-k">총 0 개</p>
-        <div class="empty-message-k">선택된 조건에 해당하는 상품이 없습니다.</div>
+    <!-- 내 상품 목록: 이미지 리스트를 아래로 이동 -->
+    <div class="products-k">
+      <h3 class="products-title-k">내 상품</h3>
+      <div class="tabs-k">
+        <a href="#" class="tab-k active-k" data-situ="total">전체</a>
+        <a href="#" class="tab-k" data-situ="onSale">판매중</a>
+        <a href="#" class="tab-k" data-situ="soldOut">판매완료</a>
       </div>
+      <p class="count-k">총 0 개</p>
+      <div class="empty-message-k">선택된 조건에 해당하는 상품이 없습니다.</div>
 
-      <!-- 정렬 옵션 -->
-      <div class="sort-options-k">
-        <a href="#" class="sort-k" data-sort="latest">최신순</a>
-        <a href="#" class="sort-k" data-sort="priceLow">낮은가격순</a>
-        <a href="#" class="sort-k" data-sort="priceHigh">높은가격순</a>
-      </div>
-
+      <!-- 이미지 리스트 테이블 -->
       <table class="msl-k">
         <tbody>
         <!-- 리스트가 나올 자리 -->
         </tbody>
       </table>
     </div>
+
+    <!-- 정렬 옵션 -->
+    <div class="sort-options-k">
+      <a href="#" class="sort-k" data-sort="latest">최신순</a>
+      <a href="#" class="sort-k" data-sort="priceLow">낮은가격순</a>
+      <a href="#" class="sort-k" data-sort="priceHigh">높은가격순</a>
+    </div>
   </div>
+
 
   <!-- 오른쪽에서 슬라이드되는 구매 내역 패널 -->
   <div id="purchase-history-panel" class="purchase-history-panel">
@@ -95,9 +94,10 @@
       <button class="close-button" onclick="togglePurchaseHistory()">X</button>
     </div>
     <div class="panel-content">
-      <input type="text" placeholder="상품명을 입력해주세요." class="search-input">
-      <button class="filter-button">상세필터</button>
-      <p class="no-history-message">최근 구매 내역이 없습니다.</p>
+      <div class="purchaselist">
+          <!-- 구매 내역 -->
+      </div>
+      <p class="no-purchase-history-message">최근 구매 내역이 없습니다.</p>
     </div>
   </div>
 
@@ -108,8 +108,6 @@
       <button class="close-button" onclick="toggleSalesHistory()">X</button>
     </div>
     <div class="panel-content">
-      <input type="text" placeholder="상품명을 입력해주세요." class="search-input">
-      <button class="filter-button">상세필터</button>
       <div class="soldlist">
         <!-- 판매 내역 -->
       </div>
@@ -124,8 +122,6 @@
       <button class="close-button" onclick="toggleWishlist()">X</button>
     </div>
     <div class="panel-content">
-      <input type="text" placeholder="상품명을 입력해주세요." class="search-input" oninput="searchWishList()">
-      <button class="filter-button">상세필터</button>
       <div class="wishlist">
         <!-- 찜 목록 -->
       </div>

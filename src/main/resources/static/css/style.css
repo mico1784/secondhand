@@ -596,4 +596,46 @@
   margin-top: 20px;
 }
 
+/* 내 상품 리스트 테이블 */
+.msl-k {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+/* 테이블 행 */
+.msl-k tr {
+    border-bottom: 1px solid #ddd;
+}
+
+/* 테이블 이미지 셀 */
+.msl-k td:first-child {
+    width: 100px;
+}
+
+/* 이미지 크기 */
+.msl-k img {
+    width: 80px; /* 원하는 이미지 크기 */
+    height: auto;
+    border-radius: 5px;
+}
+
+/* 상품 제목과 가격 셀 */
+.msl-k td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* 상품 제목 */
+.msl-k td:nth-child(2) a {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+/* 상품 가격 */
+.msl-k td:nth-child(3) {
+    color: #666;
+}
+
 

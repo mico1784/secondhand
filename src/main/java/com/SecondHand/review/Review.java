@@ -36,6 +36,10 @@ public class Review {
     @Column(nullable = false)
     private LocalDateTime createdAt; // 작성일
 
+    public void setBoughtItem(Item boughtItem) {
+        this.boughtItem = boughtItem;
+    }
+
     @Override
     public String toString() {
         return "Review{" +

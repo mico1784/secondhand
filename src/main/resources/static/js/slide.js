@@ -1,6 +1,12 @@
  var slideIndex = 1;
     showSlides(slideIndex);
 
+    // 다음 슬라이드로 자동 전환 (2초마다)
+    setInterval(function() {
+      plusSlides(1);
+    }, 2000); // 2000 밀리초 = 2초
+
+
     // 다음, 이전 제어
     function plusSlides(n) {
       showSlides(slideIndex += n);

@@ -10,8 +10,9 @@ function moveSlide(sliderId, direction) {
         'padSlider': '패드',
         'watchSlider': '워치'
     };
+
     const category = categoryMap[sliderId];
-    const itemsPerPage = 5; // 항상 5개씩 표시
+    const itemsPerPage = 6;
 
     // 페이지 업데이트
     currentPage[sliderId] += direction;
@@ -20,7 +21,10 @@ function moveSlide(sliderId, direction) {
     }
 
     fetch(`/home/categoryItems?category=${category}&page=${currentPage[sliderId]}&size=${itemsPerPage}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch data');
+            return response.json();
+        })
         .then(items => {
             const sliderContainer = document.getElementById(sliderId);
             sliderContainer.innerHTML = ''; // 기존 아이템 제거
@@ -28,12 +32,11 @@ function moveSlide(sliderId, direction) {
             items.forEach(item => {
                 const itemElement = document.createElement('div');
                 itemElement.classList.add('card');
-                itemElement.style.flex = '1 1 calc(20% - 20px)';
                 itemElement.style.boxSizing = 'border-box';
 
                 itemElement.innerHTML = `
                     <a href="/item/${item.id}">
-                        <img src="${item.imgURL}" alt="상품 이미지" style="width: 100%;">
+                        <img src="${item.imgURL}" alt="상품 이미지">
                         <div class="text-box">
                             <h5>${item.title}</h5>
                             <span>${item.price}</span>

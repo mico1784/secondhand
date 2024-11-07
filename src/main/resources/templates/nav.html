@@ -10,7 +10,7 @@
           <li th:if="${isLoggedIn == null || !isLoggedIn}"><a th:href="@{/login}">로그인</a></li>
           <li th:if="${isLoggedIn == null || !isLoggedIn}"><a th:href="@{/register}">회원가입</a></li>
           <li th:if="${isLoggedIn}">
-            <span th:text="'환영합니다, ' + ${username} + '!'"></span>
+            <span th:text="${isGoogleUser} ? ${name} : ${username}"></span>
             <a th:href="@{/logout}">로그아웃</a>
           </li>
           <li><a href="/mypage">마이페이지</a><i class="fa-regular fa-user"></i></li>

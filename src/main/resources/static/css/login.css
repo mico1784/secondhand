@@ -70,8 +70,21 @@ a {
     color: white;
     font-size: 1rem;
     cursor: pointer;
-    margin: 10px 0;
+    margin: 10px auto;
     width: 183px;
+}
+
+.kakao-login-button{
+    margin: 10px auto;
+}
+
+.google-login-button{
+    margin: 10px auto;
+}
+
+.google-login-button > img {
+    width: 183px;
+    height: 41px;
 }
 
 /* 버튼 호버 효과 */

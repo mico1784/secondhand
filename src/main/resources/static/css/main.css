@@ -16,8 +16,7 @@ a {
 
 /* 배너 섹션 */
 .wrap {
-    width: 90%;
-    max-width: 1300px;
+    width: 79%;
     margin: 0 auto;
     overflow: hidden;
     position: relative;
@@ -60,8 +59,7 @@ a {
 
 /* 메인 섹션 */
 .main-s {
-    width: 90%;
-    max-width: 1300px;
+    width: 79%;
     margin: 50px auto;
     padding: 10px 0;
     border-bottom: 1px solid #E8E8ED;
@@ -87,23 +85,28 @@ a {
 /* 슬라이드 전환 효과 */
 .item-slider {
     display: flex;
-    gap: 20px;
     transition: transform 0.5s ease;
     height: 320px;
+    justify-content: space-between;
 }
 
 /* 카드 스타일 */
 .card {
-    flex: 1 1 calc(20% - 20px);
     box-sizing: border-box;
     height: 340px;
     margin: 0 10px;
 }
 
+/* 카드 이미지 hover 시 확대 효과 */
 .card > a > img {
-    width: 85%;
+    width: 200px;
     height: 60%;
     border-radius: 5px;
+    transition: transform 0.3s ease; /* 부드러운 확대 전환 */
+}
+
+.card > a > img:hover {
+    transform: scale(1.1); /* hover 시 이미지 확대 */
 }
 
 /* 텍스트 박스 */
@@ -175,11 +178,9 @@ a {
     }
     .card {
         height: 240px;
-        flex: 1 1 calc(100% - 20px);
         margin: 10px 0;
     }
     .card > a > img {
-        width: 100%;
         height: auto;
         object-fit: cover;
     }
