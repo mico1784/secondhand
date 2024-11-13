@@ -39,39 +39,40 @@ function wsEvt(roomNo) {
         console.log("sessionId:", $("#sessionId").val());
     };
 
-    ws.onmessage = function(event) {
-        var msg = event.data;
-        if (msg != null && msg.trim() !== '') {
-            try {
-                var response = JSON.parse(msg);
+ws.onmessage = function(event) {
+    var msg = event.data;
+    if (msg != null && msg.trim() !== '') {
+        try {
+            var response = JSON.parse(msg);
 
-                // 서버에서 sessionId를 받을 때
-                if (response.type === "getId") {
-                    var si = response.sessionId || "";
-                    if (si) {
-                        $("#sessionId").val(si);
-                        localStorage.setItem('sessionId', si);  // sessionId 로컬 스토리지에 저장
-                        console.log("session Id: " + si);
-                    }
-                } else if (response.type === "message") {
-                    // 메시지 출력 처리
-                    var chatMessage = response.msg.replace(/ /g, "&nbsp;"); // 공백을 &nbsp;로 변환
-
-                    if (response.sessionId === $("#sessionId").val()) {
-                        // 자신의 메시지
-                        $("#chating").append("<p class='me'>" + chatMessage + "</p>");
-                    } else {
-                        // 다른 사람의 메시지
-                        $("#chating").append("<p class='other'>" + response.userName + " : " + chatMessage + "</p>");
-                    }
-                } else {
-                    console.warn("알 수 없는 메시지 유형:", response.type);
+            // 서버에서 sessionId를 받을 때
+            if (response.type === "getId") {
+                var si = response.sessionId || "";
+                if (si) {
+                    $("#sessionId").val(si);
+                    localStorage.setItem('sessionId', si);  // sessionId 로컬 스토리지에 저장
+                    console.log("session Id: " + si);
                 }
-            } catch (e) {
-                console.error("JSON 파싱 오류: ", e);
+            } else if (response.type === "message") {
+                // 메시지 출력 처리
+                var chatMessage = response.msg.replace(/ /g, "&nbsp;"); // 공백을 &nbsp;로 변환
+
+                // 자신의 메시지와 다른 사람의 메시지 구분
+                if (response.sessionId === $("#sessionId").val()) {
+                    // 자신의 메시지
+                    $("#chating").append("<p class='me'>" + chatMessage + "</p>");
+                } else {
+                    // 다른 사람의 메시지
+                    $("#chating").append("<p class='other'>" + response.userName + " : " + chatMessage + "</p>");
+                }
+            } else {
+                console.warn("알 수 없는 메시지 유형:", response.type);
             }
+        } catch (e) {
+            console.error("JSON 파싱 오류: ", e);
         }
-    };
+    }
+};
 
     ws.onclose = function(event) {
         console.log("WebSocket connection closed", event);

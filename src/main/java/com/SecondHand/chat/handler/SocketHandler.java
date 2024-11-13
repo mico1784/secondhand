@@ -18,6 +18,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -68,11 +69,15 @@ public class SocketHandler extends TextWebSocketHandler {
                 return;
             }
 
+            // 클라이언트에서 보낸 sessionId를 저장
+            String clientSessionId = (String) obj.get("sessionId");
+
             // 메시지 저장 및 전송
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setSender((String) obj.get("userName"));
             chatMessage.setContent((String) obj.get("msg"));
             chatMessage.setTimestamp(LocalDateTime.now());
+            chatMessage.setSessionId(clientSessionId);
             chatMessage.setRoom(room);
 
             try {
@@ -89,7 +94,8 @@ public class SocketHandler extends TextWebSocketHandler {
                 for (WebSocketSession wss : roomSessions.values()) {
                     try {
                         obj.put("type", "message");
-                        obj.put("sessionId", session.getId());
+                        obj.put("sessionId", clientSessionId);  // 클라이언트에서 보낸 sessionId를 사용
+                        System.out.println(session.getId());
                         wss.sendMessage(new TextMessage(new JSONObject(obj).toJSONString()));
                     } catch (Exception e) {
                         System.out.println("메시지 전송 실패, " + e.getMessage());
@@ -108,7 +114,7 @@ public class SocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
-        sessionMap.put(session.getId(), session);   // 새로운 세션을 생성하며 Map에 추가함
+        sessionMap.put(session.getId(), session);
         System.out.println("session: " + session);
 
         // URI에서 쿼리 파라미터로 받은 방 번호를 추출
@@ -123,7 +129,7 @@ public class SocketHandler extends TextWebSocketHandler {
 
         try {
             Integer roomNo = Integer.parseInt(roomNoStr);
-            session.getAttributes().put("roomNo", roomNo);  // 정수로 저장
+            session.getAttributes().put("roomNo", roomNo); // 정수로 저장
 
             // roomSessionMap에 세션 추가
             roomSessionMap.computeIfAbsent(roomNo, k -> new HashMap<>()).put(session.getId(), session);
@@ -132,22 +138,24 @@ public class SocketHandler extends TextWebSocketHandler {
             System.out.println("세션 추가됨: " + session.getId() + " 방 번호: " + roomNo);
             System.out.println("현재 roomSessionMap 상태: " + roomSessionMap);
 
+            // 기존 채팅 내역 전송
+            Room room = roomRepository.findByRoomNo(roomNo);
+            if (room != null) {
+                List<ChatMessage> chatHistory = chatMessageRepository.findByRoomOrderByTimestampAsc(room);
+                for (ChatMessage chat : chatHistory) {
+                    HashMap<String, Object> historyObj = new HashMap<>();
+                    historyObj.put("type", "message");
+                    historyObj.put("userName", chat.getSender());
+                    historyObj.put("msg", chat.getContent());
+                    historyObj.put("timestamp", chat.getTimestamp().toString());
+                    historyObj.put("sessionId", chat.getSessionId());
+                    session.sendMessage(new TextMessage(new JSONObject(historyObj).toJSONString()));
+                }
+            }
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
             sendErrorMessageToClient("Invalid room number", "Room number must be a valid integer.");
-            return;
-        }
-
-        // 세션 ID 전송
-        HashMap<String, Object> obj = new HashMap<>();
-        obj.put("type", "getId");
-        obj.put("sessionId", session.getId());
-
-        try {
-            session.sendMessage(new TextMessage(new JSONObject(obj).toJSONString()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendErrorMessageToClient("Connection error", "Error sending session ID: " + e.getMessage());
         }
     }
 
