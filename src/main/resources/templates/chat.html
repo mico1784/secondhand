@@ -57,6 +57,7 @@
             <!-- 메시지 입력 영역 -->
             <div class="chat-input" id="yourMsg">
                 <input type="hidden" id="sessionId" value="">
+                <input type="hidden" id="roomNo" th:value="${roomNo}">
                 <input type="hidden" id="username" th:value="${username}">
                 <input id="chatting" class="chatting-input" placeholder="보내실 메시지를 입력하세요.">
                 <button onclick="send()" id="sendBtn" class="sendBtn">보내기</button>

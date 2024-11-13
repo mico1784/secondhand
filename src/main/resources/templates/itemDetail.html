@@ -139,31 +139,11 @@
                 </div>
                 <button class="d-add-item-btn">상품 더보기</button>
                 <!-- 구매자 상품 리뷰 추가 -->
+                <div class="testBtn" onclick="loadReviews()">TestBtn</div>
                 <div class="review-box">
-                    <!--리뷰 보여지는 칸-->
-                    <div class="detail-item-review">
-                        <div class="rev-profile-content">
-                            <div class="review-profile-img">
-                                <img th:src="${item.imgURL}" alt="">
-                            </div>
-                            <div class="rev-profile-box">
-                  <span id="해당 상품 제목" class="d-review-name">
-                    닉네임
-                  </span>
-                                <span id="별점">
-                    ★★★★☆
-                  </span>
-                            </div>
-                        </div>
-                        <div id="" class="review-writer">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                                dolore magna aliqua. Nisl tincidunt eget nullam non. Quis hendrerit dolor magna eget est lorem ipsum
-                                dolor sit
-                            </p>
-                        </div>
-                    </div>
+
                 </div>
+                <div class="no-review-list">없어요</div>
                 <button class="d-add-review-btn" id="">리뷰 더보기</button>
             </div>
         </div>
@@ -213,6 +193,43 @@
             });
         });
     });
+
+    function loadReviews() {
+        fetch("/mypage/reviews")
+            .then(response => response.json())
+            .then(data => {
+                const reviewContainer = document.querySelector(".review-box");
+                const EmptyMessage = document.querySelector(".no-review-list");
+                reviewContainer.innerHTML = "";
+                if (data.reviewsWri.length === 0) {
+                    EmptyMessage.style.display = "block";
+                } else {
+                    EmptyMessage.style.display = "none";
+                    data.reviewsWri.forEach(item => {
+                        const reviewElement = `
+                            <div class="reviewWri">
+                                <h4>${item.createdAt}</h4>
+                                <div>${displayRating(item.rating)}</div>
+                                <h4>${item.content}</h4>
+                            </div>
+                        `;
+                        reviewContainer.innerHTML += reviewElement; // reviewContainer에 추가
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading reviews:', error)); // 에러 처리
+    }
+    function displayRating(rating) {
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHtml += '<span>★</span>';
+            } else {
+                starsHtml += '<span>☆</span>';
+            }
+        }
+        return starsHtml;
+    }
 </script>
 </body>
 </html>

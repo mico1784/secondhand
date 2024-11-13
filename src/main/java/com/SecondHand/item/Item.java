@@ -1,6 +1,7 @@
 package com.SecondHand.item;
 
 import com.SecondHand.Purchase.Purchase;
+import com.SecondHand.chat.room.Room;
 import com.SecondHand.member.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -47,6 +48,9 @@ public class Item {
 
     @OneToMany(mappedBy = "item")
     private List<Purchase> purchases;   // 구매된 목록
+
+    @OneToMany(mappedBy = "itemC")
+    private List<Room> rooms;   // 상품에 대한 채팅방
 
     // 상태 업데이트 메서드
     public void updateSituation(ItemSituation newSituation) {
