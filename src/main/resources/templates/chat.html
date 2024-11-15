@@ -59,7 +59,14 @@
                 <input type="hidden" id="sessionId" value="">
                 <input type="hidden" id="roomNo" th:value="${roomNo}">
                 <input type="hidden" id="username" th:value="${username}">
-                <input id="chatting" class="chatting-input" placeholder="보내실 메시지를 입력하세요.">
+
+                <!-- 이미지 업로드 필드 -->
+                <input type="file" name="uploadImg" id="uploadImg" accept="image/*">
+
+                <!-- 메시지 입력 필드 -->
+                <input id="chatting" class="chatting-input" placeholder="보내실 메시지를 입력하세요." type="text">
+
+                <!-- 전송 버튼 -->
                 <button onclick="send()" id="sendBtn" class="sendBtn">보내기</button>
             </div>
         </div>
