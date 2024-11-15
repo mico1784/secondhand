@@ -6,6 +6,7 @@ import com.SecondHand.chat.chatMessage.ChatMessageRepository;
 import com.SecondHand.chat.room.Room;
 import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.item.Item;
+import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.S3Service;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,6 +36,8 @@ public class SocketHandler extends TextWebSocketHandler {
     private RoomRepository roomRepository;
     @Autowired
     private S3Service s3Service;  // S3 서비스 추가
+    @Autowired
+    private ItemRepository itemRepository;
 
     HashMap<String, WebSocketSession> sessionMap = new HashMap<>();
     HashMap<String, HashMap<String, WebSocketSession>> roomSessionMap = new HashMap<>();
@@ -66,6 +70,27 @@ public class SocketHandler extends TextWebSocketHandler {
 
     private void handleTextMessageProcessing(WebSocketSession session, HashMap<String, Object> obj) {
         String roomNo = (String) session.getAttributes().get("roomNo");
+        Object itemIdObj = obj.get("itemId");
+        Long itemId = null;
+
+        if (itemIdObj != null) {
+            if (itemIdObj instanceof Long) {
+                itemId = (Long) itemIdObj;  // 이미 Long 타입이면 바로 사용
+            } else if (itemIdObj instanceof String) {
+                try {
+                    itemId = Long.parseLong((String) itemIdObj);  // String을 Long으로 변환
+                } catch (NumberFormatException e) {
+                    sendErrorMessageToClient("Invalid itemId", "The itemId is not a valid number.");
+                    return;
+                }
+            } else {
+                sendErrorMessageToClient("Invalid itemId type", "The itemId must be of type Long or String.");
+                return;
+            }
+        } else {
+            sendErrorMessageToClient("Item ID not found", "No itemId provided in the message.");
+            return;
+        }
         if (roomNo == null) {
             sendErrorMessageToClient("Room number not set", "Session does not have an associated room number.");
             return;
@@ -78,6 +103,7 @@ public class SocketHandler extends TextWebSocketHandler {
             room = new Room();
             room.setRoomNo(roomNo);
             room.setRoomName("채팅방 " + roomNo); // 방 이름은 필요에 맞게 설정
+            room.setItemC(itemRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Item not found")));
             roomRepository.save(room);  // 새로운 방 저장
 
             // 방을 생성 후 방 정보로 로직 진행
@@ -220,22 +246,6 @@ public class SocketHandler extends TextWebSocketHandler {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public Room createOrGetRoom(Item item, String roomNo) {
-        // roomNo로 이미 존재하는 방을 DB에서 가져옵니다.
-        Room room = roomRepository.findByRoomNo(roomNo);
-
-        if (room == null) {
-            // 방이 존재하지 않으면 새로 생성 후 DB에 저장
-            room = new Room(item, roomNo);
-            roomRepository.save(room);  // DB에 저장
-        }
-
-        // roomMap에 방 추가 (세션 관리용)
-        roomMap.put(roomNo, room);  // roomNo를 키로 사용하여 room 객체 저장
-
-        return room;
     }
 
     // 오류 메시지를 클라이언트로 전송

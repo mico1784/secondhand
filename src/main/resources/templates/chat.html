@@ -56,6 +56,7 @@
 
             <!-- 메시지 입력 영역 -->
             <div class="chat-input" id="yourMsg">
+                <input type="hidden" id="itemId" th:value="${itemId}">
                 <input type="hidden" id="sessionId" value="">
                 <input type="hidden" id="roomNo" th:value="${roomNo}">
                 <input type="hidden" id="username" th:value="${username}">

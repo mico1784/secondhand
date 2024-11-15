@@ -1,12 +1,10 @@
 package com.SecondHand.chat.controller;
 
 import com.SecondHand.chat.handler.SocketHandler;
-import com.SecondHand.chat.room.Room;
 import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
-import com.SecondHand.item.S3Service;  // S3Service 임포트
+import com.SecondHand.item.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 
 @Controller
@@ -35,16 +32,13 @@ public class MainController {
             String username = auth.getName();  // 현재 로그인한 사용자 이름
             m.addAttribute("username", username);
 
-            // 아이템 정보 가져오기
-            Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Invalid item ID"));
-
             // 사용자와 상품을 기반으로 고유한 채팅방 번호 생성
             String roomNo = itemId + "-" + username;  // itemId와 username을 결합한 고유한 roomNo
 
             // 채팅방 생성 또는 기존 채팅방 가져오기
 //            Room room = socketHandler.createOrGetRoom(item, roomNo);  // roomNo를 String으로 사용
             m.addAttribute("roomNo", roomNo);
-            m.addAttribute("item", item);
+            m.addAttribute("itemId", itemId);
 
             return "chat";
         } else {

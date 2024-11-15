@@ -2,6 +2,7 @@ var ws;
 var userName = $("#username").val() || '게스트';
 var roomNo = $("#roomNo").val();
 var sessionId = localStorage.getItem('sessionId');
+var itemId = $("#itemId").val();
 
 $(document).ready(function() {
     // 엔터 키를 눌렀을 때 메시지 전송
@@ -35,6 +36,7 @@ function wsEvt(roomNo) {
         var option = {
             type: "joinRoom",  // 채팅방에 입장
             roomNo: roomNo,
+            itemId: itemId,
             sessionId: $("#sessionId").val()  // sessionId를 포함해서 보내기
         };
         ws.send(JSON.stringify(option)); // 서버에 채팅방 번호와 sessionId 전달
@@ -96,6 +98,7 @@ function send() {
     const username = document.getElementById('username').value;
     const sessionId = document.getElementById('sessionId').value;
     const messageContent = document.getElementById('chatting').value;
+    const itemId = document.getElementById('itemId').value;
     const fileInput = document.getElementById('uploadImg');
 
     if (fileInput.files.length > 0) {
@@ -105,6 +108,7 @@ function send() {
         formData.append("username", username);
         formData.append("sessionId", sessionId);
         formData.append("msg", messageContent);
+        formData.append("itemId", itemId);
 
         fetch('/chat/uploadImage', {
             method: 'POST',
@@ -118,7 +122,8 @@ function send() {
                       sessionId: $("#sessionId").val(),
                       userName: userName,
                       msg: data.fileUrl,  // 파일 URL을 메시지로 보내기
-                      roomNo: roomNo
+                      roomNo: roomNo,
+                      itemId: itemId
                   };
 
                   // WebSocket으로 메시지 전송
@@ -147,7 +152,8 @@ function send() {
             sessionId: $("#sessionId").val(),
             userName: userName,
             msg: message,
-            roomNo: roomNo
+            roomNo: roomNo,
+            itemId: itemId
         };
 
         // WebSocket으로 메시지 전송
