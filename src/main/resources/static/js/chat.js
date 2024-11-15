@@ -7,9 +7,13 @@ var itemId = $("#itemId").val();
 $(document).ready(function() {
     // 엔터 키를 눌렀을 때 메시지 전송
     $('#chatting').on('keypress', function(event) {
-        // 엔터 키(13번)가 눌렸을 때
-        if (event.keyCode === 13) {
-            event.preventDefault(); // 기본 엔터 동작(폼 제출)을 막음
+        // Shift + Enter 키가 눌렸을 때 줄바꿈
+        if (event.keyCode === 13 && event.shiftKey) {
+            return;  // 줄바꿈을 허용
+        }
+        // Enter 키(13번)만 눌렸을 때 메시지 전송
+        if (event.keyCode === 13 && !event.shiftKey) {
+            event.preventDefault();  // 기본 엔터 동작(폼 제출)을 막음
             send();  // 메시지 전송 함수 호출
         }
     });
@@ -59,7 +63,7 @@ function wsEvt(roomNo) {
                     }
                 } else if (response.type === "message") {
                     // 메시지 출력 처리
-                    var chatMessage = response.msg.replace(/ /g, "&nbsp;"); // 공백을 &nbsp;로 변환
+                    var chatMessage = response.msg.replace(/\n/g, "<br>"); // 줄바꿈을 <br> 태그로 변환
 
                     // 자신의 메시지와 다른 사람의 메시지 구분
                     if (response.sessionId === $("#sessionId").val()) {
@@ -77,6 +81,10 @@ function wsEvt(roomNo) {
                             $("#chating").append("<p class='other'>" + response.userName + " : " + chatMessage + "</p>");
                         }
                     }
+
+                    // 채팅 메시지가 추가된 후 스크롤을 맨 아래로 내림
+                    var chatMessages = document.getElementById('chating');
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
                 } else {
                     console.warn("알 수 없는 메시지 유형:", response.type);
                 }
@@ -146,12 +154,15 @@ function send() {
             return;  // 메시지가 비어있으면 전송하지 않음
         }
 
+        // 줄바꿈을 <br>로 변환하여 메시지 전송
+        var formattedMessage = message.replace(/\n/g, "<br>");
+
         // WebSocket으로 전송할 메시지 구성
         var option = {
             type: "message",  // 메시지 타입
             sessionId: $("#sessionId").val(),
             userName: userName,
-            msg: message,
+            msg: formattedMessage,
             roomNo: roomNo,
             itemId: itemId
         };
