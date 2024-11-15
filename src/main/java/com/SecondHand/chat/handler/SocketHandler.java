@@ -21,6 +21,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,10 +76,10 @@ public class SocketHandler extends TextWebSocketHandler {
 
         if (itemIdObj != null) {
             if (itemIdObj instanceof Long) {
-                itemId = (Long) itemIdObj;  // 이미 Long 타입이면 바로 사용
+                itemId = (Long) itemIdObj;
             } else if (itemIdObj instanceof String) {
                 try {
-                    itemId = Long.parseLong((String) itemIdObj);  // String을 Long으로 변환
+                    itemId = Long.parseLong((String) itemIdObj);
                 } catch (NumberFormatException e) {
                     sendErrorMessageToClient("Invalid itemId", "The itemId is not a valid number.");
                     return;
@@ -96,18 +97,13 @@ public class SocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        // 방을 찾고, 없으면 새로 생성
         Room room = roomRepository.findByRoomNo(roomNo);
         if (room == null) {
-            // 방이 없으면 새로 생성
             room = new Room();
             room.setRoomNo(roomNo);
-            room.setRoomName("채팅방 " + roomNo); // 방 이름은 필요에 맞게 설정
+            room.setRoomName("채팅방 " + roomNo);
             room.setItemC(itemRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Item not found")));
-            roomRepository.save(room);  // 새로운 방 저장
-
-            // 방을 생성 후 방 정보로 로직 진행
-            System.out.println("New room created with roomNo: " + roomNo);
+            roomRepository.save(room);
         }
 
         String clientSessionId = (String) obj.get("sessionId");
@@ -115,23 +111,23 @@ public class SocketHandler extends TextWebSocketHandler {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setSender((String) obj.get("userName"));
         chatMessage.setContent((String) obj.get("msg"));
-        chatMessage.setTimestamp(LocalDateTime.now());
+        chatMessage.setTimestamp(LocalDateTime.now().toString());
         chatMessage.setSessionId(clientSessionId);
         chatMessage.setRoom(room);
 
         try {
-            chatMessageRepository.save(chatMessage);  // 메시지 저장
+            chatMessageRepository.save(chatMessage);
         } catch (Exception e) {
             sendErrorMessageToClient("Message save failed", "Error saving message: " + e.getMessage());
             return;
         }
 
-        // 방에 연결된 세션들에게 메시지 전달
         if (roomSessionMap.containsKey(roomNo)) {
             HashMap<String, WebSocketSession> roomSessions = roomSessionMap.get(roomNo);
             for (WebSocketSession wss : roomSessions.values()) {
                 try {
                     obj.put("type", "message");
+                    obj.put("timestamp", chatMessage.getTimestamp());
                     obj.put("sessionId", clientSessionId);
                     wss.sendMessage(new TextMessage(new JSONObject(obj).toJSONString()));
                 } catch (Exception e) {
@@ -211,7 +207,9 @@ public class SocketHandler extends TextWebSocketHandler {
                     historyObj.put("type", "message");
                     historyObj.put("userName", chat.getSender());
                     historyObj.put("msg", chat.getContent());
-                    historyObj.put("timestamp", chat.getTimestamp().toString());
+
+                    // 그대로 저장된 timestamp를 그대로 사용
+                    historyObj.put("timestamp", chat.getTimestamp());
                     historyObj.put("sessionId", chat.getSessionId());
                     session.sendMessage(new TextMessage(new JSONObject(historyObj).toJSONString()));
                 }

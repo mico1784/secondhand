@@ -14,10 +14,11 @@ public class ChatMessage {
 
     private String sender;
     private String content;
-    private LocalDateTime timestamp;
+    private String timestamp;
     private String sessionId;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
 }

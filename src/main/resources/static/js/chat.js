@@ -3,6 +3,7 @@ var userName = $("#username").val() || '게스트';
 var roomNo = $("#roomNo").val();
 var sessionId = localStorage.getItem('sessionId');
 var itemId = $("#itemId").val();
+var lastDate = null;
 
 $(document).ready(function() {
     // 엔터 키를 눌렀을 때 메시지 전송
@@ -64,21 +65,45 @@ function wsEvt(roomNo) {
                 } else if (response.type === "message") {
                     // 메시지 출력 처리
                     var chatMessage = response.msg.replace(/\n/g, "<br>"); // 줄바꿈을 <br> 태그로 변환
+                    var timestamp = response.timestamp; // 서버에서 전달된 timestamp
+
+                    // timestamp가 Date 객체가 아니라면 Date 객체로 변환
+                    if (!(timestamp instanceof Date)) {
+                        timestamp = new Date(timestamp);  // timestamp를 Date 객체로 변환
+                    }
+
+                    // 시간을 오전/오후 형식으로 변환 (HH:MM)
+                    var hours = timestamp.getHours();
+                    var minutes = timestamp.getMinutes();
+                    var ampm = hours >= 12 ? '오후' : '오전';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;  // 0시는 12로 표시
+                    minutes = minutes < 10 ? '0' + minutes : minutes;  // 10분 미만은 0 추가
+                    var timeString = ampm + " " + hours + ":" + minutes;  // 오전/오후 HH:MM 형식
+
+                    var messageDate = timestamp.toLocaleDateString();
+
+                    // 날짜가 바뀌었을 경우 날짜와 구분선을 표시
+                    if (lastDate !== messageDate) {
+                        $("#chating").append("<p class='date-separator'>" + messageDate + "</p>");
+                        lastDate = messageDate;  // 현재 날짜를 lastDate로 설정
+                        $("#chating").append("<hr class='date-line'>");  // 구분선 추가
+                    }
 
                     // 자신의 메시지와 다른 사람의 메시지 구분
                     if (response.sessionId === $("#sessionId").val()) {
                         // 자신의 메시지
                         if (response.msg.startsWith('http')) {  // 이미지 URL인 경우
-                            $("#chating").append("<p class='me'><img src='" + chatMessage + "' alt='이미지' class='chat-image'></p>");
+                            $("#chating").append("<p class='timestamp'>" + timeString + "</p><p class='me'><img src='" + chatMessage + "' alt='이미지' class='chat-image'></p>");
                         } else {
-                            $("#chating").append("<p class='me'>" + chatMessage + "</p>");
+                            $("#chating").append("<p class='timestamp'>" + timeString + "</p><p class='me'>" + chatMessage + "</p>");
                         }
                     } else {
                         // 다른 사람의 메시지
                         if (response.msg.startsWith('http')) {  // 이미지 URL인 경우
-                            $("#chating").append("<p class='other'>" + response.userName + " : <img src='" + chatMessage + "' alt='이미지' class='chat-image'></p>");
+                            $("#chating").append("<p class='other'>" + response.userName + " : <img src='" + chatMessage + "' alt='이미지' class='chat-image'></p><p class=timestamp>" + timeString + "</p>");
                         } else {
-                            $("#chating").append("<p class='other'>" + response.userName + " : " + chatMessage + "</p>");
+                            $("#chating").append("<p class='other'>" + response.userName + " : " + chatMessage + "</p><p class='timestamp'>" + timeString + "</p>");
                         }
                     }
 
@@ -93,6 +118,7 @@ function wsEvt(roomNo) {
             }
         }
     };
+
 
     ws.onclose = function(event) {
         console.log("WebSocket connection closed", event);
