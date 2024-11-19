@@ -2,6 +2,7 @@ package com.SecondHand.chat.room;
 
 import com.SecondHand.chat.chatMessage.ChatMessage;
 import com.SecondHand.item.Item;
+import com.SecondHand.member.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,25 +14,19 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String roomNo;
-    private String roomName;
+    private Long id;        // ID
+    private String roomNo;  // 방 이름
+
+    @Column(name = "seller_id")
+    private Long sellerId;  // 판매자 정보
+    @Column(name = "buyer_id")
+    private Long buyerId;   // 구매자 정보
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatMessage> chatMessages;
+    private List<ChatMessage> chatMessages; // 채팅내용
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private Item itemC;  // itemC로 유지
+    private Item itemC;  // 거래 물품
 
-    // Item과 roomNo를 받는 생성자 추가
-    public Room(Item itemC, String roomNo) {
-        this.itemC = itemC;  // itemC를 설정
-        this.roomNo = roomNo;
-        this.roomName = "Room " + roomNo;  // roomName은 roomNo 기반으로 설정 (선택사항)
-    }
-
-    public Room() {
-        // 기본 생성자 필요 (JPA에서 엔티티를 관리하기 위해 필요)
-    }
 }

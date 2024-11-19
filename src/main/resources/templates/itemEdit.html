@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/css/itemEdit.css">
     <script src="/js/nav.js" defer></script>
-    <script type="text/javascript" src="/js/category.js"></script>
+    <script src="/js/category.js" defer></script>
+    <script src="/js/item.js" defer></script>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=839bb08f604c66a5b580b3a23a69c1cd&libraries=services"></script>
 
 </head>
 <body>
@@ -19,38 +21,140 @@
     <div class="edit-container">
         <h1>상품 수정</h1>
         <form class="item-edit-form" th:action="@{/item/edit/{id}(id=${item.id})}" method="post" enctype="multipart/form-data">
-            <label for="category">카테고리</label><br>
-            <select id="category" name="category" onchange="updateSubcategories()" required>
-                <option value="">선택하세요</option>
-                <option value="휴대폰">휴대폰</option>
-                <option value="패드">패드</option>
-                <option value="워치">워치</option>
-            </select><br>
+            <!-- 카테고리 -->
+            <div class="category-box">
+                <label for="category">카테고리</label><br>
+                <select id="category" class="edit-cate" name="category" onchange="updateSubcategories()" required>
+                    <option value="">선택하세요</option>
+                    <option value="휴대폰">휴대폰</option>
+                    <option value="패드">패드</option>
+                    <option value="워치">워치</option>
+                </select>
+                <span><i class="fa-solid fa-chevron-right"></i></span>
+                <select id="subcategory" class="edit-cate-sub" name="subcategory" required>
+                    <option value="">카테고리 먼저 선택</option>
+                </select><br>
+            </div>
+            <div class="category-box-title">
+                <label for="title">상품명</label><br>
+                <input class="edit" type="text" id="title" name="title" th:value="${item.title}" required><br>
+            </div>
 
-            <label for="subcategory">서브 카테고리</label><br>
-            <select id="subcategory" name="subcategory" required>
-                <option value="">카테고리 먼저 선택</option>
-            </select><br>
-            <label for="title">상품명</label><br>
-            <input class="edit" type="text" id="title" name="title" th:value="${item.title}" required><br>
+            <div class="category-box">
+                <label for="price">가격</label><br>
+                <input class="edit" type="number" id="price" name="price" th:value="${item.price}" required><br>
+            </div>
 
-            <label for="price">가격</label><br>
-            <input class="edit" type="number" id="price" name="price" th:value="${item.price}" required><br>
+            <label for="imgFile">이미지 등록</label><br>
 
-<!--            &lt;!&ndash; 거래지역 추가 &ndash;&gt;
+            <!-- 기존 이미지 미리보기 -->
+            <div id="preview-container" style="display:none;">
+                <h3>미리보기</h3>
+                <img id="img-preview" src="https://placehold.co/300" alt="상품 이미지" width="200" height="200">
+            </div>
+
+            <!-- 기존 이미지 -->
+            <small id="existing-image-container">
+                <h3>기존 이미지</h3>
+                <img src="https://placehold.co/300" th:src="${item.imgURL}" alt="상품 이미지" width="200" height="200">
+            </small><br>
+            <!-- 파일 업로드 -->
+            <div class="edit-img-box">
+                <label for="imgFile" class="add-img-upload">파일선택</label>
+                <input class="edit" type="file" id="imgFile" name="imgFile"><br>
+            </div>
+
+            <!-- 거래지역 -->
             <label for="location">거래지역</label><br>
-            <input class="edit" type="text" id="location" name="location" th:value="" required><br>-->
+            <select id="location" name="location" required onchange="handleLocationChange()">
+                <option value="">거래지역을 선택하세요</option>
+                <option id="locationTest" value="현재위치">현재위치</option>
+                <!-- 지하철역 목록은 스크립트로 추가됩니다 -->
+            </select><br>
 
-            <label for="imgFile">이미지 파일</label><br>
-            <input class="edit" type="file" id="imgFile" name="imgFile"><br>
-            <small><span>기존 이미지</span> <img src="https://placehold.co/300" th:src="${item.imgURL}" alt="상품 이미지" width="100"></small><br>
-
-            <label for="desc">설명</label><br>
-            <textarea  id="desc" name="itemDesc" required th:text="${item.itemDesc}"></textarea><br>
+            <!-- 상품설명 -->
+            <div class="category-box">
+                <label for="desc">상품 설명</label><br>
+                <span class="desc_ex">
+                    * 해당 제품의 사용 정보를 작성해주세요. <br>
+                    ex) 하자 여부, 사용 기간, 구매 시기 등.
+                </span>
+                <textarea class="desc_text" id="desc" name="itemDesc" required th:text="${item.itemDesc}">
+      </textarea><br>
+            </div>
 
             <button class="edit-btn" type="submit">수정</button>
         </form>
     </div>
 </div>
+
+<script>
+    // 위치 가져오기 함수
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    // 위치 정보 처리 함수
+    function showPosition(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const coords = new kakao.maps.LatLng(latitude, longitude);
+
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2Address(coords.getLng(), coords.getLat(), (result, status) => {
+            if (status === kakao.maps.services.Status.OK) {
+                const detailAddr = result[0].address.address_name;
+
+                // '현재위치'를 갱신하는 부분
+                const locationSelect = document.getElementById('location');
+                const locationTestOption = document.getElementById('locationTest');
+
+                // '현재위치'가 이미 있으면 값만 갱신
+                locationTestOption.textContent = detailAddr;
+                locationTestOption.value = detailAddr;
+
+                // 거래지역 텍스트 박스에 현재 위치 값 설정
+                locationSelect.value = detailAddr; // 위치 정보 반영
+            }
+        });
+    }
+
+    // 에러 처리 함수
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("사용자가 위치 정보 제공을 거부했습니다.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("위치 정보가 제공되지 않았습니다.");
+                break;
+            case error.TIMEOUT:
+                alert("위치 정보를 가져오는 시간이 초과되었습니다.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("알 수 없는 오류가 발생했습니다.");
+                break;
+        }
+    }
+
+    // 거래지역 변경 시 처리 함수
+    function handleLocationChange() {
+        const locationSelect = document.getElementById("location");
+        const selectedValue = locationSelect.value;
+
+        if (selectedValue === "현재위치") {
+            // '현재위치'를 선택하면 위치 정보를 가져오는 함수 호출
+            getLocation();
+        }
+    }
+
+
+</script>
+
+
 </body>
 </html>

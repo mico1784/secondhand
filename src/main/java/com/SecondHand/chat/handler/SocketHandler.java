@@ -5,13 +5,17 @@ import com.SecondHand.chat.chatMessage.ChatMessage;
 import com.SecondHand.chat.chatMessage.ChatMessageRepository;
 import com.SecondHand.chat.room.Room;
 import com.SecondHand.chat.room.RoomRepository;
+import com.SecondHand.chat.room.RoomService;
 import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.S3Service;
+import com.SecondHand.member.User;
+import com.SecondHand.member.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.socket.CloseStatus;
@@ -21,138 +25,153 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class SocketHandler extends TextWebSocketHandler {
 
-    @Autowired
-    private ChatMessageRepository chatMessageRepository;
-    @Autowired
-    private RoomRepository roomRepository;
-    @Autowired
-    private S3Service s3Service;  // S3 서비스 추가
-    @Autowired
-    private ItemRepository itemRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final RoomRepository roomRepository;
+    private final RoomService roomService; // RoomService 사용
+    private final S3Service s3Service;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
-    HashMap<String, WebSocketSession> sessionMap = new HashMap<>();
-    HashMap<String, HashMap<String, WebSocketSession>> roomSessionMap = new HashMap<>();
-    private Map<String, Room> roomMap = new HashMap<>();
+    private final Map<String, WebSocketSession> sessionMap = new HashMap<>();
+    private final Map<String, Map<String, WebSocketSession>> roomSessionMap = new HashMap<>();
+    private final Map<String, List<String>> userRoomMap = new HashMap<>();
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
-        String msg = message.getPayload(); // 클라이언트가 보낸 메시지
-        HashMap<String, Object> obj = jsonToObjectParser(msg);
+        String msg = message.getPayload();
+        Map<String, Object> obj = parseJsonToMap(msg);
 
-        if (obj == null || !obj.containsKey("type")) {
-            return; // 유효하지 않은 메시지 무시
-        }
+        if (obj == null || !obj.containsKey("type")) return;
 
         String messageType = (String) obj.get("type");
 
-        if ("joinRoom".equals(messageType)) {
-            String roomNo = obj.get("roomNo").toString();
-            session.getAttributes().put("roomNo", roomNo);
-            roomSessionMap.computeIfAbsent(roomNo, k -> new HashMap<>()).put(session.getId(), session);
-            return; // joinRoom 처리 후 종료
-        }
-
-        if ("message".equals(messageType)) {
-            handleTextMessageProcessing(session, obj);
-        } else if ("image".equals(messageType)) {
-            handleImageMessage(session, obj);
+        switch (messageType) {
+            case "joinRoom":
+                handleJoinRoom(session, obj);
+                break;
+            case "message":
+                handleTextMessageProcessing(session, obj);
+                break;
+            case "image":
+                handleImageMessage(session, obj);
+                break;
+            default:
+                break;
         }
     }
 
-    private void handleTextMessageProcessing(WebSocketSession session, HashMap<String, Object> obj) {
-        String roomNo = (String) session.getAttributes().get("roomNo");
-        Object itemIdObj = obj.get("itemId");
-        Long itemId = null;
+    private void handleJoinRoom(WebSocketSession session, Map<String, Object> obj) {
+        String roomNo = (String) obj.get("roomNo");
+        String username = (String) obj.get("userName");
+        userRoomMap.computeIfAbsent(username, k -> new ArrayList<>()).add(roomNo);
 
-        if (itemIdObj != null) {
-            if (itemIdObj instanceof Long) {
-                itemId = (Long) itemIdObj;
-            } else if (itemIdObj instanceof String) {
-                try {
-                    itemId = Long.parseLong((String) itemIdObj);
-                } catch (NumberFormatException e) {
-                    sendErrorMessageToClient("Invalid itemId", "The itemId is not a valid number.");
-                    return;
-                }
-            } else {
-                sendErrorMessageToClient("Invalid itemId type", "The itemId must be of type Long or String.");
-                return;
-            }
-        } else {
-            sendErrorMessageToClient("Item ID not found", "No itemId provided in the message.");
-            return;
-        }
-        if (roomNo == null) {
-            sendErrorMessageToClient("Room number not set", "Session does not have an associated room number.");
+        // itemId 변환 처리
+        String itemIdStr = (String) obj.get("itemId");
+        Long itemId;
+        try {
+            itemId = Long.parseLong(itemIdStr);
+        } catch (NumberFormatException e) {
+            sendErrorMessageToClient("Invalid itemId", "The itemId provided is not valid.");
             return;
         }
 
-        Room room = roomRepository.findByRoomNo(roomNo);
-        if (room == null) {
-            room = new Room();
-            room.setRoomNo(roomNo);
-            room.setRoomName("채팅방 " + roomNo);
-            room.setItemC(itemRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Item not found")));
-            roomRepository.save(room);
+        try {
+            // RoomService를 사용하여 방 생성 또는 조회
+            Room room = roomService.getRoomOrCreate(roomNo, itemId, username);
+            session.getAttributes().put("roomNo", room.getRoomNo());
+            session.getAttributes().put("itemId", room.getItemC().getId());
+
+            roomSessionMap.computeIfAbsent(room.getRoomNo(), k -> new HashMap<>())
+                    .put(session.getId(), session);
+
+        } catch (Exception e) {
+            sendErrorMessageToClient("Room join failed", "An error occurred: " + e.getMessage());
         }
+    }
 
-        String clientSessionId = (String) obj.get("sessionId");
+    private void handleTextMessageProcessing(WebSocketSession session, Map<String, Object> obj) {
+        try {
+            String roomNo = (String) session.getAttributes().get("roomNo");
+            Long itemId = (Long) session.getAttributes().get("itemId");
+            if (itemId == null) return;
 
+            String userName = (String) obj.get("userName");
+            User buyer = userRepository.findByUsername(userName)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            Long buyerId = buyer.getId();
+
+            Item item = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new NoSuchElementException("Item not found"));
+            User seller = item.getSeller();
+            Long sellerId = seller.getId();
+
+            // RoomService를 사용하여 방 생성 또는 조회
+            Room room = roomService.getRoomOrCreate(roomNo, itemId, userName);
+
+            String clientSessionId = (String) obj.get("sessionId");
+
+            ChatMessage chatMessage = createChatMessage(obj, room, clientSessionId);
+            saveChatMessage(chatMessage);
+            sendMessageToRoom(room.getRoomNo(), obj, chatMessage, clientSessionId);
+
+        } catch (Exception e) {
+            sendErrorMessageToClient("Error processing message", "An error occurred while processing the message: " + e.getMessage());
+        }
+    }
+
+    private ChatMessage createChatMessage(Map<String, Object> obj, Room room, String clientSessionId) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setSender((String) obj.get("userName"));
         chatMessage.setContent((String) obj.get("msg"));
         chatMessage.setTimestamp(LocalDateTime.now().toString());
         chatMessage.setSessionId(clientSessionId);
         chatMessage.setRoom(room);
+        return chatMessage;
+    }
 
+    private void saveChatMessage(ChatMessage chatMessage) {
         try {
             chatMessageRepository.save(chatMessage);
         } catch (Exception e) {
             sendErrorMessageToClient("Message save failed", "Error saving message: " + e.getMessage());
-            return;
-        }
-
-        if (roomSessionMap.containsKey(roomNo)) {
-            HashMap<String, WebSocketSession> roomSessions = roomSessionMap.get(roomNo);
-            for (WebSocketSession wss : roomSessions.values()) {
-                try {
-                    obj.put("type", "message");
-                    obj.put("timestamp", chatMessage.getTimestamp());
-                    obj.put("sessionId", clientSessionId);
-                    wss.sendMessage(new TextMessage(new JSONObject(obj).toJSONString()));
-                } catch (Exception e) {
-                    sendErrorMessageToClient("Message delivery failed", "Error sending message: " + e.getMessage());
-                }
-            }
-        } else {
-            sendErrorMessageToClient("Room session not found", "No active sessions found for room " + roomNo);
         }
     }
 
-    private void handleImageMessage(WebSocketSession session, HashMap<String, Object> obj) {
+    private void sendMessageToRoom(String roomNo, Map<String, Object> obj, ChatMessage chatMessage, String clientSessionId) {
+        if (!roomSessionMap.containsKey(roomNo)) {
+            sendErrorMessageToClient("Room session not found", "No active sessions found for room " + roomNo);
+            return;
+        }
+
+        Map<String, WebSocketSession> roomSessions = roomSessionMap.get(roomNo);
+        for (WebSocketSession wss : roomSessions.values()) {
+            try {
+                obj.put("type", "message");
+                obj.put("timestamp", chatMessage.getTimestamp());
+                obj.put("sessionId", clientSessionId);
+                wss.sendMessage(new TextMessage(new JSONObject(obj).toJSONString()));
+            } catch (Exception e) {
+                sendErrorMessageToClient("Message delivery failed", "Error sending message: " + e.getMessage());
+            }
+        }
+    }
+
+    private void handleImageMessage(WebSocketSession session, Map<String, Object> obj) {
         String base64Image = (String) obj.get("imageData");
         String userName = (String) obj.get("userName");
         String roomNo = (String) session.getAttributes().get("roomNo");
 
         if (base64Image != null && !base64Image.isEmpty()) {
             try {
-                // base64 이미지를 byte[] 배열로 변환
                 byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Image);
-
-                // MultipartFile로 변환
-                MultipartFile file = new Base64MultipartFile(imageBytes, "image.png"); // 파일 이름은 예시로 지정
-
-                // S3에 업로드
+                MultipartFile file = new Base64MultipartFile(imageBytes, "image.png");
                 String imageUrl = s3Service.uploadFile(file);
                 sendImageToRoom(roomNo, userName, imageUrl);
             } catch (Exception e) {
@@ -164,121 +183,98 @@ public class SocketHandler extends TextWebSocketHandler {
     }
 
     private void sendImageToRoom(String roomNo, String userName, String imageUrl) {
-        HashMap<String, Object> imageMessage = new HashMap<>();
+        Map<String, Object> imageMessage = new HashMap<>();
         imageMessage.put("type", "image");
         imageMessage.put("userName", userName);
         imageMessage.put("imageUrl", imageUrl);
 
-        roomSessionMap.forEach((room, sessions) -> {
-            if (room.equals(roomNo)) {
-                for (WebSocketSession wss : sessions.values()) {
-                    try {
-                        wss.sendMessage(new TextMessage(new JSONObject(imageMessage).toJSONString()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+        roomSessionMap.getOrDefault(roomNo, Collections.emptyMap())
+                .values()
+                .forEach(session -> sendMessage(session, imageMessage));
+    }
+
+    private void sendMessage(WebSocketSession session, Map<String, Object> message) {
+        try {
+            session.sendMessage(new TextMessage(new JSONObject(message).toJSONString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
         sessionMap.put(session.getId(), session);
-        String uri = session.getUri().toString();
-        String roomNoStr = extractRoomNoFromUri(uri);
 
+        String roomNoStr = extractRoomNoFromUri(session.getUri().toString());
         if (roomNoStr == null) {
             sendErrorMessageToClient("Room number missing", "No room number provided by client.");
             return;
         }
 
-        try {
-            session.getAttributes().put("roomNo", roomNoStr);
+        session.getAttributes().put("roomNo", roomNoStr);
+        roomSessionMap.computeIfAbsent(roomNoStr, k -> new HashMap<>()).put(session.getId(), session);
 
-            roomSessionMap.computeIfAbsent(roomNoStr, k -> new HashMap<>()).put(session.getId(), session);
+        sendChatHistory(session, roomNoStr);
+    }
 
-            Room room = roomRepository.findByRoomNo(roomNoStr);
-            if (room != null) {
-                List<ChatMessage> chatHistory = chatMessageRepository.findByRoomOrderByTimestampAsc(room);
-                for (ChatMessage chat : chatHistory) {
-                    HashMap<String, Object> historyObj = new HashMap<>();
-                    historyObj.put("type", "message");
-                    historyObj.put("userName", chat.getSender());
-                    historyObj.put("msg", chat.getContent());
-
-                    // 그대로 저장된 timestamp를 그대로 사용
-                    historyObj.put("timestamp", chat.getTimestamp());
-                    historyObj.put("sessionId", chat.getSessionId());
-                    session.sendMessage(new TextMessage(new JSONObject(historyObj).toJSONString()));
-                }
-            }
-        } catch (NumberFormatException e) {
-            sendErrorMessageToClient("Invalid room number", "Room number must be a valid integer.");
+    private void sendChatHistory(WebSocketSession session, String roomNoStr) {
+        Room room = roomRepository.findByRoomNo(roomNoStr);
+        if (room != null) {
+            List<ChatMessage> chatHistory = chatMessageRepository.findByRoomOrderByTimestampAsc(room);
+            chatHistory.forEach(chat -> {
+                Map<String, Object> historyObj = new HashMap<>();
+                historyObj.put("type", "message");
+                historyObj.put("userName", chat.getSender());
+                historyObj.put("msg", chat.getContent());
+                historyObj.put("timestamp", chat.getTimestamp());
+                historyObj.put("sessionId", chat.getSessionId());
+                sendMessage(session, historyObj);
+            });
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessionMap.remove(session.getId());
-        roomSessionMap.forEach((roomNo, sessions) -> sessions.remove(session.getId()));
+        roomSessionMap.values().forEach(sessions -> sessions.remove(session.getId()));
         super.afterConnectionClosed(session, status);
     }
 
     private String extractRoomNoFromUri(String uri) {
         try {
-            // URI 객체로 변환
             URI url = new URI(uri);
-
-            // 쿼리 파라미터가 존재할 경우, 쿼리 파라미터를 Map 형태로 변환
             Map<String, String> queryParams = URI.create(uri).getQuery().lines()
                     .map(param -> param.split("="))
                     .filter(parts -> parts.length == 2)
                     .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1]));
-
-            // 쿼리 파라미터에서 roomNo를 반환
             return queryParams.get("roomNo");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    // 오류 메시지를 클라이언트로 전송
-    private void sendErrorMessageToClient(String errorMessage, String details) {
-        HashMap<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("type", "error");
-        errorResponse.put("message", errorMessage);
-        errorResponse.put("details", details);
-
-        roomSessionMap.forEach((roomNo, sessions) -> {
-            for (WebSocketSession session : sessions.values()) {
-                try {
-                    session.sendMessage(new TextMessage(new JSONObject(errorResponse).toJSONString()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    // JSON 문자열을 Map으로 파싱
-    private HashMap<String, Object> jsonToObjectParser(String jsonString) {
+    private Map<String, Object> parseJsonToMap(String jsonString) {
         try {
-            // JSON을 파싱하여 Object로 반환
             Object obj = new JSONParser().parse(jsonString);
-
-            // 반환된 Object가 Map 타입인지 확인 후 안전하게 캐스팅
             if (obj instanceof Map) {
-                return new HashMap<String, Object>((Map<String, Object>) obj);  // 안전하게 캐스팅
-            } else {
-                throw new IllegalArgumentException("Parsed object is not a valid Map.");
+                return new HashMap<>((Map<String, Object>) obj);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return null;
     }
+
+    private void sendErrorMessageToClient(String errorMessage, String details) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("type", "error");
+        errorResponse.put("message", errorMessage);
+        errorResponse.put("details", details);
+
+        roomSessionMap.values().forEach(sessions -> sessions.values()
+                .forEach(session -> sendMessage(session, errorResponse)));
+    }
 }
+

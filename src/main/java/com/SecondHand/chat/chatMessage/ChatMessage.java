@@ -1,6 +1,7 @@
 package com.SecondHand.chat.chatMessage;
 
 import com.SecondHand.chat.room.Room;
+import com.nimbusds.openid.connect.sdk.claims.PersonClaims;
 import jakarta.persistence.*;
 import lombok.Data;
 
