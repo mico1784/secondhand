@@ -277,4 +277,3 @@ public class SocketHandler extends TextWebSocketHandler {
                 .forEach(session -> sendMessage(session, errorResponse)));
     }
 }
-

@@ -1,7 +1,7 @@
 var ws;
 var userName = $("#username").val() || '게스트';
 var roomNo = $("#roomNo").val();
-var sessionId = localStorage.getItem('sessionId');
+var sessionId = localStorage.getItem('sessionId');  // 로컬 스토리지에서 sessionId 가져오기
 var itemId = $("#itemId").val();
 var lastDate = null;
 
@@ -22,31 +22,42 @@ $(document).ready(function() {
     // 세션 ID가 이미 로컬 스토리지에 있으면 사용하고, 없으면 새로운 세션 생성
     if (sessionId) {
         $("#sessionId").val(sessionId);
-        wsOpen(roomNo);
+        wsOpen();  // sessionId가 있으면 WebSocket 연결
     } else {
-        wsOpen(roomNo);  // sessionId가 없으면 WebSocket 연결 시도
+        wsOpen();  // sessionId가 없으면 WebSocket 연결 시도
     }
 });
 
-function wsOpen(roomNo) {
+function wsOpen() {
     ws = new WebSocket("wss://" + location.host + "/chatting?roomNo=" + roomNo);
     console.log(roomNo);
-    wsEvt(roomNo);
+    wsEvt();
 }
 
-function wsEvt(roomNo) {
+function wsEvt() {
     ws.onopen = function() {
         console.log("WebSocket Connection Established");
-        // 방 번호와 sessionId를 서버로 전송
-        var option = {
-            type: "joinRoom",  // 채팅방에 입장
-            roomNo: roomNo,
-            username: userName,
-            itemId: itemId,
-            sessionId: $("#sessionId").val()  // sessionId를 포함해서 보내기
-        };
-        ws.send(JSON.stringify(option)); // 서버에 채팅방 번호와 sessionId 전달
-        console.log("sessionId:", $("#sessionId").val());
+
+        // 세션이 없다면 세션 ID 요청
+        if (!sessionId) {
+            var option = {
+                type: "getId",  // 세션 ID를 요청
+                roomNo: roomNo,
+                username: userName
+            };
+            ws.send(JSON.stringify(option));  // 서버에 세션 ID 요청
+        } else {
+            // 메시지가 전송되면 방이 없으면 생성하고, 그 후에 채팅방에 입장
+            var option = {
+                type: "joinRoom",  // 채팅방에 입장
+                roomNo: roomNo,
+                username: userName,
+                itemId: itemId,
+                sessionId: sessionId  // sessionId를 포함해서 보내기
+            };
+            ws.send(JSON.stringify(option)); // 서버에 채팅방 번호와 sessionId 전달
+            console.log("sessionId:", sessionId);
+        }
     };
 
     ws.onmessage = function(event) {
@@ -59,9 +70,20 @@ function wsEvt(roomNo) {
                 if (response.type === "getId") {
                     var si = response.sessionId || "";
                     if (si) {
+                        sessionId = si;
                         $("#sessionId").val(si);
                         localStorage.setItem('sessionId', si);  // sessionId 로컬 스토리지에 저장
                         console.log("session Id: " + si);
+
+                        // sessionId가 확보되었으면 채팅방에 입장
+                        var option = {
+                            type: "joinRoom",  // 채팅방에 입장
+                            roomNo: roomNo,
+                            username: userName,
+                            itemId: itemId,
+                            sessionId: si  // 새로운 sessionId로 전송
+                        };
+                        ws.send(JSON.stringify(option));
                     }
                 } else if (response.type === "message") {
                     // 메시지 출력 처리
@@ -92,7 +114,7 @@ function wsEvt(roomNo) {
                     }
 
                     // 자신의 메시지와 다른 사람의 메시지 구분
-                    if (response.sessionId === $("#sessionId").val()) {
+                    if (response.sessionId === sessionId) {
                         // 자신의 메시지
                         if (response.msg.startsWith('http')) {  // 이미지 URL인 경우
                             $("#chating").append("<p class='timestamp'>" + timeString + "</p><p class='me'><img src='" + chatMessage + "' alt='이미지' class='chat-image'></p>");
@@ -120,7 +142,6 @@ function wsEvt(roomNo) {
         }
     };
 
-
     ws.onclose = function(event) {
         console.log("WebSocket connection closed", event);
         alert("서버와의 연결이 끊겼습니다.");
@@ -135,13 +156,14 @@ function send() {
     const messageContent = document.getElementById('chatting').value;
     const fileInput = document.getElementById('uploadImg');
 
-    if (fileInput.files.length > 0) {
+    // 메시지를 입력했을 때만 방 생성 및 메시지 전송
+    if (fileInput.files.length > 0) {  // 파일이 선택되었을 때
         const formData = new FormData();
         formData.append("file", fileInput.files[0]);
         formData.append("roomNo", roomNo);
         formData.append("username", username);
         formData.append("sessionId", sessionId);
-        formData.append("msg", messageContent);
+        formData.append("msg", messageContent);  // 메시지가 비어있어도 업로드된 파일 전송
 
         fetch('/chat/uploadImage', {
             method: 'POST',
@@ -152,7 +174,7 @@ function send() {
                   // 업로드된 이미지 URL을 메시지에 포함시켜 WebSocket으로 전송
                   var option = {
                       type: "message",
-                      sessionId: $("#sessionId").val(),
+                      sessionId: sessionId,
                       userName: userName,
                       msg: data.fileUrl,  // 파일 URL을 메시지로 보내기
                       roomNo: roomNo,
@@ -171,29 +193,18 @@ function send() {
           }).catch(error => {
               console.error('Error:', error);
           });
-    } else {
-        var message = $("#chatting").val().trim();
+    } else if (messageContent.trim() !== "") {  // 메시지가 있을 경우
+        var formattedMessage = messageContent.replace(/\n/g, "<br>");
 
-        if (message === "") {
-            return;  // 메시지가 비어있으면 전송하지 않음
-        }
-
-        // 줄바꿈을 <br>로 변환하여 메시지 전송
-        var formattedMessage = message.replace(/\n/g, "<br>");
-
-        // WebSocket으로 전송할 메시지 구성
         var option = {
-            type: "message",  // 메시지 타입
-            sessionId: $("#sessionId").val(),
+            type: "message",
+            sessionId: sessionId,
             userName: userName,
             msg: formattedMessage,
             roomNo: roomNo,
         };
 
-        // WebSocket으로 메시지 전송
         ws.send(JSON.stringify(option));
-
-        // 메시지 입력 필드 초기화
-        $('#chatting').val("");
+        $('#chatting').val("");  // 메시지 입력 필드 초기화
     }
 }
