@@ -1,0 +1,37 @@
+<div class="filter-section" th:fragment="listcg">
+    <!-- 카테고리 필터 -->
+    <div class="filter-category">
+        <span class="filter-title">카테고리</span> <!-- 카테고리 섹션 제목 -->
+        <a href="#" class="filter-button" onclick="filterByCategory('')">전체</a> <!-- 전체 보기 버튼 -->
+        <a href="#" class="filter-button" onclick="filterByCategory('휴대폰')">휴대폰</a> <!-- '휴대폰' 카테고리 필터 버튼 -->
+        <a href="#" class="filter-button" onclick="filterByCategory('패드')">패드</a> <!-- '패드' 카테고리 필터 버튼 -->
+        <a href="#" class="filter-button" onclick="filterByCategory('워치')">워치</a> <!-- '워치' 카테고리 필터 버튼 -->
+    </div>
+
+    <!-- 가격 필터 -->
+    <div class="filter-price">
+        <span class="filter-title">가격</span> <!-- 가격 필터 섹션 제목 -->
+        <input type="text" id="minPrice" placeholder="최소 가격" class="filter-input"> <!-- 최소 가격 입력 필드 -->
+        <span class="price-separator">~</span> <!-- 가격 범위를 나타내는 구분자 -->
+        <input type="text" id="maxPrice" placeholder="최대 가격" class="filter-input"> <!-- 최대 가격 입력 필드 -->
+        <button class="apply-button" onclick="filterByPrice()">적용</button> <!-- 가격 필터 적용 버튼 -->
+    </div>
+
+    <!-- 가격 요약 섹션 -->
+    <h3 style="text-align:center;">현재 페이지의 상품 가격을 비교해봤어요</h3> <!-- 가격 요약 섹션 제목 -->
+    <div class="price-summary-box">
+        <div class="price-item">
+            <span>평균 가격</span> <!-- 평균 가격 레이블 -->
+            <strong th:text="${formattedAvgPrice} + '원'">273,691원</strong> <!-- 평균 가격 데이터 표시 -->
+        </div>
+        <div class="price-item">
+            <span>가장 높은 가격</span> <!-- 최고 가격 레이블 -->
+            <strong th:text="${formattedMaxPrice + '원'}">1,180,000원</strong> <!-- 최고 가격 데이터 표시 -->
+        </div>
+        <div class="price-item">
+            <span>가장 낮은 가격</span> <!-- 최저 가격 레이블 -->
+            <strong th:text="${formattedMinPrice + '원'}">1,000원</strong> <!-- 최저 가격 데이터 표시 -->
+        </div>
+    </div>
+
+</div>
