@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>아이템 목록</title>
+    <link rel="stylesheet" href="/css/nav.css">
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+  <script src="/js/nav.js" defer></script>
+
+</head>
+<body>
+<div class="fix">
+  <div th:replace="~{nav.html::navbar}"></div>
+</div>
+<h1>아이템 목록</h1>
+<table>
+  <tr>
+    <th>카테고리</th> <!-- 카테고리 열 -->
+    <th>서브 카테고리</th> <!-- 서브 카테고리 열 -->
+    <th>상품명</th>
+    <th>가격</th>
+    <th>이미지</th>
+    <th>작업</th>
+  </tr>
+  <th:block th:each="item : ${items}">
+    <tr>
+      <td th:text="${item.category}"></td> <!-- 카테고리 데이터 -->
+      <td th:text="${item.subcategory}"></td> <!-- 서브 카테고리 데이터 -->
+      <td>
+        <a th:href="@{/item/{id}(id=${item.id})}" th:text="${item.title}">상품명</a>
+      </td>
+      <td th:text="${item.price}"></td>
+      <td><img th:src="${item.imgURL}" alt="상품 이미지" width="100"></td>
+      <td>
+        <form action="/item/delete" method="post">
+          <input type="hidden" name="id" th:value="${item.id}"/>
+          <button type="submit">삭제</button>
+        </form>
+      </td>
+    </tr>
+  </th:block>
+</table>
+<a href="/item">새 아이템 등록</a>
+</body>
+</html>

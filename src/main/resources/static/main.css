@@ -1,0 +1,481 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+/* 전체 */
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+li{
+  list-style: none;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+img{
+  max-width: 100%;
+}
+
+button{
+  cursor: pointer;
+}
+
+body{
+  color: #333;
+  padding-top:7.330rem;
+  width:100%;
+  height: 100vh;
+
+  /* 헤더 크기 만큼 제외 */
+
+}
+
+table{
+  width: 100%;
+}
+
+/* .noto-sans-kr-<uniquifier> {
+  font-family: "Noto Sans KR", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+} */
+
+
+.main-container{
+width: 100%;
+height: 100vh;
+margin: 0 auto;
+
+}
+
+.wrap{
+  width: 1100px;
+  height: 100vh;
+  margin: 0 auto;
+border: 1px solid green;
+
+}
+
+/* colors - 영역*/
+
+.main-container{
+border: 1px solid blue;
+}
+
+.wrap{
+border: 1px solid green;
+}
+
+header{
+ border:1px solid red;
+}
+
+section{
+border: 1px solid #9b59b6;
+}
+
+footer{
+border: 1px solid #e67e22;
+}
+
+
+
+
+/* header*/
+
+header{
+  background-color: white;
+  width: 100%;
+  height: 120px;
+  margin: 0 auto;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+}
+
+nav{
+  margin: 0 auto;
+  width: 1100px;
+  height: 100%;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.menu-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.logo{
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fdcb6e;
+}
+
+.join{
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.join > li > a{
+  padding: 10px;
+}
+
+/* 아래 메뉴 */
+
+.menu-bot{
+
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Category{
+  display: flex;
+  align-items: center;
+
+}
+.Category >li > a{
+  padding: 10px 0;
+  padding-right: 20px;
+}
+
+/* 검색창 */
+
+input[type="search"]{
+  width: 420px;
+  height: 40px;
+  border-radius: 50px;
+  border: 1px solid #fdcb6e;
+  padding: 10px 20px;
+}
+
+input[type="search"]::placeholder{
+  color: #bdc3c7;
+}
+
+.search-btn{
+  padding: 10px 20px;
+  background-color: white;
+  border: 1px solid #fdcb6e;
+  color: #fdcb6e;
+}
+
+.search-btn:hover{
+  border: 1px solid #fdcb6e;
+  background-color: #fdcb6e;
+  color: white;
+}
+
+
+
+/* 슬라이더 */
+
+
+section{
+  width: 1100px;
+  height: 300px;
+  margin: 0 auto;
+  position:relative;
+}
+
+.slideshow-container {
+  max-width: 1100px;
+  max-height: 300px;
+  position: relative;
+  overflow: hidden;
+  margin: auto;
+}
+
+/* 이미지를 숨기는데 사용 */
+.mySlides {
+    display: none;
+}
+
+/* 다음, 이전 버튼 */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 120px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  z-index: 9;
+  padding: 10px;
+  border: none;
+  background:none;
+}
+
+/* "다음 버튼"을 오른쪽에 위치 */
+.next {
+  position: absolute;
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* 마우스를 올리면 배경색을 변경 */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* 하단의 점들 */
+
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* 페이드 효과 */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+/* content */
+
+.content-slider{
+  width: 1500px;
+  height: 450px;
+  background-color:#B1D690;
+  margin: 0 auto;
+}
+
+.container{
+  width: 1300px;
+  height: 100%;
+  background-color: red;
+  margin: 0 auto;
+  position: relative;
+  overflow:hidden;
+}
+
+.slider-container{
+  position: absolute;
+  width: 100%;
+}
+
+.slide{
+  position: absolute;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+  top: 50px;
+  overflow:hidden;
+}
+
+/* card */
+
+.card{
+  width: 200px;
+  height:330px;
+ background-color: gray;
+ display: inline-block;
+ top: 10px;
+}
+
+
+.card > a > img{
+  width: 200px;
+  height: 200px;
+  display:block;
+}
+
+.text-box{
+  width: 100%;
+  height: 100%;
+  padding: 20px 0;
+}
+
+.items{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content:space-evenly;
+  align-items: center;
+}
+
+
+
+/* item Detail 상세페이지 */
+
+
+/* 전체 디테일 사이즈*/
+.item-detail-container{
+  width: 100%;
+  height: 100vh;
+  border: 1px solid #9b59b6;
+}
+
+.list-back-btn{
+  padding: 15px 20px;
+  background-color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.list-back-btn > a{
+  padding-right: 10px;
+  font-size: 20px;
+}
+
+.item-detail-contents{
+  display: flex;
+  justify-content: space-evenly;
+}
+
+/*아이템 이름*/
+
+.item-image{
+  width: 450px;
+  height: 450px;
+  border-radius: 20px;
+  background-color:  #7f8c8d;
+  overflow: hidden;
+}
+
+.item-image > img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* item-box */
+
+.item-text-box{
+  width: 600px;
+  height: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.item-title{
+  width: 100%;
+  font-size: 28px;
+  font-weight: 600;
+
+}
+
+.item-title-price > p{
+  font-size: 40px;
+  font-weight: 800;
+  padding: 12px 0;
+}
+
+.item-description{
+  width: 100%;
+  height: 200px;
+}
+
+.item-description > h2{
+  padding-bottom: 10px;
+  font-size: 18px;
+}
+
+.item-description > p{
+  width: 100%;
+  height: 180px;
+  border: 1px solid #bdc3c7;
+  margin-bottom: 10px;
+}
+
+.item-upload-date{
+  padding-bottom: 20px;
+  color: #7f8c8d;
+}
+
+/*상세페이지 form 버튼 찜하기 수정하기 삭제하기*/
+.item-actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 80px;
+}
+
+.detail-btn{
+  padding: 15px 20px;
+  background-color: white;
+  border: 1px solid black;
+}
+
+.point-form{
+  float: left;
+}
+
+.point-btn:hover{
+  color: white;
+  background-color: #f1c40f;
+  border: 1px solid #f1c40f;
+}
+
+.del-btn:hover, .edit-btn:hover, .chat-btn:hover{
+  background-color: black;
+  color: white;
+}
+
+.left-btn{
+  display: flex;
+}
+
+
+/* footer */
+footer{
+  width: 100%;
+  background-color: white;
+  padding: 20px;
+  margin: 0 auto;
+  font-size: 0.8rem;
+  border:1px solid orange;
+}
+
+.text-footer{
+   margin-bottom: 20px;
+}
+
+.list-footer{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.list-footer > li > a{
+    padding: 10px 15px 10px 0;
+}

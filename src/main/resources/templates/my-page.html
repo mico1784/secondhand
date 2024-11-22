@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Page</title>
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" /> <!-- 사이트 아이콘 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome 아이콘 -->
+  <link rel="stylesheet" href="/css/style.css"> <!-- 페이지 스타일 -->
+  <link rel="stylesheet" href="/css/nav.css"> <!-- 네비게이션 스타일 -->
+  <link rel="stylesheet" href="/css/footer.css"> <!-- 네비게이션 스타일 -->
+  <script src="/js/nav.js" defer></script> <!-- 네비게이션 스크립트 -->
+  <script src="/js/my-page.js" defer></script> <!-- 마이페이지 스크립트 -->
+</head>
+<body class="body-k">
+
+<!-- 상단 네비게이션 -->
+<div class="fix">
+  <div th:replace="~{nav.html::navbar}"></div> <!-- 네비게이션 바 삽입 -->
+</div>
+
+<div class="wrap-k">
+  <!-- 왼쪽 사이드바 -->
+  <div class="side-k">
+    <h2 class="title-k">마이 페이지</h2> <!-- 페이지 제목 -->
+    <div class="section-k">
+      <h3 class="subtitle-k">거래 정보</h3> <!-- 거래 정보 섹션 -->
+      <ul class="menu-k">
+        <li><a href="javascript:void(0)" onclick="toggleSalesHistory()">판매내역</a></li> <!-- 판매내역 보기 -->
+        <!--        <li><a href="javascript:void(0)" onclick="togglePurchaseHistory()">구매내역</a></li> &lt;!&ndash; 구매내역 보기 &ndash;&gt;-->
+        <li><a href="javascript:void(0)" onclick="toggleWishlist()">찜한 상품</a></li> <!-- 찜한 상품 보기 -->
+      </ul>
+    </div>
+    <hr class="divider-k"> <!-- 구분선 -->
+    <div class="section-k">
+      <h3 class="subtitle-k">내 정보</h3> <!-- 내 정보 섹션 -->
+      <ul class="menu-k">
+        <li><a href="javascript:void(0)" onclick="toggleAccountPanel()">계정 관리</a></li> <!-- 계정 관리 -->
+        <li><a href="javascript:void(0)" onclick="toggleReviewPanel()">거래 후기</a></li> <!-- 거래 후기 -->
+        <li><a href="javascript:void(0)" onclick="toggleWithdrawalPanel()">탈퇴하기</a></li> <!-- 탈퇴하기 -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- 메인 콘텐츠 -->
+  <div class="main-k">
+    <!-- 사용자 인사 및 신뢰 지수 -->
+    <div class="header-k">
+      <div>
+        <h2 class="page-title-k">안녕하세요! <span th:text="${user.name} + '#' + ${formattedUserId}">중고나라#10413076</span>님</h2> <!-- 사용자 인사 -->
+      </div>
+    </div>
+
+    <!-- 통계 정보 -->
+    <div class="stats-k">
+      <div><p class="value-k" th:text="${reviewCnt}" onclick="toggleReviewPanel()">0</p><p>거래후기</p></div> <!-- 거래 후기 카운트 -->
+    </div>
+
+    <!-- 내 상품 목록 -->
+    <div class="products-k">
+      <h3 class="products-title-k">내 상품</h3> <!-- 내 상품 섹션 -->
+      <div class="tabs-k">
+        <a href="#" class="tab-k active-k" data-situ="total">전체</a> <!-- 전체 상품 탭 -->
+        <a href="#" class="tab-k" data-situ="onSale">판매중</a> <!-- 판매중 상품 탭 -->
+        <a href="#" class="tab-k" data-situ="soldOut">판매완료</a> <!-- 판매완료 상품 탭 -->
+      </div>
+      <!-- 정렬 옵션 -->
+      <div class="sort-options-k">
+        <a href="#" class="sort-k" data-sort="latest">최신순</a> <!-- 최신순 정렬 -->
+        <a href="#" class="sort-k" data-sort="priceLow">낮은가격순</a> <!-- 낮은 가격순 정렬 -->
+        <a href="#" class="sort-k" data-sort="priceHigh">높은가격순</a> <!-- 높은 가격순 정렬 -->
+      </div>
+      <p class="count-k">총 0 개</p> <!-- 상품 개수 -->
+      <div class="empty-message-k">선택된 조건에 해당하는 상품이 없습니다.</div> <!-- 조건에 맞는 상품이 없을 때 메시지 -->
+
+      <!-- 상품 리스트 테이블 -->
+      <table class="msl-k">
+        <tbody>
+        <!-- 상품 리스트가 삽입될 자리 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 구매 내역 패널 -->
+  <div id="purchase-history-panel" class="purchase-history-panel">
+    <div class="panel-header">
+      <h2>구매내역</h2> <!-- 패널 제목 -->
+      <button class="close-button" onclick="togglePurchaseHistory()">X</button> <!-- 패널 닫기 버튼 -->
+    </div>
+    <div class="panel-content">
+      <div class="purchaselist">
+        <!-- 구매 내역 목록 -->
+      </div>
+      <p class="no-purchase-history-message">최근 구매 내역이 없습니다.</p> <!-- 구매 내역이 없을 때 메시지 -->
+    </div>
+  </div>
+
+  <!-- 판매 내역 패널 -->
+  <div id="sales-history-panel" class="sales-history-panel">
+    <div class="panel-header">
+      <h2>판매내역</h2> <!-- 패널 제목 -->
+      <button class="close-button" onclick="toggleSalesHistory()">X</button> <!-- 패널 닫기 버튼 -->
+    </div>
+    <div class="panel-content">
+      <div class="soldlist">
+        <!-- 판매 내역 목록 -->
+      </div>
+      <p class="no-sales-history-message">최근 판매 내역이 없습니다.</p> <!-- 판매 내역이 없을 때 메시지 -->
+    </div>
+  </div>
+
+  <!-- 찜한 상품 패널 -->
+  <div id="wishlist-panel" class="wishlist-panel">
+    <div class="panel-header">
+      <h2>찜한 상품</h2> <!-- 패널 제목 -->
+      <button class="close-button" onclick="toggleWishlist()">X</button> <!-- 패널 닫기 버튼 -->
+    </div>
+    <div class="panel-content">
+      <div class="wishlist">
+        <!-- 찜한 상품 목록 -->
+      </div>
+      <p class="no-wishlist-message">찜한 상품이 없습니다.</p> <!-- 찜한 상품이 없을 때 메시지 -->
+    </div>
+  </div>
+
+  <!-- 계정 관리 패널 -->
+  <div id="account-panel" class="account-panel">
+    <div class="panel-header">
+      <h2>계정 관리</h2> <!-- 패널 제목 -->
+      <button class="close-button" onclick="toggleAccountPanel()">X</button> <!-- 패널 닫기 버튼 -->
+    </div>
+    <div class="panel-content">
+      <div class="user-info">
+        <!-- 사용자 정보가 표시될 자리 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 거래 후기 패널 -->
+  <div id="review-panel" class="review-panel">
+    <div class="panel-header">
+      <h2>후기</h2> <!-- 패널 제목 -->
+      <button class="close-button" onclick="toggleReviewPanel()">X</button> <!-- 패널 닫기 버튼 -->
+    </div>
+    <div class="panel-content">
+      <!-- 받은 후기 섹션 -->
+      <div class="review-section">
+        <h3 class="review-title">작성된 후기</h3> <!-- 섹션 제목 -->
+        <div class="review-content">
+          <div class="revRec">
+            <!-- 작성된 후기가 표시될 자리 -->
+          </div>
+          <p class="no-reviewRec-message">작성된 후기가 없습니다.</p> <!-- 후기가 없을 때 메시지 -->
+        </div>
+      </div>
+
+      <!-- 작성한 후기 섹션 -->
+      <div class="review-section">
+        <h3 class="review-title">내가 작성한 후기</h3> <!-- 섹션 제목 -->
+        <div class="review-content">
+          <div class="revWri">
+            <!-- 작성한 후기가 표시될 자리 -->
+          </div>
+          <p class="no-reviewWri-message">작성한 후기가 없습니다.</p> <!-- 후기가 없을 때 메시지 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탈퇴하기 패널 -->
+  <div id="withdrawal-panel" class="withdrawal-panel">
+    <div class="panel-header">
+      <h2>회원 탈퇴</h2> <!-- 패널 제목 -->
+      <button class="close-button" onclick="toggleWithdrawalPanel()">X</button> <!-- 패널 닫기 버튼 -->
+    </div>
+
+    <!-- 탈퇴 시 주의사항 -->
+    <div class="caution-container1">
+      <h3>유의 사항을 확인해주세요!</h3>
+
+      <div class="caution-details1">
+        <ul class="caution-list1">
+          <li>01 탈퇴 신청일로부터 30일 이내에 동일한 아이디와 휴대폰 번호로 가입 불가하며, 재가입 시 신규 가입 혜택은 적용되지 않습니다.</li>
+          <li>02 회원 탈퇴 시 본인 계정에 등록된 게시물 또는 작성한 게시물은 삭제됩니다. 단, 다른 회원에 의해 스크랩되거나 공유된 게시물은 삭제되지 않습니다.</li>
+          <li>03 전자 상거래 등에서의 소비자 보호에 관한 법률 규정에 따라 아래와 같이 기록을 보관하며, 법률 위반 경우 외 다른 목적으로 이용되지 않습니다.</li>
+        </ul>
+
+        <!-- 기록 보관 정보 -->
+        <h4>기록 보관 정보</h4>
+        <table class="record-table1">
+          <thead>
+          <tr>
+            <th>기록 항목</th>
+            <th>보관 기간</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td data-label="기록 항목">표시 광고에 대한 기록</td>
+            <td data-label="보관 기간">6개월</td>
+          </tr>
+          <tr>
+            <td data-label="기록 항목">계약 또는 청약철회, 대금결제 및 재화 등의 공급에 관한 기록</td>
+            <td data-label="보관 기간">5년</td>
+          </tr>
+          <tr>
+            <td data-label="기록 항목">소비자의 불만 또는 분쟁처리에 관한 기록</td>
+            <td data-label="보관 기간">3년</td>
+          </tr>
+          <tr>
+            <td data-label="기록 항목">로그인 기록</td>
+            <td data-label="보관 기간">3개월</td>
+          </tr>
+          <tr>
+            <td data-label="기록 항목">전자금융거래기록</td>
+            <td data-label="보관 기간">5년</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <!-- 회원 탈퇴 버튼 -->
+        <button class="withdrawal-button" onclick="deleteAccount()">회원 탈퇴</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 회원 탈퇴 요청 함수
+  function deleteAccount() {
+      if (confirm("정말로 회원 탈퇴를 하시겠습니까?")) {
+          // 서버에 POST 요청 전송
+          fetch('/deleteAccount', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({})
+          })
+          .then(response => {
+              if (response.ok) {
+                  alert("회원 탈퇴가 완료되었습니다.");
+                  window.location.href = "/login"; // 탈퇴 후 로그인 페이지로 리다이렉트
+              } else {
+                  alert("회원 탈퇴 처리에 실패했습니다. 다시 시도해주세요.");
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert("회원 탈퇴 중 오류가 발생했습니다.");
+          });
+      }
+  }
+</script>
+
+<div class="ad"> <!-- 광고 이미지 영역 -->
+  <img src="/images/엉덩이.png"> <!-- 광고 이미지 삽입 -->
+</div>
+
+<footer th:replace="~{footer.html::footer}"></footer> <!-- 외부 푸터 템플릿을 삽입 -->
+</body>
+</html>
