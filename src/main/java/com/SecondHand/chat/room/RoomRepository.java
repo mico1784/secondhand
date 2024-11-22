@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     Room findByRoomNo(String roomNo);
-    Room findByItemC_Id(Long itemId);
+    @Query("SELECT r FROM Room r WHERE r.itemC.id = :itemId AND (r.buyerId = :buyerId OR r.sellerId = :sellerId)")
+    Room findRoom(@Param("itemId") Long itemId, @Param("buyerId") Long buyerId, @Param("sellerId") Long sellerId);
     @Query("SELECT r FROM Room r WHERE r.sellerId = :userId OR r.buyerId = :userId")
     List<Room> findByUserId(@Param("userId") Long userId);
 }

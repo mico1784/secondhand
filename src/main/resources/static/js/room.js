@@ -34,7 +34,7 @@ $(document).ready(function () {
 
                     // 채팅 항목 HTML 생성
                     const chatItem = `
-                        <div class="chat-item" onclick="openChatWindow(${chat.itemId})">
+                        <div class="chat-item" data-room-no="${chat.roomNo}">
                             <img src="/images/logo.jpg" alt="프로필 이미지" class="profile-img">
                             <div class="chat-info">
                                 <h3>${otherPersonName}</h3> <!-- 상대방의 이름만 표시 -->
@@ -46,6 +46,12 @@ $(document).ready(function () {
                     // 채팅 항목 추가
                     chatListContainer.append(chatItem);
                 });
+
+                // 각 채팅 항목에 이벤트 추가
+                $(".chat-item").on("click", function () {
+                    const roomNo = $(this).data("room-no");
+                    openChatWindow(roomNo);
+                });
             },
             error: function (error) {
                 console.error("채팅 목록을 불러오는 중 오류 발생:", error);
@@ -54,10 +60,9 @@ $(document).ready(function () {
     }
 
     // 채팅 창 열기 함수
-    window.openChatWindow = function (itemId) {
-        // itemId를 기반으로 채팅방으로 이동
-        window.location.href = `/chat/${itemId}`;
-    };
+    function openChatWindow(roomNo) {
+        window.location.href = `/chat/rn/${roomNo}`;
+    }
 
     // 초기 로딩
     loadChatList();

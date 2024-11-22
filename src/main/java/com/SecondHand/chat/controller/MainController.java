@@ -8,6 +8,7 @@ import com.SecondHand.chat.room.Room;
 import com.SecondHand.chat.room.RoomDTO;
 import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.chat.room.RoomService;
+import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.S3Service;
 import com.SecondHand.user.User;
@@ -57,13 +58,15 @@ public class MainController {
     public String chatView(@PathVariable Long itemId, Model m, Principal principal) {
         if (principal != null) {
             String username = principal.getName();
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("몰라요"));
+            Long buyerId = user.getId();
+            Long sellerId = user.getId();
             m.addAttribute("username", username);
 
-            String roomNo = getRoomNoByItemId(itemId);
+            String roomNo = getRoomNoByItemIdAndBuyerIdOrSellerId(itemId, buyerId, sellerId);
             if (roomNo == null) {
-                // getRoomOrCreate로 방을 먼저 생성하면서 sellerId와 buyerId를 설정합니다.
                 roomNo = generateRandomString(10);
-                Room room = roomService.getRoomOrCreate(roomNo, itemId, username);  // sellerId와 buyerId가 올바르게 설정됩니다.
+                Room room = roomService.getRoomOrCreate(roomNo, itemId, username);
                 saveRoomMapping(itemId, roomNo);
             }
 
@@ -76,8 +79,24 @@ public class MainController {
         }
     }
 
-    private String getRoomNoByItemId(Long itemId) {
-        Room room = roomRepository.findByItemC_Id(itemId);
+    @RequestMapping("/rn/{roomNo}")
+    public String chatViewByRoomNo(@PathVariable String roomNo, Model m, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("몰라요"));
+            m.addAttribute("username", username);
+            Long roomItem = roomRepository.findByRoomNo(roomNo).getItemC().getId();
+            m.addAttribute("roomNo", roomNo);
+            m.addAttribute("itemId", roomItem);
+
+            return "chat";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    private String getRoomNoByItemIdAndBuyerIdOrSellerId(Long itemId, Long buyerId, Long sellerId) {
+        Room room = roomRepository.findRoom(itemId, buyerId, sellerId);
         return room != null ? room.getRoomNo() : null;
     }
 
