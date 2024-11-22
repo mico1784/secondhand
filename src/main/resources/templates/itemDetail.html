@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="/js/nav.js" defer></script>
     <script src="/js/content.js" defer></script>
-    <script src="/js/my-page.js" defer></script>
 </head>
 
 <body data-logged-in="${principal != null}">
@@ -90,7 +89,7 @@
                                 <button type="submit" id="wishlist-btn" class="point-btn detail-btn">찜하기</button>
                                 <input type="hidden" id="isLoggedIn" th:value="${isLoggedIn}"/>
                             </form>
-                            <form th:action="@{/chat}">
+                            <form th:action="@{/chat/} + ${item.id}">
                             <button class="chat-btn detail-btn" >채팅하기</button>
                             </form>
                             <!-- 리뷰 작성 버튼 추가 -->

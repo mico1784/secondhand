@@ -1,15 +1,20 @@
 package com.SecondHand.item;
 
 import com.SecondHand.Purchase.Purchase;
+import com.SecondHand.chat.room.Room;
+import com.SecondHand.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import com.SecondHand.review.Review;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.text.NumberFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Data
@@ -59,9 +64,11 @@ public class Item {
 
     // 구매된 내역을 저장하는 목록
     @OneToMany(mappedBy = "item")
+    @JsonIgnore
     private List<Purchase> purchases; // 구매 내역// 구매된 목록
 
     @OneToMany(mappedBy = "itemC")
+    @JsonIgnore
     private List<Room> rooms;   // 상품에 대한 채팅방
 
     // 상태 업데이트 메서드
@@ -88,6 +95,9 @@ public class Item {
     @Transient
     private String formattedPrice; // 천 단위 구분 기호가 포함된 가격 (데이터베이스에 저장되지 않음)
 
+    public void setFormattedPrice(String formattedPrice) {
+        this.formattedPrice = formattedPrice;
+    }
     // 가격을 천 단위로 포맷팅하여 반환하는 메서드
     public String getFormattedPrice() {
         if (this.price != null) {
@@ -95,6 +105,7 @@ public class Item {
             return formatter.format(this.price);
         }
         return null; // 가격이 없을 경우 null 반환
+
     }
 
     @Transient // 데이터베이스에 매핑되지 않는 필드
@@ -119,7 +130,5 @@ public class Item {
         } else {
             return "방금 전"; // 1분 이내일 경우
         }
-    public void setFormattedPrice(String formattedPrice) {
-        this.formattedPrice = formattedPrice;
     }
 }

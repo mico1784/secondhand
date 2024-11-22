@@ -2,7 +2,8 @@ package com.SecondHand.chat.room;
 
 import com.SecondHand.chat.chatMessage.ChatMessage;
 import com.SecondHand.item.Item;
-import com.SecondHand.member.User;
+import com.SecondHand.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,5 +28,6 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
+    @JsonIgnore
     private Item itemC;  // 거래 물품
 }

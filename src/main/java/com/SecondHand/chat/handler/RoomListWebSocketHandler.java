@@ -1,8 +1,10 @@
 package com.SecondHand.chat.handler;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+@Component
 public class RoomListWebSocketHandler extends TextWebSocketHandler {
 
     @Override

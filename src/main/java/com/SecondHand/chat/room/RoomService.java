@@ -2,8 +2,8 @@ package com.SecondHand.chat.room;
 
 import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
-import com.SecondHand.member.User;
-import com.SecondHand.member.UserRepository;
+import com.SecondHand.user.User;
+import com.SecondHand.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
