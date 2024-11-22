@@ -1,6 +1,6 @@
 package com.SecondHand.wishList;
 
-import com.SecondHand.member.User;
+import com.SecondHand.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

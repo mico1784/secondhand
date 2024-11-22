@@ -1,7 +1,7 @@
 package com.SecondHand.wishList;
 
-import com.SecondHand.member.CustomUser;
-import com.SecondHand.member.UserRepository;
+import com.SecondHand.user.CustomUser;
+import com.SecondHand.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;

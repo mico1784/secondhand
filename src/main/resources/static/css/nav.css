@@ -7,11 +7,11 @@
     font-family: Arial, sans-serif;
 }
 
-.fix{
+.fix {
     position: relative;
     height: 150px;
     width: 100%;
-    margin-bottom: 100px;
+    margin-bottom: 40px;
 }
 
 /* a 태그 */
@@ -21,9 +21,7 @@ a {
     font-weight: bold;
 }
 
-/* 헤더 및 네비게이션 */
-header { }
-
+/* 네비게이션 */
 nav {
     width: 79%;
     margin: 0 auto;
@@ -35,15 +33,38 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 18px;
 }
 
 .logo {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 900;
     color: #F36A3C;
     margin: 0;
     position: relative;
     left: 4%;
+}
+
+.logo > img{
+   width: 41px;
+   position: absolute;
+   left: -22%; top: 2%;"
+}
+
+.lpbox {
+    display: flex;
+    justify-content: end;
+    gap: 20px;
+}
+
+.lpbox > li {
+    margin-top: 20px;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.lpbox > li > a {
+    font-size: 14px;
 }
 
 .join {
@@ -60,18 +81,20 @@ nav {
 }
 
 .join > li > a {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     padding: 10px;
     transition: font-size 0.3s ease, color 0.3s ease;
 }
 
-
-
-.join li a:hover {
-    font-size: 0.9rem; /* hover 시 폰트 크기를 약간 키움 */
-    color: #F36A3C; /* hover 시 텍스트 색상 변경 (선택 사항) */
+.fa-solid,
+.fa-brands,
+.fa-regular {
+    color: #F26C3B;
 }
 
+.join li a:hover {
+    color: #F36A3C; /* hover 시 텍스트 색상 변경 */
+}
 
 /* 하단 메뉴 */
 .menu-bot {
@@ -80,7 +103,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 40px 0px;
+    margin-top: 14px;
 }
 
 .Category {
@@ -93,7 +116,7 @@ nav {
 /* 카테고리 메뉴 hover 밑줄 효과 */
 .Category li a {
     position: relative;
-    padding-bottom: 4px; /* 밑줄이 나타날 공간 확보 */
+    padding-bottom: 4px;
     color: #333;
     transition: color 0.2s;
 }
@@ -117,7 +140,6 @@ nav {
     width: 100%; /* hover 시 밑줄이 전체 너비로 확장 */
 }
 
-
 .hamburger-button {
     cursor: pointer;
     display: flex;
@@ -129,8 +151,8 @@ nav {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 20px;
-    height: 16px;
+    width: 27px;
+    height: 20px;
     transition: transform 0.3s ease;
 }
 
@@ -144,7 +166,7 @@ nav {
 
 /* X자 모양으로 변환될 때 스타일 */
 .hamburger-button.active .hamburger-icon span:nth-child(1) {
-    transform: rotate(45deg) translate(7px, 5px);
+    transform: rotate(45deg) translate(9px, 9px);
     transform-origin: center;
 }
 
@@ -153,11 +175,9 @@ nav {
 }
 
 .hamburger-button.active .hamburger-icon span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -3px);
+    transform: rotate(-45deg) translate(4px, -4px);
     transform-origin: center;
 }
-
-
 
 /* 검색 버튼 */
 .search-btn {
@@ -166,31 +186,32 @@ nav {
 
 .search-btn > input[type="search"] {
     border: 1px solid #f39c12;
-    width: 300px;
-    height: 34px;
-    border-radius: 50px;
+    width: 400px;
+    height: 43px;
     padding: 10px;
+    margin-left: 7rem;
+    outline: none;
 }
 
 .fas {
     position: absolute;
     right: 4%;
-    bottom: 25%;
+    bottom: 30%;
 }
 
 /* 드롭다운 메뉴 */
 .dropdown-menu {
     display: none;
-       position: absolute;
-       top: 150px;
-       left: 130px;
-       width: 100%;
-       max-width: 1403px;
-       background-color: #fff;
-       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-       padding: 20px;
-       border-radius: 5px;
-       z-index: 1000;
+    position: absolute;
+    top: 150px;
+    left: 130px;
+    width: 100%;
+    max-width: 1403px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1000;
 }
 
 .column {
@@ -217,7 +238,6 @@ nav {
     color: #333;
 }
 
-/* 드롭다운 메뉴 레이아웃 정리 */
 .dropdown-menu::after {
     content: "";
     display: table;
@@ -234,21 +254,137 @@ nav {
     background-color: #FFFFFF;
 }
 
-/* 반응형 미디어 쿼리 */
-@media screen and (max-width: 767px) {
-    nav {
-        width: 90%;
-    }
+/* 최대 1200px 이하 - 큰 데스크탑 및 태블릿 */
+@media screen and (max-width: 1200px) {
     .menu-top {
-        width: 90%;
+        height: 45px;
+        padding: 0 15px;
     }
+
+    .logo {
+        font-size: 1.8rem;
+        left: 2%; /* 위치 조정 */
+    }
+
+    .search-btn > input[type="search"] {
+        width: 350px; /* 검색창 너비 조정 */
+    }
+
+    .join > li {
+        border-right: 1px solid rgba(0, 0, 0, 0.2);
+        padding: 0 10px;
+        display: flex;
+        width: 110px;
+    }
+
     .join > li > a {
-        font-size: 9px;
+        font-size: 7px;
     }
-    .Category > li > a {
-        display: none;
+}
+
+/* 최대 992px 이하 - 작은 데스크탑 및 큰 태블릿 */
+@media screen and (max-width: 992px) {
+    .menu-top {
+        height: 40px;
+        padding: 0 10px;
     }
-    .search-btn {
-        transform: translate(-3%);
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    .search-btn > input[type="search"] {
+        width: 300px; /* 검색창 너비 축소 */
+    }
+
+    .join{
+        display: flex;
+        bottom: 14%;
+        position: absolute;
+        right: 0;
+    }
+
+    .fa-solid,
+    .fa-brands,
+    .fa-regular {
+        padding:10px;
+    }
+
+    .join > li {
+       display:flex;
+    }
+
+    .join > li > a {
+       font-size:11px;
+    }
+}
+
+/* 최대 768px 이하 - 작은 태블릿 및 큰 스마트폰 */
+@media screen and (max-width: 768px) {
+    .menu-top {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 8px;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+    }
+
+    .search-btn > input[type="search"] {
+        width: 250px; /* 검색창 너비 추가 축소 */
+        padding: 8px; /* 패딩 축소 */
+    }
+
+    .join > li > a {
+        font-size: 0.75rem; /* 글자 크기 추가 축소 */
+    }
+}
+
+/* 최대 576px 이하 - 스마트폰 */
+@media screen and (max-width: 576px) {
+    .menu-top {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 5px;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .search-btn{
+        position: relative;
+        margin-left: 88px;
+        top: -82%;
+    }
+
+    .search-btn > input[type="search"] {
+        width: 200px; /* 검색창 너비 추가 축소 */
+        padding: 6px; /* 패딩 축소 */
+    }
+
+    .join {
+        display: none; /* 작은 화면에서는 숨김 */
+    }
+
+    .menu-bot {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .dropdown-menu {
+        left: 0;
+        width: 100%; /* 전체 너비 */
+        max-width: 100%; /* 최대 너비 조정 */
+        padding: 10px;
+    }
+
+    .logo > img{
+        width: 41px;
+        position: absolute;
+        left: -43%;
+        top: -18%;
     }
 }

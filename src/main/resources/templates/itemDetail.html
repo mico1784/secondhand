@@ -5,12 +5,15 @@
     <title>상품 상세 정보</title>
     <link rel="stylesheet" href="/css/nav.css">
     <link rel="stylesheet" href="/css/itemDetail.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="/js/nav.js" defer></script>
+    <script src="/js/content.js" defer></script>
+    <script src="/js/my-page.js" defer></script>
 </head>
 
-<body>
+<body data-logged-in="${principal != null}">
 <div class="fix">
     <div th:replace="~{nav.html::navbar}"></div>
 </div>
@@ -20,12 +23,18 @@
     <!-- 상품페이지 -->
     <div class="item-detail-container">
         <!-- 상세페이지 목록버튼 -->
-        <button class="list-back-btn" href="/item/list">
-            <span>&#10094;</span>
-            <span>목록으로 돌아가기</span>
-        </button>
+        <span>&#10094;</span> <a href="/list">목록으로 돌아가기</a>
         <div class="detail-content">
             <div class="detail-img">
+                <!--    판매완료 추가     -->
+                <div class="de-soldout-text" id="soldoutText" style="display: none;">
+                    <strong>판매완료</strong>
+                </div>
+                <div class="heart">
+                    <i id="heart-icon" class="fa-solid fa-heart"
+                       th:classappend="${isWished ? 'active' : ''}"
+                       style="position: absolute; right: 3%; top: 3%; font-size: 30px; color: ${isWished ? 'red' : 'white'};"></i>
+                </div>
                 <img id="" th:src="${item.imgURL}" alt="상품 이미지">
             </div>
             <div class="d-text-content">
@@ -35,11 +44,13 @@
                     <p>서브 카테고리: <span th:text="${item.subcategory}"></span></p> <!-- 서브 카테고리 추가 -->
                 </div>
                 <div class="detail-text-box">
-                    <h3 class="de-item-title" th:text="${item?.title}">핸드폰이 자가증식을 해서 몸집이 점점 커지는데 이거 어떻게 하는거지 </h3>
+                    <!-- 예약중-판매완료 추가 -->
+                    <div class="detail-situation" style="display: block">
+                        <span id="currentSituation" th:text="${item.situation}">SoldOut</span>
+                    </div>
+                    <h3 class="de-item-title" th:text="${item?.title}">상품명</h3>
                     <div class="de-select-flex">
-                        <h4 class="de-item-price" th:text="${item.price + '원'}">450,000원</h4>
-
-                        <!-- 예약중-판매완료 추가 -->
+                        <h4 class="de-item-price" th:text="${item.formattedPrice+'원'}">450,000원</h4>
                         <!-- 상황 선택 부분 (상태 변경은 판매자가 할 수 있음) -->
                         <label style="display: none;" for="situation"></label>
                         <select class="detail-select" id="situation" name="situation" required
@@ -50,101 +61,120 @@
                         </select>
 
                         <!-- 현재 상태 표시 -->
-                        <div th:style="${item.seller.username != currentUsername ? 'display:block;' : 'display:none;'}">
-                            <span id="currentSituation" th:text="${item.situation}"></span>
+                        <!--                        <div th:style="${item.seller.username != currentUsername ? 'display:block;' : 'display:none;'}">
+                                                    <span id="currentSituation" th:text="${item.situation}"></span>
+                                                </div>-->
+                    </div>
+                    <!-- 등록일 표시 부분 -->
+                    <div class="item-desc-box">
+                        <div class="item-upload-date">
+                            등록일: <span th:text="${formattedDate}"></span>
                         </div>
-
-                        <!-- 등록일 표시 부분 -->
-                        <div class="item-desc-box">
-                            <div class="item-upload-date">
-                                등록일: <span th:text="${formattedDate}"></span>
-                            </div>
-                            <span id="" class="de-location">거래지역:</span>
+                        <!-- 거래지역 추가 -->
+                        <div>
+                            <span class="de-location">거래지역: </span>
+                            <a th:href="@{'https://map.kakao.com/link/search/' + ${item.location}}" target="_blank">
+                                <span th:text="${item.location}"></span>
+                            </a>
                         </div>
                     </div>
-                </div>
-                <!-- 거래 지역 추가-->
+                    <div class="detail-actions-btn">
+                        <!--찜하기, 채팅하기-->
+                        <div class="detail-btn-left">
+                            <form class="point-form" action="/wishlist/add" id="wishlist-form" method="post">
+                                <input name="itemId" th:value="${item.id}" style="display:none">
+                                <input name="itemTitle" th:value="${item.title}" style="display:none">
+                                <input name="itemImgURL" th:value="${item.imgURL}" style="display:none">
+                                <input name="itemPrice" th:value="${item.price}" style="display:none">
+                                <input name="itemUploadedDate" th:value="${item.uploadDate}" style="display:none">
+                                <button type="submit" id="wishlist-btn" class="point-btn detail-btn">찜하기</button>
+                                <input type="hidden" id="isLoggedIn" th:value="${isLoggedIn}"/>
+                            </form>
+                            <form th:action="@{/chat}">
+                            <button class="chat-btn detail-btn" >채팅하기</button>
+                            </form>
+                            <!-- 리뷰 작성 버튼 추가 -->
+                            <form action="#" th:action="@{/item/review/{id}(id=${item.id})}" method="get">
+                                <button type="submit" class="review-btn detail-btn">리뷰 작성</button>
+                            </form>
 
-                <div class="detail-actions-btn">
-                    <!--찜하기, 채팅하기-->
-                    <div class="detail-btn-left">
-                        <form class="point-form" action="/wishlist/add" method="post">
-                            <input name="itemId" th:value="${item.id}" style="display:none">
-                            <input name="itemTitle" th:value="${item.title}" style="display:none">
-                            <input name="itemImgURL" th:value="${item.imgURL}" style="display:none">
-                            <input name="itemPrice" th:value="${item.price}" style="display:none">
-                            <input name="itemUploadedDate" th:value="${item.uploadDate}" style="display:none">
-                            <button class="point-btn detail-btn" type="submit">찜하기</button>
-                        </form>
-                        <a th:href="@{/chat/{id}(id=${item.id})}" class="chat-btn detail-btn">채팅하기</a>
-
-                        <!-- 리뷰 작성 버튼 추가 -->
-                        <form action="#" th:action="@{/item/review/{id}(id=${item.id})}" method="get">
-                            <button type="submit" class="review-btn detail-btn">리뷰 작성</button>
-                        </form>
-
-                    <!--수정 삭제 버튼-->
-                    <div class="detail-btn-right">
-                        <!-- 수정 버튼 (판매자만 보이게) -->
-                        <form th:action="@{/item/edit/{id}(id=${item.id})}" method="get"
-                              th:if="${item.seller.username == currentUsername}">
-                            <button type="submit" class="edit-btn detail-btn">수정하기</button>
-                        </form>
-                        <!-- 삭제 버튼 (판매자만 보이게) -->
-                        <form th:action="@{/item/delete}" method="post" th:if="${item.seller.username == currentUsername}">
-                            <input type="hidden" name="id" th:value="${item.id}" />
-                            <button class="del-btn detail-btn" type="submit">삭제하기</button>
-                        </form>
+                            <!--수정 삭제 버튼-->
+                            <div class="detail-btn-right">
+                                <!-- 수정 버튼 (판매자만 보이게) -->
+                                <form th:action="@{/item/edit/{id}(id=${item.id})}" method="get"
+                                      th:if="${item.seller.username == currentUsername}">
+                                    <button type="submit" class="edit-btn detail-btn">수정하기</button>
+                                </form>
+                                <!-- 삭제 버튼 (판매자만 보이게) -->
+                                <form th:action="@{/item/delete}" method="post" th:if="${item.seller.username == currentUsername}">
+                                    <input type="hidden" name="id" th:value="${item.id}" />
+                                    <button class="del-btn detail-btn" type="submit">삭제하기</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
         <!--상품정보 및 회원의 상품 추가-->
         <div class="detail-content-bot">
             <!-- 상품 정보 (상품 등록 제목 및 내용)-->
             <div class="de-text-left">
                 <h4 id="">상품 정보</h4>
-                <div class="detail-text-box" id="" th:text="${item.itemDesc}">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl tincidunt eget nullam non. Quis hendrerit dolor magna eget est lorem ipsum dolor sit
+                <div class="detail-text-box" th:utext="${formattedItemDesc}"></div>
+                    상품 설명
                 </div>
-            </div>
+
             <div class="line"></div>
-            <!--판매자 정보 추가-->
             <div class="de-text-right">
+                <!--판매자 정보 추가-->
                 <h4 id="">판매 회원 정보</h4>
                 <div class="member-box">
-                    <div id="" class="member-img">
-                        <img th:src="${item.imgURL}" alt="이미지">
+                    <div class="member-img">
+                        <img th:if="${seller != null and seller.profileImageURL != null}" th:src="${seller.profileImageURL}" class="profile-icon">
+                        <img th:if="${seller == null or seller.profileImageURL == null}" src="/images/ppp.jpg" class="profile-icon">
                     </div>
+
                     <div class="member-text">
-                        <span id="" class="user-id" th:text="'아이디: ' + ${item.seller.username}">아이디:주절주절</span>
-                        <a href="" id="my-item-list" th:text="'상품: ' + ${item.title}">상품</a>
-                        <span>|</span>
-                        <span id="" class="follow-right">팔로워</span>
+                        <span id="" class="user-id" th:text="${item.seller.name}">닉네임</span>
+                        <a href="" id="my-item-list" th:text="'상품명: ' + ${item.title}">상품</a>
                     </div>
                 </div>
-                <button class="follow-btn" id="">
-                    팔로우 +
-                </button>
 
-                <div class="de-item-box">
-                    <!-- 가격, 이미지 묶음 -->
-                    <div id="" class="detail-item-list">
-                        <div class="detail-item-img">
-                            <img id="" th:src="${item.imgURL}" alt="상품이미지">
-                        </div>
-                        <span id="">가격</span>
-                    </div>
-                </div>
-                <button class="d-add-item-btn">상품 더보기</button>
-                <!-- 구매자 상품 리뷰 추가 -->
-                <div class="testBtn" onclick="loadReviews()">TestBtn</div>
+                <!-- 리뷰 박스 -->
                 <div class="review-box">
+                    <div th:each="review, iterStat : ${reviews}">
+                        <!--리뷰 보여지는 칸-->
+                        <div class="detail-item-review" th:classappend="${iterStat.index >= 3 ? 'hidden-review' : ''}">
+                            <div class="rev-profile-content">
+                                <div class="review-profile-img">
+                                    <img th:if="${review.profileImageURL != null}" th:src="${review.profileImageURL}" class="profile-icon">
+                                    <img th:if="${review.profileImageURL == null}" src="/images/ppp.jpg" class="profile-icon">
+                                </div>
+                                <div class="rev-profile-box">
+                                    <span class="d-review-name"><p th:text="${review.reviewerName}">리뷰 작성자 이름</p></span>
+                                    <span id="별점">
+                        <p>
+                            <span th:text="${#strings.repeat('★', review.rating) + #strings.repeat('☆', 5 - review.rating)}"
+                                  style="font-size: 20px; color: gold; white-space: nowrap; letter-spacing: 0;
+                                         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);"></span>
+                        </p>
+                    </span>
+                                </div>
+                            </div>
+                            <!--리뷰 내용-->
+                            <div class="review-writer">
+                                <p th:text="${review.content}">리뷰 내용</p>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- 더 보기 / 접기 버튼 -->
+                    <div class="plus" th:if="${#lists.size(reviews) > 3}" onclick="toggleReviews()">
+                        <span id="review-toggle-text" style="cursor: pointer;">펼치기 (<span th:text="${#lists.size(reviews) - 3}" ></span>)</span>
+                    </div>
                 </div>
-                <div class="no-review-list">없어요</div>
-                <button class="d-add-review-btn" id="">리뷰 더보기</button>
+            </div>
             </div>
         </div>
     </div>
@@ -193,43 +223,142 @@
             });
         });
     });
+</script>
 
-    function loadReviews() {
-        fetch("/mypage/reviews")
-            .then(response => response.json())
-            .then(data => {
-                const reviewContainer = document.querySelector(".review-box");
-                const EmptyMessage = document.querySelector(".no-review-list");
-                reviewContainer.innerHTML = "";
-                if (data.reviewsWri.length === 0) {
-                    EmptyMessage.style.display = "block";
-                } else {
-                    EmptyMessage.style.display = "none";
-                    data.reviewsWri.forEach(item => {
-                        const reviewElement = `
-                            <div class="reviewWri">
-                                <h4>${item.createdAt}</h4>
-                                <div>${displayRating(item.rating)}</div>
-                                <h4>${item.content}</h4>
-                            </div>
-                        `;
-                        reviewContainer.innerHTML += reviewElement; // reviewContainer에 추가
-                    });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+         const situationSelect = document.getElementById('situation');
+         const currentSituationElement = document.getElementById('currentSituation');
+         const soldoutText = document.getElementById('soldoutText');
+
+         // 초기 로드 시 상태에 따라 '판매완료' 표시 설정
+         if (currentSituationElement.innerText.trim() === '판매완료') {
+             soldoutText.style.display = 'block';
+         }
+
+         // 상태 변경 이벤트 리스너 추가
+         situationSelect.addEventListener('change', function() {
+             const newSituation = this.value;
+
+             // 변경된 상황이 '판매완료'이면 '판매완료' 텍스트를 표시
+             if (newSituation === '판매완료') {
+                 soldoutText.style.display = 'block';
+                 currentSituationElement.innerText = newSituation; // 현재 상태 업데이트
+             } else {
+                 soldoutText.style.display = 'none';
+                 currentSituationElement.innerText = newSituation; // 현재 상태 업데이트
+             }
+
+             // AJAX 요청
+             const itemId = [[${item.id}]]; // 타임리프에서 값 주입
+             fetch(`/item/${itemId}/situation`, {
+                 method: 'PUT',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ situation: newSituation })
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     return response.text().then(text => { throw new Error(text); });
+                 }
+             })
+             .catch(error => {
+                 alert('상태 업데이트 중 오류가 발생했습니다: ' + error);
+             });
+         });
+     });
+</script>
+
+<script>
+    let reviewsExpanded = false; // 현재 리뷰가 펼쳐져 있는지 상태 관리
+
+    function toggleReviews() {
+        const reviews = document.querySelectorAll('.detail-item-review');
+        const toggleText = document.getElementById('review-toggle-text');
+        const hiddenReviews = document.querySelectorAll('.hidden-review'); // 현재 숨겨진 리뷰
+
+        if (reviewsExpanded) {
+            // 리뷰 접기 - 첫 3개만 표시하고 나머지는 숨김
+            reviews.forEach((review, index) => {
+                if (index >= 3) {
+                    review.classList.add('hidden-review');
                 }
-            })
-            .catch(error => console.error('Error loading reviews:', error)); // 에러 처리
-    }
-    function displayRating(rating) {
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
-                starsHtml += '<span>★</span>';
-            } else {
-                starsHtml += '<span>☆</span>';
-            }
+            });
+            toggleText.innerHTML = `펼치기 (${reviews.length - 3})`;
+        } else {
+            // 리뷰 펼치기 - 모든 리뷰 표시
+            hiddenReviews.forEach(review => {
+                review.classList.remove('hidden-review');
+            });
+            toggleText.innerHTML = '접기';
         }
-        return starsHtml;
+
+        reviewsExpanded = !reviewsExpanded; // 상태 토글
     }
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const wishlistBtn = document.getElementById("wishlist-btn");
+        const heartIcon = document.getElementById("heart-icon");
+        const isLoggedIn = JSON.parse(document.getElementById("isLoggedIn").value); // 서버에서 렌더링된 로그인 여부
+
+        wishlistBtn.addEventListener("click", function () {
+            if (!isLoggedIn) {
+                alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+                window.location.href = "/login";
+                return;
+            }
+
+            const itemId = document.querySelector("input[name='itemId']").value;
+
+            // 로그인 상태일 때 찜하기 요청
+            fetch("/wishlist/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ itemId: itemId }),
+            })
+            .then((response) => {
+                if (response.ok) {
+                    // 성공적으로 찜하기 처리되었을 때만 색깔 변경
+                    heartIcon.style.color =
+                        heartIcon.style.color === "red" ? "white" : "red";
+                    alert("찜하기가 성공적으로 추가/삭제 되었습니다.");
+                } else {
+                    // 실패 시 오류 메시지 띄우지 않음
+                    alert("찜하기 요청이 실패했습니다.");
+                }
+            })
+            .catch((error) => {
+                // 오류 발생 시, 콘솔에만 기록하고 메시지 노출하지 않음
+                console.error("찜하기 요청 중 오류 발생:", error);
+            });
+        });
+    });
+</script>
+
+
+<!-- 휴대폰 카테고리 섹션 -->
+<div th:if="${item.category == '휴대폰'}">
+    <section th:replace="~{content.html::phoneItems}"></section>
+</div>
+
+<!-- 패드 카테고리 섹션 -->
+<div th:if="${item.category == '패드'}">
+    <section th:replace="~{content.html::padItems}"></section>
+</div>
+
+<!-- 워치 카테고리 섹션 -->
+<div th:if="${item.category == '워치'}">
+    <section th:replace="~{content.html::watchItems}"></section>
+</div>
+
+<div class="ad">
+    <img src="/images/엉덩이.png">
+</div>
+<footer th:replace="~{footer.html::footer}"></footer>
 </body>
 </html>

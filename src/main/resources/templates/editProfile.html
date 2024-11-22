@@ -4,48 +4,85 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>프로필 수정</title>
-  <link href="/css/register.css" rel="stylesheet">
+  <link href="/css/profileEdit.css" rel="stylesheet">
   <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="/js/nav.js" defer></script>
 </head>
 <body>
 <div id="container">
-  <h2>프로필 수정/h2></h2>
 
-  <!-- 에러 메시지를 표시하는 부분 추가 -->
-  <div id="error-message" style="color: red;">
+  <h2>프로필 수정</h2>
+
+  <div id="error-message">
     <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
   </div>
 
-  <form action="/editProfile" method="POST">
-    <label for="name">이름</label>
-    <input type="text" id="name" name="name" required placeholder="이름을 입력하세요">
+  <form action="/editProfile" method="POST" enctype="multipart/form-data">
+    <label for="profileImage">프로필 사진</label>
+    <input type="file" id="profileImage" name="profileImage" accept="image/*" onchange="previewProfilePicture(event)">
+    <img id="profile-picture-preview" class="profile-picture" style="width: 300px; height: 300px; object-fit: cover; display: none;">
 
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" name="password" required placeholder="비밀번호 (8자리 이상)" minlength="8">
+    <label for="name">닉네임</label>
+    <input type="text" id="name" name="name" th:value="${user.name}">
+
+    <label for="password">비밀번호 <span class="password-toggle" onclick="togglePasswordVisibility()">👁️</span></label>
+    <input type="password" id="password" name="password" minlength="8" placeholder="비밀번호를 변경하려면 입력하세요">
 
     <label for="email">이메일</label>
-    <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요">
+    <input type="email" id="email" name="email" th:value="${user.email}">
 
     <label for="age">나이</label>
-    <input type="number" id="age" name="age" required placeholder="생년월일 ex) 19950430">
+    <input type="number" id="age" name="age" th:value="${user.age}">
 
     <label for="phoneNumber">전화번호</label>
-    <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="전화번호를 입력하세요">
+    <input type="tel" id="phoneNumber" name="phoneNumber" th:value="${user.phoneNumber}">
 
     <label for="gender">성별</label>
-    <select id="gender" name="gender" required>
-      <option value="male">남성</option>
-      <option value="female">여성</option>
-      <option value="other">기타</option>
+    <select id="gender" name="gender" th:value="${user.gender}">
+      <option value="male" th:selected="${user.gender == 'male'}">남성</option>
+      <option value="female" th:selected="${user.gender == 'female'}">여성</option>
+      <option value="other" th:selected="${user.gender == 'other'}">기타</option>
     </select>
 
     <label for="address">주소</label>
-    <input type="text" id="address" name="address" required placeholder="주소를 입력하세요">
+    <input type="text" id="address" name="address" th:value="${user.address}">
+
+    <label for="social-media">소셜 미디어 링크</label>
+    <input type="url" id="social-media" name="socialMedia" placeholder="https://instagram.com/username">
 
     <input type="submit" id="submit-button" value="수정">
   </form>
+
 </div>
+
+<script>
+  // 프로필 사진 미리보기 기능
+  function previewProfilePicture(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('profile-picture-preview');
+        preview.src = e.target.result;
+        preview.style.display = 'block'; // 이미지가 업로드되면 보이게 설정
+        preview.style.width = '300px';
+        preview.style.height = '300px';
+        preview.style.objectFit = 'cover';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // 비밀번호 보이기 기능
+  function togglePasswordVisibility() {
+    const passwordField = document.getElementById('password');
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+    } else {
+      passwordField.type = 'password';
+    }
+  }
+</script>
 </body>
 </html>

@@ -1,9 +1,10 @@
 @import url('https://cdn.tailwindcss.com');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* Body 기본 스타일 */
 .body-k {
     background-color: #FFFFFF;
-    font-family: sans-serif;
+    font-family:"Noto Sans KR", sans-serif;
     color: #111827;
 }
 
@@ -56,6 +57,8 @@
 /* 메인 콘텐츠 */
 .main-k {
     width: 80%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 헤더 */
@@ -80,6 +83,7 @@
 .trust-k {
     display: flex;
     align-items: center;
+    margin-bottom: 24px; /* 아래 콘텐츠와 여백 추가 */
 }
 
 .score-k {
@@ -121,10 +125,9 @@
 
 /* 통계 영역 */
 .stats-k {
-    flex: 1; /* 통계 영역을 더 크게 확장 */
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
     background-color: #F3F4F6;
     padding: 20px;
     border-radius: 8px;
@@ -135,47 +138,13 @@
     font-size: 1.25rem;
     font-weight: bold;
     color: #111827;
-}
-
-/* 카페 자동 등록 영역 */
-.auto-register-k {
-    flex: 0.6; /* 통계보다 조금 작게 설정 */
-    display: flex;
-    align-items: center;
-    background-color: #ECFDF5;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.auto-register-k i {
-    color: #10B981;
-    font-size: 1.5rem;
-    margin-right: 16px;
-}
-
-.auto-text-k .auto-main-k {
-    color: #047857;
-    font-weight: bold;
-}
-
-.auto-text-k .auto-sub-k {
-    color: #6B7280;
-    font-size: 0.875rem;
-}
-
-.register-btn-k {
-    background-color: #1F2937;
-    color: #FFF;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: bold;
-    margin-left: 16px;
+    cursor: pointer;
+    text-align: center;
 }
 
 /* 내 상품 영역 */
 .products-k {
-    margin-bottom: 24px;
+    margin-top: 24px;
 }
 
 .products-title-k {
@@ -225,6 +194,9 @@
 }
 
 .sort-k {
+    position: relative;
+    padding-bottom: 4px;
+    overflow: hidden;
     transition: color 0.2s;
 }
 
@@ -232,31 +204,68 @@
     color: #111827;
 }
 
-/* 기본 패널 스타일 */
-.purchase-history-panel {
-  position: fixed;
-  top: 0;
-  right: -100%; /* 기본 상태에서 화면 밖에 위치 */
-  width: 40%;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.3s ease; /* 슬라이드 애니메이션 */
-  z-index: 1000;
-  padding: 20px;
-  transition: right 0.8s ease;
+/* 정렬 옵션 하단 보더 애니메이션 */
+.sort-k::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #111827;
+    transition: width 0.3s ease-in-out;
 }
 
-.purchase-history-panel.active {
-  right: 0; /* 활성화 시 화면 오른쪽에 표시 */
+.sort-k:hover::after {
+    width: 100%;
+}
+
+/* 이미지 hover 시 확대 효과 */
+.msl-k img {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    transition: transform 0.3s ease; /* 확대 애니메이션 */
+}
+
+.msl-k img:hover {
+    transform: scale(1.1); /* hover 시 이미지 확대 */
+}
+
+/* 기본 패널 스타일 */
+.purchase-history-panel,
+.sales-history-panel,
+.wishlist-panel,
+.account-panel,
+.review-panel,
+.withdrawal-panel {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 40%;
+  height: 100vh;
+  background-color:  #f9f9f9;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: right 0.8s ease;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.purchase-history-panel.active,
+.sales-history-panel.active,
+.wishlist-panel.active,
+.account-panel.active,
+.review-panel.active,
+.withdrawal-panel.active {
+  right: 0;
 }
 
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .panel-header h2 {
@@ -292,308 +301,57 @@
   margin-top: 50px;
 }
 
-/* 판매 내역 패널 스타일 */
-.sales-history-panel {
-  position: fixed;
-  top: 0;
-  right: -100%; /* 기본 상태에서 화면 밖에 위치 */
-  width: 40%;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.3s ease;
-  z-index: 1000;
-  padding: 20px;
-  transition: right 0.8s ease;
-}
-
-.sales-history-panel.active {
-  right: 0; /* 활성화 시 화면 오른쪽에 표시 */
-}
-
-/* 찜한 상품 패널 스타일 */
-.wishlist-panel {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 40%;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.5s ease;
-  z-index: 1000;
-  padding: 20px;
-  transition: right 0.8s ease;
-}
-
-.wishlist-panel.active {
-  right: 0;
-}
-
 .wishlist-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: white;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .wishlist-img {
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
+    width: 120px;
+    height: 120px;
+    margin-right: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.wishlist-text{
+    width: 400px;
 }
 
 .wishlist-title {
-  font-weight: bold;
+    font-weight: bold;
+    width: 100%;
+    display: block;
+    padding-bottom: 10px;
 }
 
 .wishlist-price {
-  margin-left: auto;
-  color: #888;
+    margin-left: auto;
+    /* margin-right: 20px; */
+    margin-bottom: 15px;
 }
 
-.no-wishlist-message {
+.no-wishlist-message,
+.no-review-message {
   text-align: center;
   color: #888;
   margin-top: 50px;
 }
 
-/* 계정 관리 패널 스타일 */
-.account-panel {
-  position: fixed;
-  top: 0;
-  right: -100%; /* 기본 상태에서 화면 밖에 위치 */
-  width: 40%;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.5s ease; /* 부드러운 슬라이드 효과 */
-  z-index: 1000;
-  padding: 20px;
+/* 찜 목록 삭제 버튼 */
+.delete-button {
+    padding: 8px 20px;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
 }
 
-.account-panel.active {
-  right: 0; /* 활성화 시 화면 오른쪽에 표시 */
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.profile-icon {
-  margin-bottom: 15px;
-}
-
-.profile-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-}
-
-.user-details {
-  width: 100%;
-  max-width: 300px;
-}
-
-.user-details div,
-.user-details p {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.user-details strong {
-  font-weight: bold;
-  color: #555;
-}
-
-.edit-profile-link {
-  display: block;
-  text-align: center;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #f26b3b;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.edit-profile-link:hover {
-  background-color: #e15c30;
-}
-
-
-/* 거래 후기 패널 스타일 */
-.review-panel {
-  position: fixed;
-  top: 0;
-  right: -100%; /* 기본 상태에서 화면 밖에 위치 */
-  width: 40%;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.8s ease; /* 부드러운 슬라이드 효과 */
-  z-index: 1000;
-  padding: 20px;
-}
-
-.review-panel.active {
-  right: 0; /* 활성화 시 화면 오른쪽에 표시 */
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.panel-header h2 {
-  font-size: 1.5rem;
-}
-
-.close-button {
-  font-size: 1.2rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.review-section {
-  padding: 20px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.review-title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.review-content {
-  text-align: center;
-  color: #888;
-}
-
-.review-icon {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 10px;
-}
-
-.no-review-message {
-  font-size: 1rem;
-  color: #666;
-}
-
-/* 탈퇴 패널 스타일 */
-.withdrawal-panel {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 40%;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.8s ease;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.withdrawal-panel.active {
-  right: 0;
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.panel-header h2 {
-  font-size: 1.5rem;
-}
-
-.close-button {
-  font-size: 1.2rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.panel-content p {
-  margin-bottom: 10px;
-}
-
-.panel-content form label {
-  display: block;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.panel-content textarea {
-  width: 100%;
-  height: 80px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: none;
-}
-
-.caution-list {
-  margin-top: 20px;
-  padding-left: 15px;
-  color: #666;
-}
-
-.caution-list li {
-  margin-bottom: 10px;
-}
-
-/* 기록 보관 테이블 스타일 */
-.record-table {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  border-collapse: collapse;
-}
-
-.record-table td {
-  padding: 8px 0;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
-}
-
-.record-table td:nth-child(2) {
-  text-align: right;
-  color: #888;
-}
-
-/* 탈퇴 버튼 스타일 */
-.withdrawal-button {
-  width: 100%;
-  padding: 15px;
-  font-size: 1rem;
-  color: #888;
-  background-color: #e0e0e0;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
+.delete-button:hover{
+    cursor: pointer;
 }
 
 /* 내 상품 리스트 테이블 */
@@ -603,39 +361,268 @@
     margin-top: 20px;
 }
 
-/* 테이블 행 */
 .msl-k tr {
     border-bottom: 1px solid #ddd;
 }
 
-/* 테이블 이미지 셀 */
 .msl-k td:first-child {
     width: 100px;
 }
 
-/* 이미지 크기 */
-.msl-k img {
-    width: 80px; /* 원하는 이미지 크기 */
-    height: auto;
-    border-radius: 5px;
-}
-
-/* 상품 제목과 가격 셀 */
 .msl-k td {
     padding: 10px;
     vertical-align: middle;
 }
 
-/* 상품 제목 */
 .msl-k td:nth-child(2) a {
     font-weight: bold;
     color: #333;
     text-decoration: none;
 }
 
-/* 상품 가격 */
 .msl-k td:nth-child(3) {
     color: #666;
 }
 
+.withdrawal-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #ff6060;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
 
+/* 판매내역 */
+.soldlist{
+  width: 100%;
+  height: 100%;
+  display:flex;
+  flex-direction:column;
+}
+
+/* sold-item-box */
+.sold-item-box {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.wishlist-item{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+
+   .wishlist-price{
+   font-size:1.1rem;
+   }
+
+/* 타이틀, 텍스트 box */
+.sold-item-box > div:nth-of-type(2) {
+    /* border: 1px solid red; */
+    overflow: hidden;
+}
+
+/* 판매내역 타이틀 */
+.sold-item-title {
+    font-size: 1.2rem;
+    width: 100%;
+    margin-bottom: 20px;
+    /* 말줄임표 */
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: keep-all;
+
+}
+
+/* 판매내역 가격 */
+.sold-item-price{
+    font-size:1.1rem;
+}
+
+/* 판매내역 이미지 */
+.sold-item-img{
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    margin-right: 20px;
+    border-radius: 5px;
+}
+
+.sold-item-img > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* 유저인포 */
+
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-icon {
+    font-size: 180px;
+    color: #6b7280; /* Tailwind의 'text-gray-500' */
+    margin-bottom: 20px;
+    max-width:200px;
+}
+
+.user-details {
+    text-align: center;
+}
+
+.info-item {
+    margin-bottom: 10px;
+}
+
+.edit-profile-link {
+    color: #3b82f6; /* Tailwind의 'text-blue-500' */
+    text-decoration: none;
+}
+
+.edit-profile-link:hover {
+    text-decoration: underline;
+}
+
+/* 리뷰 작성된 후기 */
+.revRec{/* html 작성된 후기*/
+
+}
+
+.reviewRec{
+    padding: 10px;
+    position: relative;
+    margin-bottom: 20px;
+    background: #ecf0f1;;
+    border-radius: 5px;
+}
+
+/* 작성된 후기 날짜 */
+.reviewRec > h4:nth-of-type(2) {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.reviewRec > h4:nth-of-type(3) {
+    padding: 15px 0;
+}
+
+/* 리뷰 작성한 후기 */
+.reviewWri{
+    margin-bottom: 20px;
+    position: relative;
+    padding: 10px;
+    background-color: #ecf0f1;
+    border-radius: 5px;
+}
+
+.revWri{/*html 작성한 후기 부분*/
+
+}
+
+.review-title{
+    margin-bottom: 10px;
+}
+
+.review-section {
+    margin-bottom: 50px;
+}
+
+/* 작성한 후기 날짜 */
+.reviewWri > h4:nth-of-type(1) {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+
+}
+
+/* 작성한 후기 텍스트 */
+.reviewWri > h4:nth-of-type(2) {
+    padding: 15px 0;
+}
+.caution-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.caution-container h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.caution-list {
+    list-style: decimal;
+    margin-left: 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+.caution-list1 li {
+    margin-bottom: 10px;
+}
+
+.record-table1 {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+.record-table1 th,
+.record-table1 td {
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+}
+
+.record-table1 th {
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: bold;
+}
+
+.record-table1 tr:last-child td {
+    border-bottom: none;
+}
+
+.record-table1 tr:hover {
+    background-color: #f9f9f9;
+}
+
+.record-table1 th:nth-child(2),
+.record-table1 td:nth-child(2) {
+    width: 100px; /* '보관 기간' 컬럼의 너비를 지정 */
+}

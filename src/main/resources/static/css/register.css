@@ -73,6 +73,16 @@ a {
     background-color: #d68d0e;
 }
 
+.id-check-btn{
+    padding: 10px;
+    border: 1px solid #F36A3C;
+    background-color: white;
+    color: #F36A3C;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 /* 에러 메시지 스타일 */
 .error-message {
     text-align: center;

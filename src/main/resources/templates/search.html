@@ -6,64 +6,85 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>List</title>
+  <link href="/css/list1.css" rel="stylesheet">
+  <link href="/css/footer.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/nav.css">
-  <link rel="stylesheet" href="/css/search.css">
-  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
   <script src="/js/nav.js" defer></script>
-
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div class="fix">
-  <div th:replace="~{nav.html::navbar}"></div>
-</div>
-
 <div class="main-container-e">
+  <div class="fix">
+    <!-- 네비게이션 바를 외부 파일에서 포함 -->
+    <div class="nav" th:replace="~{nav.html::navbar}"></div>
+  </div>
 
-  <div class="search-container-e">
+  <!-- 아이템 목록을 표시하는 섹션 -->
+  <div th:fragment="list1" class="list-container">
+    <h4 class="search-result" style="margin-bottom: 20px">
+      해당 제품에 대해 검색한 결과 :
+      <span th:text="${items.size()} + '개'">2개</span> <!-- 아이템 개수 표시 -->
+    </h4>
 
-    <!--해당 제품 검색 결과 추가-->
-    <h4 class="search-result" id="">해당 제품에 대해 검색한 결과 : <span>124개</span></h4>
-
-    <!--아이템 박스-->
-    <div class="search-item-grid">
-      <a href="" class="search-box-test" th:each="i : ${items}">
-        <div class="search-item-box">
-          <div class="search-item-img" id="">
-            <img th:src="${i.imgURL}" id="" alt="이미지">
+    <!-- 아이템 목록 -->
+    <div id="item-list-box" class="item-list-box">
+      <!-- 각 아이템을 링크와 함께 표시 -->
+      <a th:href="@{/item/{id}(id=${i.id})}" id="item-link" class="item-list-box-test" th:each="i : ${items}">
+        <div id="item-list" class="item-list">
+          <div class="item-list-img">
+            <img th:src="${i.imgURL}" alt="이미지"> <!-- 아이템 이미지 -->
           </div>
-          <div class="search-item-text">
-            <h4 class="search-item-title" th:href="@{/item/{id}(id=${i.id})}" th:text="${i.title}">텀블러 텀블러가 우후죽순</h4>
-            <h4 class="search-item-price" th:text="${i.price} +원">25000원</h4>
+          <div class="list-text-box">
+            <h4 class="list-title" th:text="${i.title}" id="item-title">타이틀 타이틀텀블러텀블러</h4> <!-- 아이템 제목 -->
+            <h4 th:text="${i.formattedPrice + '원'}"  id="item-price">4500원</h4> <!-- 아이템 가격 -->
+            <h4 class="upload-time" th:text="${i.readableUploadTime}">업로드 시간입니다</h4> <!-- 업로드 시간 -->
           </div>
-          <!-- 지도 추가 -->
-          <div class="search-location-pin">
-            <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0yRxr%2FbtsKmL5rJa7%2FkUXcovSEN2t6dSziK95FTk%2Fimg.png" alt="">
-            <span>00시 00구 00동</span>
-          </div>
+          <!-- 아이템 위치 정보 -->
+          <span id="" class="location-pin">
+            <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0yRxr%2FbtsKmL5rJa7%2FkUXcovSEN2t6dSziK95FTk%2Fimg.png" alt="지도 핀">
+           <p id="location" th:text="${i.location != null ? i.location : '부산광역시 동구 00동'}">부산광역시 동구 00동</p> <!-- 위치 정보 -->
+          </span>
         </div>
       </a>
     </div>
   </div>
+
+  <!-- 페이지 네비게이션 -->
+  <div th:if="${totalPage > 1}" id="pagination-container" class="pagination-container">
+    <nav>
+      <ul class="pagination" id="pagination">
+        <!-- 이전 페이지 링크 -->
+        <li th:class="${currentPage == 1} ? 'disabled'" id="prev-page">
+          <a th:href="${currentPage == 1 ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage - 1) : '/list?page=' + (currentPage - 1))}">
+            prev
+          </a>
+        </li>
+        <!-- 페이지 번호 -->
+        <li th:each="page : ${#numbers.sequence(1, totalPage)}"
+            th:class="${page == currentPage} ? 'active'" id="page-item">
+          <a th:href="${category != null ? '/list?category=' + category + '&page=' + page : '/list?page=' + page}" th:text="${page}">
+          </a>
+        </li>
+        <!-- 다음 페이지 링크 -->
+        <li th:class="${currentPage >= totalPage} ? 'disabled'" id="next-page">
+          <a th:href="${currentPage >= totalPage ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage + 1) : '/list?page=' + (currentPage + 1))}">
+            next
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </div>
 
-<!--페이지 처리-->
-<div th:if="${totalPage > 1}">
-  <nav>
-    <ul class="pagination">
-      <li th:class="${currentPage == 1} ? 'disabled'">
-        <a th:href="${currentPage == 1 ? 'javascript:void(0);' : '/list/' + searchText + '?page=' + (currentPage - 1)}">prev</a>
-      </li>
-      <li th:each="page : ${#numbers.sequence(1, totalPage)}"
-          th:class="${page == currentPage} ? 'active'">
-        <a th:href="${'/list/' + searchText + '?page=' + page}" th:text="${page}"></a>
-      </li>
-      <li th:class="${currentPage >= totalPage} ? 'disabled'">
-        <a th:href="${currentPage >= totalPage ? 'javascript:void(0);' : '/list/' + searchText + '?page=' + (currentPage + 1)}">next</a>
-      </li>
+<!-- 광고 이미지 -->
+<div class="ad">
+  <img src="/images/엉덩이.png">
+</div>
 
-    </ul>
-  </nav>
-</div>
-</div>
+<!-- 푸터 포함 -->
+<footer th:replace="~{footer.html::footer}"></footer>
+
+<script src="/js/listcg.js" defer></script>
 </body>
 </html>

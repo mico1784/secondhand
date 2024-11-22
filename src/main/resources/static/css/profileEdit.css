@@ -1,0 +1,89 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f4f6; /* Tailwind의 'bg-gray-100' */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+#container {
+    background-color: #ffffff; /* 흰색 배경 */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+    width: 100%;
+    max-width: 600px;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-icon {
+    font-size: 100px; /* 아이콘 크기 */
+    color: #6b7280; /* Tailwind의 'text-gray-500' */
+}
+
+#container h2 {
+    text-align: center;
+    color: #333; /* 진한 회색 */
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #4b5563; /* Tailwind의 'text-gray-700' */
+}
+
+input, select {
+    width: 96%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d1d5db; /* Tailwind의 'border-gray-300' */
+    border-radius: 4px;
+    outline: none;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select#gender {
+    width: 100%;
+}
+
+input:focus, select:focus {
+    border-color: #3b82f6; /* Tailwind의 'border-blue-500' */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* 파란색 포커스 효과 */
+}
+
+#submit-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #3b82f6; /* Tailwind의 'bg-blue-500' */
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#submit-button:hover {
+    background-color: #2563eb; /* Tailwind의 'bg-blue-600' */
+}
+
+#error-message {
+    margin-bottom: 1rem;
+    color: red;
+    font-weight: bold;
+}
+
+#error-message p {
+    margin: 0;
+}

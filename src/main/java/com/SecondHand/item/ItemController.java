@@ -1,10 +1,14 @@
 package com.SecondHand.item;
 
-import com.SecondHand.member.User;
-import com.SecondHand.member.UserRepository;
-import com.SecondHand.member.UserService;
+import com.SecondHand.review.ReviewService;
+import com.SecondHand.review.ReviewDTO;
+import com.SecondHand.user.User;
+import com.SecondHand.user.UserRepository;
+import com.SecondHand.wishList.WishListRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -18,85 +22,111 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class ItemController {
 
+    // 필드 정의
     private final ItemRepository itemRepository;
     private final ItemService itemService;
-    private final S3Service s3Service;
+    private final S3Service s3Service; // S3 파일 업로드/삭제 서비스를 담당
     private final UserRepository userRepository;
+    private final WishListRepository wishListRepository;
 
-    // 아이템 작성 폼 보여주기
+    @Autowired
+    private ReviewService reviewService; // 리뷰 관련 서비스
+
+    // 아이템 작성 폼을 보여주는 메서드
     @GetMapping("/item")
     public String showWriteForm(Model model, Principal principal) {
-        model.addAttribute("item", new Item());
-        return "item";
+        model.addAttribute("item", new Item()); // 빈 Item 객체를 모델에 추가
+        return "item"; // item 작성 페이지 반환
     }
 
-    // 아이템 제출
+    // 아이템 제출 처리 메서드
     @PostMapping("/item/add")
     public String submitItem(@ModelAttribute Item item,
                              @RequestParam("imgFile") MultipartFile file,
                              Principal principal) throws IOException {
+        // 이미지 파일 업로드 여부 확인
         if (file != null && !file.isEmpty()) {
             try {
-                String imgURL = s3Service.uploadFile(file);
-                item.setImgURL(imgURL);
+                String imgURL = s3Service.uploadFile(file); // 파일 업로드 후 URL 반환
+                item.setImgURL(imgURL); // 아이템에 이미지 URL 설정
             } catch (RuntimeException e) {
                 throw new RuntimeException("파일 업로드 중 오류 발생: " + e.getMessage(), e);
             }
         } else {
-            throw new RuntimeException("파일이 비어있습니다.");
+            throw new RuntimeException("파일이 비어있습니다."); // 파일이 없을 경우 예외 발생
         }
+
+        // 현재 로그인한 사용자 정보 설정
         Optional<User> user = userRepository.findByUsername(principal.getName());
-        item.setSeller(user.get());
+        if (user.isPresent()) {
+            item.setSeller(user.get()); // 판매자 정보 설정
+        } else {
+            throw new RuntimeException("판매자 정보를 찾을 수 없습니다."); // 사용자 정보가 없을 경우 예외 발생
+        }
+
+        // 거래지역 설정
+        String location = item.getLocation();
+        if (location != null && !location.isEmpty()) {
+            item.setLocation(location);
+        } else {
+            throw new RuntimeException("거래지역을 입력해주세요."); // 거래지역이 없는 경우 예외 발생
+        }
+
+        // 상품 설명 줄바꿈 처리
+        String itemDesc = item.getItemDesc();
+        if (itemDesc != null && !itemDesc.isEmpty()) {
+            item.setItemDesc(itemDesc.replace("\n", "<br>")); // 줄바꿈을 <br> 태그로 변환
+        } else {
+            throw new RuntimeException("상품 설명을 입력해주세요."); // 상품 설명이 없는 경우 예외 발생
+        }
+
+        // 아이템 저장
         itemService.saveItem(item);
-        return "redirect:/list";
+        return "redirect:/list"; // 아이템 목록 페이지로 리다이렉트
     }
 
-    // 아이템 삭제 (판매자만 가능)
+
+    // 아이템 삭제 메서드 (판매자만 가능)
     @PostMapping("/item/delete")
     public String deleteItem(@RequestParam Long id, Principal principal, RedirectAttributes redirectAttributes) {
-        Item item = itemService.getItemById(id); // 아이템 조회
-        if (item != null) {
-            // 판매자만 삭제 가능
-            if (!item.getSeller().getUsername().equals(principal.getName())) {
-                redirectAttributes.addFlashAttribute("error", "삭제 권한이 없습니다.");
-                return "redirect:/home"; // 권한이 없는 경우 홈 페이지로 리다이렉트
-            }
-
-            try {
-                // S3에서 파일 삭제
-                String fileName = item.getImgURL().substring(item.getImgURL().lastIndexOf("/") + 1); // 파일 이름 추출
-                s3Service.deleteFile(fileName); // S3에서 파일 삭제
-                itemService.deleteItem(id); // 데이터베이스에서 아이템 삭제
-
-                // 성공 메시지 추가
-                redirectAttributes.addFlashAttribute("message", "아이템이 성공적으로 삭제되었습니다.");
-            } catch (Exception e) {
-                // 오류 메시지 추가
-                redirectAttributes.addFlashAttribute("error", "아이템 삭제 중 오류가 발생했습니다.");
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "아이템을 찾을 수 없습니다.");
+        if (!itemService.hasEditPermission(id, principal.getName())) {
+            redirectAttributes.addFlashAttribute("error", "삭제 권한이 없습니다.");
+            return "redirect:/list"; // 권한이 없는 경우 홈으로 리다이렉트
         }
-        return "redirect:/home"; // 목록 페이지로 리다이렉트
+
+        try {
+            Item item = itemService.getItemById(id);
+            String fileName = item.getImgURL().substring(item.getImgURL().lastIndexOf("/") + 1); // 파일 이름 추출
+            s3Service.deleteFile(fileName); // S3에서 파일 삭제
+            itemService.deleteItem(id); // 데이터베이스에서 아이템 삭제
+            redirectAttributes.addFlashAttribute("message", "아이템이 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "아이템 삭제 중 오류가 발생했습니다.");
+        }
+        return "redirect:/home"; // 홈으로 리다이렉트
     }
 
-    // 상품 상세 정보 페이지로 이동
     @GetMapping("/item/{id}")
-    public String showItemDetail(@PathVariable Long id, Model model, Principal principal) {
+    public String showItemDetail(@PathVariable Long id, Model model, Principal principal, @RequestParam(defaultValue = "1") Integer page) {
         Item item = itemService.getItemById(id);
-        if (item != null) {
-            // 현재 로그인한 사용자의 username
-            String currentUsername = principal.getName();
 
-            // 등록된 날짜 포맷팅
+        if (item != null) {
+            // 로그인 여부 및 사용자 정보 확인
+            boolean isLoggedIn = (principal != null);
+            String currentUsername = isLoggedIn ? principal.getName() : "anonymous";
+            User currentUser = isLoggedIn ? userRepository.findByUsername(currentUsername).orElse(null) : null;
+
+            // 아이템 등록일 포맷팅
             if (item.getUploadDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 String formattedDate = item.getUploadDate().format(formatter);
@@ -104,134 +134,186 @@ public class ItemController {
             } else {
                 model.addAttribute("formattedDate", "날짜 정보 없음");
             }
-            model.addAttribute("item", item);
-            model.addAttribute("currentUsername", currentUsername);  // currentUsername을 템플릿에 전달
-            return "itemDetail";  // 디테일 페이지로 이동
-        } else {
-            model.addAttribute("error", "아이템을 찾을 수 없습니다.");
-            return "itemList"; // 목록 페이지로 돌아감
-        }
-    }
 
-    // 상품 존재 여부
-    @GetMapping("/item/{id}/exists")
-    public ResponseEntity<Void> checkItemExists(@PathVariable Long id) {
-        boolean itemExists = itemRepository.existsById(id);
-        if (itemExists) {
-            return ResponseEntity.ok().build(); // 아이템이 존재하면 200 OK 응답
-        } else {
-            return ResponseEntity.notFound().build(); // 아이템이 존재하지 않으면 404 Not Found 응답
-        }
-    }
-
-    // S3 presigned URL 생성
-    @GetMapping("/presigned-url")
-    @ResponseBody
-    public String getPresignedUrl(@RequestParam String filename) {
-        var result = s3Service.createPreSignedUrl("SecondHand/" + filename);
-        System.out.println(result);
-        return result;
-    }
-
-    // 아이템 수정 폼 보여주기
-    @GetMapping("/item/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, Principal principal) {
-        Item item = itemService.getItemById(id);
-        if (item != null) {
-            // 판매자만 수정 가능하도록 권한 체크
-            if (!item.getSeller().getUsername().equals(principal.getName())) {
-                return "redirect:/home"; // 권한이 없으면 홈으로 리다이렉트
+            // 상품 설명 줄바꿈 처리
+            if (item.getItemDesc() != null) {
+                String formattedDesc = item.getItemDesc().replace("\n", "<br>");
+                model.addAttribute("formattedItemDesc", formattedDesc);
+            } else {
+                model.addAttribute("formattedItemDesc", "상품 설명 없음");
             }
 
+            // 판매자 정보 추가
+            User seller = item.getSeller();
+            model.addAttribute("seller", seller);
+            model.addAttribute("sellerProfileImageURL", seller.getProfileImageURL());
+
+            // 찜 상태 확인 (로그인된 경우만 처리)
+            boolean isWished = false;
+            if (isLoggedIn && currentUser != null) {
+                isWished = wishListRepository.findByItemIdAndUser(item.getId(), currentUser).isPresent();
+            }
+            model.addAttribute("isLoggedIn", isLoggedIn);
+            model.addAttribute("isWished", isWished);
+
+            // 리뷰 작성자의 정보 포함한 리뷰 리스트 가져오기
+            List<ReviewDTO> reviews = reviewService.getReviewsBySellerId(seller.getId());
+            reviews.forEach(review -> {
+                review.setProfileImageURL(review.getProfileImageURL());
+            });
+
+            // 모델에 필요한 데이터 추가
             model.addAttribute("item", item);
-            return "itemEdit"; // 수정 페이지로 이동
+            model.addAttribute("currentUsername", currentUsername);
+            model.addAttribute("user", currentUser);
+            model.addAttribute("reviews", reviews);
+
+            // 카테고리별 아이템 리스트 추가 (최신순으로 정렬)
+            List<Item> phoneItems = itemService.getAllItemsByCategorySorted("휴대폰", Sort.by(Sort.Direction.DESC, "uploadDate"));
+            model.addAttribute("phoneItems", phoneItems);
+
+            List<Item> padItems = itemService.getAllItemsByCategorySorted("패드", Sort.by(Sort.Direction.DESC, "uploadDate"));
+            model.addAttribute("padItems", padItems);
+
+            List<Item> watchItems = itemService.getAllItemsByCategorySorted("워치", Sort.by(Sort.Direction.DESC, "uploadDate"));
+            model.addAttribute("watchItems", watchItems);
+
+            return "itemDetail"; // 상세 페이지로 이동
         } else {
             model.addAttribute("error", "아이템을 찾을 수 없습니다.");
-            return "itemList"; // 목록 페이지로 돌아감
+            return "itemList"; // 아이템이 없으면 목록 페이지로 돌아감
         }
     }
 
 
-    // 아이템 수정 처리
+    // 아이템 수정 폼 표시 메서드
+    @GetMapping("/item/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model, Principal principal) {
+        if (!itemService.hasEditPermission(id, principal.getName())) {
+            return "redirect:/home"; // 권한이 없으면 홈으로 리다이렉트
+        }
+        Item item = itemService.getItemById(id);
+        model.addAttribute("item", item); // 수정할 아이템 정보 모델에 추가
+        return "itemEdit"; // 수정 페이지 반환
+    }
+
+    // 아이템 수정 처리 메서드
     @PostMapping("/item/edit/{id}")
     public String updateItem(@PathVariable Long id,
                              @ModelAttribute Item item,
                              @RequestParam(value = "imgFile", required = false) MultipartFile file,
-                             Principal principal,  // Principal을 매개변수로 추가
+                             Principal principal,
                              RedirectAttributes redirectAttributes) throws IOException {
-        // 기존 아이템 조회
-        Item existingItem = itemService.getItemById(id); // id를 사용하여 조회
-
-        // 판매자만 수정 가능하도록 권한 체크
-        if (!existingItem.getSeller().getUsername().equals(principal.getName())) {
+        if (!itemService.hasEditPermission(id, principal.getName())) {
             redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다.");
             return "redirect:/home"; // 권한이 없으면 홈으로 리다이렉트
         }
 
-        // 파일이 업로드된 경우
+        Item existingItem = itemService.getItemById(id);
+        if (item.getLocation() != null) existingItem.setLocation(item.getLocation());
+        if (item.getCategory() != null) existingItem.setCategory(item.getCategory());
+        if (item.getSubcategory() != null) existingItem.setSubcategory(item.getSubcategory());
+
+        // 이미지 파일 처리
         if (file != null && !file.isEmpty()) {
             try {
-                // S3에서 기존 이미지 삭제
                 if (existingItem.getImgURL() != null) {
                     String fileName = existingItem.getImgURL().substring(existingItem.getImgURL().lastIndexOf("/") + 1);
-                    s3Service.deleteFile("SecondHand/" + fileName); // 기존 이미지 삭제
+                    s3Service.deleteFile("SecondHand/" + fileName);
                 }
-                // 새 이미지 업로드
                 String imgURL = s3Service.uploadFile(file);
-                item.setImgURL(imgURL); // 새 이미지 URL 설정
+                existingItem.setImgURL(imgURL);
             } catch (RuntimeException e) {
                 redirectAttributes.addFlashAttribute("error", "파일 업로드 중 오류 발생: " + e.getMessage());
                 return "redirect:/item/edit/" + id; // 오류 발생 시 수정 페이지로 돌아감
             }
-        } else {
-            // 파일이 업로드되지 않은 경우, 기존 이미지 URL 유지
-            item.setImgURL(existingItem.getImgURL());
         }
 
-        // 아이템 업데이트
-        item.setId(existingItem.getId()); // 아이템의 ID를 설정 (필수)
-        itemService.updateItem(item);
+        if (item.getTitle() != null) existingItem.setTitle(item.getTitle());
+        if (item.getPrice() != null) existingItem.setPrice(item.getPrice());
+        if (item.getItemDesc() != null) existingItem.setItemDesc(item.getItemDesc());
+        if (item.getSituation() != null) existingItem.setSituation(item.getSituation());
 
-        // 수정 완료 후 상세 페이지로 리다이렉트
+        itemService.updateItem(existingItem);
         redirectAttributes.addFlashAttribute("message", "아이템이 성공적으로 수정되었습니다.");
         return "redirect:/item/" + existingItem.getId(); // 상세 페이지로 리다이렉트
     }
 
-    // 목록
+    // 아이템 목록 페이지 표시
     @GetMapping("/list")
-    String categoryList(Model m,
-                        @RequestParam(required = false, defaultValue = "") String category,
-                        @RequestParam(defaultValue = "1") Integer page) {
+    public String categoryList(Model m,
+                               @RequestParam(required = false, defaultValue = "") String category,
+                               @RequestParam(required = false) Integer minPrice,
+                               @RequestParam(required = false) Integer maxPrice,
+                               @RequestParam(defaultValue = "1") Integer page) {
         Page<Item> list;
 
-        if (category.isEmpty()) { // 카테고리가 없을 때 전체 목록 페이지네이션
-            list = itemRepository.findAll(PageRequest.of(page - 1, 20, Sort.by(Sort.Direction.DESC, "id")));
-            list.forEach(item -> item.setFormattedPrice(String.format("%,d", item.getPrice())));
-        } else { // 카테고리가 있을 때 해당 카테고리의 목록만 페이지네이션
-            list = itemRepository.findPageByCategory(category, PageRequest.of(page - 1, 5, Sort.by(Sort.Direction.DESC, "id")));
-            list.forEach(item -> item.setFormattedPrice(String.format("%,d", item.getPrice())));
+        // 카테고리 필터링
+        if (category.isEmpty()) {
+            list = itemRepository.findAll(PageRequest.of(page - 1, 24, Sort.by(Sort.Direction.DESC, "id")));
+        } else {
+            list = itemRepository.findPageByCategory(category, PageRequest.of(page - 1, 24, Sort.by(Sort.Direction.DESC, "id")));
             m.addAttribute("category", category);
         }
 
+        // 가격 필터링 적용
+        if (minPrice != null || maxPrice != null) {
+            list = new PageImpl<>(list.stream()
+                    .filter(item -> (minPrice == null || item.getPrice() >= minPrice) &&
+                            (maxPrice == null || item.getPrice() <= maxPrice))
+                    .collect(Collectors.toList()));
+        }
 
+        // 아이템 목록에 포맷된 가격 추가
+        List<Item> items = list.getContent();
+        items.forEach(item -> item.setFormattedPrice(String.format("%,d", item.getPrice())));
 
-        m.addAttribute("items", list.getContent()); // 현재 페이지의 아이템 목록
+        // 가격 통계 계산 후 모델에 추가
+        if (!items.isEmpty()) {
+            int maxPriceValue = items.stream().mapToInt(Item::getPrice).max().orElse(0);
+            int minPriceValue = items.stream().mapToInt(Item::getPrice).min().orElse(0);
+            double avgPriceValue = items.stream().mapToInt(Item::getPrice).average().orElse(0.0);
+
+            // 포맷팅된 가격 통계
+            String formattedMaxPrice = String.format("%,d", maxPriceValue);
+            String formattedMinPrice = String.format("%,d", minPriceValue);
+            String formattedAvgPrice = String.format("%,d", (int) avgPriceValue);
+
+            // 모델에 값 추가
+            m.addAttribute("formattedMaxPrice", formattedMaxPrice);
+            m.addAttribute("formattedMinPrice", formattedMinPrice);
+            m.addAttribute("formattedAvgPrice", formattedAvgPrice);
+
+            // 실제 가격 값도 모델에 추가 (원하는 경우)
+            m.addAttribute("maxPriceValue", maxPriceValue);
+            m.addAttribute("minPriceValue", minPriceValue);
+            m.addAttribute("avgPriceValue", (int) avgPriceValue);
+        } else {
+            m.addAttribute("formattedMaxPrice", "0");
+            m.addAttribute("formattedMinPrice", "0");
+            m.addAttribute("formattedAvgPrice", "0");
+
+            // 실제 가격 값도 모델에 추가 (원하는 경우)
+            m.addAttribute("maxPriceValue", 0);
+            m.addAttribute("minPriceValue", 0);
+            m.addAttribute("avgPriceValue", 0);
+        }
+
+        // 페이지 관련 정보
+        m.addAttribute("items", items);
         m.addAttribute("hasPrevious", list.hasPrevious());
         m.addAttribute("hasNext", list.hasNext());
         m.addAttribute("currentPage", page);
         m.addAttribute("totalPage", list.getTotalPages());
 
-        return "list1.html";
+        return "list1.html"; // 목록 페이지 반환
     }
 
-    // 검색
+    // 검색 결과 처리 메서드
     private String processSearchList(Model m, String searchText, Integer page) {
-        System.out.println(searchText);
-
-        Page<Item> list = itemRepository.findPageByTitleContains(searchText, PageRequest.of(page - 1, 3, Sort.by(Sort.Direction.DESC, "id")));
-
+        Page<Item> list = itemRepository.findPageByTitleContains(searchText, PageRequest.of(page - 1, 24, Sort.by(Sort.Direction.DESC, "id")));
         if (list.isEmpty()) {
-            m.addAttribute("warningMessage", "검색 결과가 없습니다.");
+            m.addAttribute("warningMessage", "검색 결과가 없습니다."); // 검색 결과 없음 경고 메시지
         }
 
         m.addAttribute("searchText", searchText);
@@ -241,7 +323,7 @@ public class ItemController {
         m.addAttribute("currentPage", page);
         m.addAttribute("totalPage", list.getTotalPages());
 
-        return "search.html";
+        return "search.html"; // 검색 결과 페이지 반환
     }
 
     @PostMapping("/list/{searchText}")
@@ -254,16 +336,16 @@ public class ItemController {
         return processSearchList(m, searchText, page);
     }
 
+    // 아이템 상태 업데이트 메서드
     @PutMapping("/item/{id}/situation")
     public ResponseEntity<String> updateItemSituation(@PathVariable Long id, @RequestBody Map<String, String> request) {
         String situationString = request.get("situation");
-
         if (situationString == null) {
             return ResponseEntity.badRequest().body("Situation value cannot be null");
         }
 
         try {
-            Item.ItemSituation situation = Item.ItemSituation.valueOf(situationString);
+            Item.ItemSituation situation = Item.ItemSituation.valueOf(situationString); // Enum 값 확인
             itemService.updateItemSituation(id, situation);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
@@ -271,5 +353,19 @@ public class ItemController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating situation");
         }
+    }
+
+    // 아이템 상세 페이지 (판매자 리뷰 포함)
+    @GetMapping("/item/detail/{itemId}")
+    public String getItemDetail(@PathVariable Long itemId, Model model) {
+        Item item = itemService.getItemById(itemId);
+        User seller = item.getSeller(); // 판매자 정보 가져오기
+
+        List<ReviewDTO> reviews = reviewService.getReviewsBySellerId(seller.getId()); // 리뷰 가져오기
+
+        model.addAttribute("item", item);
+        model.addAttribute("reviews", reviews);
+
+        return "item/detail"; // 상세 페이지 반환
     }
 }
