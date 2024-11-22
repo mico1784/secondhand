@@ -1,5 +1,6 @@
 package com.SecondHand.chat.config;
 
+import com.SecondHand.chat.handler.RoomListWebSocketHandler;
 import com.SecondHand.chat.handler.SocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +14,13 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final SocketHandler socketHandler;
+    private final RoomListWebSocketHandler roomListWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry){
         registry.addHandler(socketHandler, "/chatting");
+
+        registry.addHandler(roomListWebSocketHandler, "/chat/roomlist/socket").setAllowedOrigins("*");
     }
 }
 
