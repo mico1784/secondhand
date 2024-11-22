@@ -1,13 +1,21 @@
 package com.SecondHand.chat.controller;
 
+import com.SecondHand.chat.chatMessage.ChatMessage;
+import com.SecondHand.chat.chatMessage.ChatMessageDTO;
+import com.SecondHand.chat.chatMessage.ChatMessageRepository;
 import com.SecondHand.chat.handler.SocketHandler;
 import com.SecondHand.chat.room.Room;
+import com.SecondHand.chat.room.RoomDTO;
 import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.chat.room.RoomService;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.S3Service;
+import com.SecondHand.member.User;
+import com.SecondHand.member.UserRepository;
+import com.SecondHand.review.ReviewDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -26,6 +38,20 @@ public class MainController {
     private final ItemRepository itemRepository;
     private final RoomRepository roomRepository;
     private final RoomService roomService;
+    private final UserRepository userRepository;
+    private final ChatMessageRepository chatMessageRepository;
+
+    @GetMapping
+    public String chatHome(Model m, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            m.addAttribute("myName", username);
+
+            return "chat";
+        } else {
+            return "redirect:/login";
+        }
+    }
 
     @RequestMapping("/{itemId}")
     public String chatView(@PathVariable Long itemId, Model m, Principal principal) {
@@ -110,4 +136,44 @@ public class MainController {
         }
         return sb.toString();
     }
+
+    @GetMapping("/roomlist")
+    @ResponseBody
+    public Map<String, Object> getRoomList(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("사용자가 로그인되어 있지 않습니다.");
+        }
+
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        Long userId = user.getId();
+
+        List<RoomDTO> roomListDTO = roomRepository.findByUserId(userId).stream()
+                .map(room -> {
+                    // 최신 채팅 메시지 가져오기
+                    ChatMessage latestMessage = chatMessageRepository
+                            .findFirstByRoomIdOrderByIdDesc(room.getId());
+
+                    // 채팅 메시지가 있다면 ChatMessageDTO로 변환
+                    ChatMessageDTO latestMessageDTO = latestMessage != null
+                            ? new ChatMessageDTO(latestMessage)
+                            : null;
+
+                    // 판매자와 구매자 이름 가져오기
+                    String sellerName = roomService.findUsernameById(room.getSellerId());
+                    String buyerName = roomService.findUsernameById(room.getBuyerId());
+
+                    // RoomDTO에 최신 메시지 포함
+                    return new RoomDTO(room, latestMessageDTO, sellerName, buyerName);
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("roomListDTO", roomListDTO);
+        System.out.println("Response: " + response);
+
+        return response;
+    }
+
 }

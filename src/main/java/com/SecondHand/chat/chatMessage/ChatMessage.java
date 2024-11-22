@@ -21,5 +21,4 @@ public class ChatMessage {
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
-
 }

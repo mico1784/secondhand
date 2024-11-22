@@ -55,4 +55,10 @@ public class RoomService {
         }
         return room;  // 방을 반환
     }
+
+    public String findUsernameById(Long id) {
+        return userRepository.findById(id)
+                .map(user -> user.getUsername())
+                .orElse("Unknown User");
+    }
 }

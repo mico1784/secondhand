@@ -28,5 +28,4 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item itemC;  // 거래 물품
-
 }

@@ -205,16 +205,32 @@ public class SocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
         sessionMap.put(session.getId(), session);
+        System.out.println(session);
 
+        // URI에서 roomNo 추출
         String roomNoStr = extractRoomNoFromUri(session.getUri().toString());
         if (roomNoStr == null) {
             sendErrorMessageToClient("Room number missing", "No room number provided by client.");
             return;
         }
 
+        // 세션에 roomNo 설정
         session.getAttributes().put("roomNo", roomNoStr);
         roomSessionMap.computeIfAbsent(roomNoStr, k -> new HashMap<>()).put(session.getId(), session);
 
+        // 클라이언트에서 sessionId를 보내지 않으면 새로 생성하여 반환
+        String clientSessionId = (String) session.getAttributes().get("sessionId");
+        if (clientSessionId == null) {
+            clientSessionId = session.getId();  // 서버의 WebSocketSession ID 사용
+            session.getAttributes().put("sessionId", clientSessionId);  // 세션에 sessionId 설정
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("type", "getId");
+        response.put("sessionId", clientSessionId);  // 새 sessionId를 클라이언트에 전송
+        sendMessage(session, response);
+
+        // 채팅 기록 전송
         sendChatHistory(session, roomNoStr);
     }
 
