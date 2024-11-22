@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat</title>
+    <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="/css/chat.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/nav.css">
+    <script src="/js/nav.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="fix">
+    <div th:replace="~{nav.html::navbar}"></div>
+</div>
+
+<!-- 전체 채팅 레이아웃을 감싸는 새로운 컨테이너 -->
+<div class="chat-wrapper">
+    <div class="chat-container">
+
+        <!-- 왼쪽: 전체 대화 목록 -->
+        <div class="chat-list">
+            <h2>전체 대화</h2>
+            <div class="chat-item">
+                <img src="/images/logo.jpg" alt="프로필 이미지" class="profile-img">
+                <div class="chat-info">
+                    <h3>SecondHand</h3>
+                    <p>SecondHand에 오신 걸 환영해요 ⚡</p>
+                    <span class="chat-time">오후 4:27</span>
+                </div>
+            </div>
+            <!-- 여기서 더 많은 채팅 목록 아이템을 추가할 수 있습니다 -->
+        </div>
+
+        <!-- 오른쪽: 현재 채팅 창 -->
+        <div class="chat-window">
+            <div class="chat-header">
+                <h3>SecondHand</h3>
+                <p>SecondHand의 공식상점입니다</p>
+            </div>
+
+            <!-- 채팅 메시지 영역 -->
+            <div class="chat-messages" id="chating">
+                <!-- 예시 메시지: 실제 데이터베이스에서 메시지를 불러와서 이곳에 추가합니다 -->
+                <div class="message received">
+                    <img src="/images/logo.jpg" alt="프로필 이미지" class="profile-img">
+                    <div class="message-content">
+                        <p>SecondHand에 오신 걸 환영해요 ⚡</p>
+                        <p>쉽고 안전한 거래를 위해 SecondHand 사용 가이드를 준비했어요. 지금 바로 읽으러 가볼까요?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 메시지 입력 영역 -->
+            <div class="chat-input" id="yourMsg">
+                <input type="hidden" id="sessionId" value="">
+                <input type="hidden" id="username" th:value="${username}">
+                <input id="chatting" class="chatting-input" placeholder="보내실 메시지를 입력하세요.">
+                <button onclick="send()" id="sendBtn" class="sendBtn">보내기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/chat.js" defer></script>
+</body>
+</html>

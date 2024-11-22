@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* 전체 */
+
+*{
+font-family:"Noto Sans KR", sans-serif;
+}
+
+/* a 태그 */
+a {
+  text-decoration: none;
+}
+
+/* .wrap */
+.wrap-e {
+   margin: 0 100px;
+   margin-bottom: 50px;
+   font-family:"Noto Sans KR", sans-serif;
+}
+
+
+
+
+.main-e{
+/*margin:0 100px;*/
+    max-width: 720px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+}
+
+/* colors - 영역*/
+
+.main-container{
+border: 1px solid blue;
+}
+
+.wrap{
+border: 1px solid green;
+}
+
+section{
+border: 1px solid #9b59b6;
+}
+
+footer{
+border: 1px solid #e67e22;
+}
+
+/*상품 수정 */
+
+.edit-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    margin: 0 auto;
+}
+
+/* 상품수정 타이틀 */
+.edit-container > h1{
+    margin-bottom: 28px;
+    text-align: center;
+    padding-bottom: 20px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 20px;
+
+}
+
+.category-box, .category-box-title, .img-file-box{
+  margin-bottom: 25px;
+}
+
+.item-add-form > div > label {
+  font-weight: 600;
+  color: #555;
+  display: inline-block;
+}
+
+.item-edit-form {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.add, input, select:not(.edit-cate, .edit-cate-sub), textarea {
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fdfdfd;
+  transition: all 0.3s ease;
+}
+
+/* 카테고리 */
+select#category, #subcategory{
+    /* width: 100%; */
+    width: 25%;
+    padding: 14px 16px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #fdfdfd;
+    transition: all 0.3s ease;
+}
+
+select#category:focus, #subcategory:focus{
+  border-color: #e67e22;
+  outline: none;
+  box-shadow: 0 0 4px rgba(26, 188, 156, 0.5);
+}
+
+
+.fa-chevron-right:before {
+     content: "\f054";
+     padding: 0 10px;
+ }
+
+
+input:focus, select:focus, textarea:focus {
+  border-color: #e67e22;
+  outline: none;
+  box-shadow: 0 0 4px rgba(26, 188, 156, 0.5);
+}
+
+.desc_text {
+  min-height: 180px;
+  resize: vertical;
+    font-size: 13px;
+    color: #777;
+    margin-top: 5px;
+    resize: none;
+}
+
+.edit-btn {
+  width: 100%;
+  background-color: #F26B3A;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-images-box{
+    margin-bottom: 20px;
+}
+
+.edit-btn:hover {
+  background-color: #F26B3A;
+  color: white;
+}
+
+.preview-box {
+  width: 300px;
+  height: 300px;
+  border: 2px dashed #c7c7c7;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  margin-top: 5px;
+}
+
+.edit-img-box{
+    position: relative;
+}
+
+/*.preview-box:hover {
+  border-color: #e67e22;
+}*/
+
+#preview-container, #existing-image-container{
+}
+
+#preview-container > .edit-img, #existing-image-container > .edit-img{
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        overflow:hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-img > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.img-file-box {
+    position: relative;
+}
+
+.add-img-upload {
+    display: block;
+    /* margin-top: 15px; */
+    text-align: center;
+    /* background-color: #1abc9c; */
+    color: #F16B3A;
+    border: 1px solid #F16B3A;
+    background-color: white;
+    padding: 15px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    bottom: 0;
+}
+
+.add-img-upload:hover {
+  background-color: #F26B3A;
+  color: white;
+}
+
+#location {
+    margin-bottom: 25px;
+}
+
+.desc_ex {
+    font-size: 12px;
+    color: #b3b3b3;
+}
+
+/* 드롭다운 아이콘 커스터마이징 */
+select {
+  appearance: none;
+  background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23777"><path d="M7 10l5 5 5-5H7z"/></svg>') no-repeat right 16px center;
+  background-size: 12px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .main-e {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .add-btn {
+    font-size: 15px;
+  }
+}
+
+/* 간단한 로드 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform:
+}
