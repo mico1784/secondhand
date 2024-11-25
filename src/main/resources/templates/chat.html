@@ -59,7 +59,7 @@
                 <input type="hidden" id="itemId" th:value="${itemId}">
                 <input type="hidden" id="sessionId" value="">
                 <input type="hidden" id="roomNo" th:value="${roomNo}">
-                <input id="username" th:value="${myName}">
+                <input type="hidden" id="username" th:value="${myName}">
 
                 <!-- 이미지 업로드 필드 -->
                 <input type="file" name="uploadImg" id="uploadImg" accept="image/*">
@@ -73,7 +73,7 @@
         </div>
     </div>
 </div>
-<input id="myNameCheck" th:value="${myName}">
+<input type="hidden" id="myNameCheck" th:value="${myName}">
 <script src="/js/chat.js" defer></script>
 <script src="/js/room.js" defer></script>
 </body>
