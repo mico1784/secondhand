@@ -368,4 +368,14 @@ public class ItemController {
 
         return "item/detail"; // 상세 페이지 반환
     }
+
+    @GetMapping("/item/{id}/exists")
+    public ResponseEntity<Void> checkItemExists(@PathVariable Long id) {
+        Optional<Item> item = itemRepository.findById(id);
+        if (item.isPresent()) {
+            return ResponseEntity.ok().build(); // 존재하면 200 응답
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 존재하지 않으면 404 응답
+        }
+    }
 }

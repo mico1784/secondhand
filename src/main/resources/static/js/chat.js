@@ -19,6 +19,16 @@ $(document).ready(function() {
         }
     });
 
+    // roomNo 값이 없을 경우, chat-window를 비우는 처리
+    if (!roomNo || roomNo.trim() === "") {
+        $(".chat-window").html(`
+            <div class="no-chat-selected">
+                <h3>선택된 채팅방 없음 알림</h3>
+                <p>적당히 수정해주세요</p>
+            </div>
+        `);
+    }
+
     // 세션 ID가 이미 로컬 스토리지에 있으면 사용하고, 없으면 새로운 세션 생성
     if (sessionId) {
         $("#sessionId").val(sessionId);

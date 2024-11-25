@@ -315,11 +315,11 @@ function displayWishList(items) {
         items.forEach(item => {
             const itemRow = `
                 <div class="wishlist-item">
-                    <a href="#" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
+                    <a href="/item/${item.itemId}" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
                         <img src="${item.itemImgURL}" alt="상품 이미지" class="wishlist-img"/>
                     </a>
                     <div class="wishlist-text">
-                        <a href="#" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
+                        <a href="/item/${item.itemId}" onclick="checkItemBeforeRedirect(${item.itemId}, '${item.itemId}')">
                             <strong class="wishlist-title">${item.itemTitle}</strong>
                         </a>
                         <strong class="wishlist-price">${item.formattedPrice} 원</strong><br><br>
