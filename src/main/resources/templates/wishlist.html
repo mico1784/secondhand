@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>wishlist</title>
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+</head>
+<body>
+<div th:each="wl : ${wishlist}">
+  <h4 th:text="${wl.itemTitle}"></h4>
+  <span th:onclick="fetch('/wishlist/delete/[[${wl.id}]]', {method: 'DELETE'})  // id를 경로 변수로 사용
+                .then(r => r.text())
+                .then(() => {
+                    location.reload();
+                })">
+    Delete
+</span>
+</div>
+</body>
+</html>

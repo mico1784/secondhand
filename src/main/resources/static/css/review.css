@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+/* 전체 */
+*{
+  box-sizing: border-box;
+  margin: 0;
+  font-family:"Noto Sans KR", sans-serif;
+}
+li{
+  list-style: none;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+img{
+  max-width: 100%;
+}
+
+button{
+  cursor: pointer;
+}
+
+body{
+  color: #333;
+  width:100%;
+  font-family: "Noto Sans KR", sans-serif;
+
+  /* 헤더 크기 만큼 제외 */
+
+}
+
+table{
+  width: 100%;
+}
+
+.main-container-e{
+    width: 60%;
+    margin: 0 auto;
+
+}
+
+.wrap-e{
+  width: 950px;
+  height: 100%;
+  margin: 0 auto;
+
+}
+
+/* colors - 영역*/
+
+.main-container-e{
+
+}
+
+.wrap-e{
+border: 1px solid green;
+}
+
+section{
+border: 1px solid #9b59b6;
+}
+
+
+/* 리뷰 review */
+
+.rating {
+    direction: rtl;
+    display: inline-block;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 24px;
+    color: grey;
+    cursor: pointer;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: gold;
+}
+
+/* 리뷰 상품 박스 */
+.review-item-box{
+    width: 120%;
+    height: auto;
+    display: flex;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 50px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+/* 카테고리 */
+.re-item-category{
+    display: flex;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.re-item-category > p > span:nth-of-type(1){
+  padding-right: 10px;
+}
+
+
+/* 리뷰 이미지 */
+.review-item-img {
+    width: 250px;
+    height: 250px;
+    margin-right: 50px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.review-item-img > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 리뷰 타이틀 */
+.review-info-text > h3{
+    width: 600px;
+    height: auto;
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+/* 가격 */
+.review-info-text > h4{
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* 리뷰 판매자 */
+
+.review-info-text > span:not(.re-item-date){
+    margin-bottom: 10px;
+}
+
+.review-info-text > span:nth-of-type(1){
+    display: block;
+}
+
+/* 거래지역 */
+.review-info-text > span:nth-of-type(2){
+    display: block;
+}
+
+/* 날짜 */
+.review-info-text > span:nth-of-type(3){
+    display: block;
+}
+/* 리뷰 작성 칸 */
+
+textarea {
+    width: 100%;
+    height: 150px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    resize: none;
+}
+
+
+/* 등록 버튼 */
+
+.review-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #F46C3C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    right: 0;
+    float: right;
+}
+
+button:hover{
+    background-color: #d35400;
+}
