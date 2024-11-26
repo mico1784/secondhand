@@ -1,0 +1,370 @@
+@import url('https://cdn.tailwindcss.com');
+
+/* Body 기본 스타일 */
+.body-k {
+    background-color: #FFFFFF;
+    font-family: sans-serif;
+    color: #111827;
+}
+
+/* 전체 컨테이너 레이아웃 */
+.wrap-k {
+    max-width: 1280px;
+    display: flex;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+/* 사이드바 스타일 */
+.side-k {
+    width: 20%;
+    margin-right: 32px;
+}
+
+.title-k {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+}
+
+.section-k {
+    margin-top: 24px;
+}
+
+.subtitle-k {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.menu-k li a {
+    color: #4B5563;
+    display: block;
+    margin: 8px 0;
+    transition: color 0.2s;
+}
+
+.menu-k li a:hover {
+    color: #111827;
+}
+
+.divider-k {
+    border: 1px solid #E5E7EB;
+    margin: 24px 0;
+}
+
+/* 메인 콘텐츠 */
+.main-k {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 헤더 */
+.header-k {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title-k {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+}
+
+.description-k {
+    color: #6B7280;
+}
+
+/* 신뢰지수 섹션 */
+.trust-k {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px; /* 아래 콘텐츠와 여백 추가 */
+}
+
+.score-k {
+    color: #10B981;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.progress-k {
+    width: 160px;
+    height: 4px;
+    background-color: #E5E7EB;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.fill-k {
+    width: 40%; /* 신뢰지수 바의 비율 */
+    height: 100%;
+    background-color: #10B981;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.goal-k {
+    color: #9CA3AF;
+    margin-left: 8px;
+}
+
+/* 통계 및 카페 자동 등록 컨테이너 */
+.stats-and-register-k {
+    display: flex;
+    gap: 24px; /* 통계와 자동 등록 사이의 간격 */
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+/* 통계 영역 */
+.stats-k {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    background-color: #F3F4F6;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.value-k {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #111827;
+    cursor: pointer;
+}
+
+/* 내 상품 영역 */
+.products-k {
+    margin-top: 24px;
+}
+
+.products-title-k {
+    font-size: 1.125rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.tabs-k {
+    display: flex;
+    border-bottom: 2px solid #E5E7EB;
+    margin-bottom: 8px;
+}
+
+.tab-k {
+    margin-right: 16px;
+    color: #6B7280;
+    padding-bottom: 4px;
+    transition: color 0.2s;
+}
+
+.active-k {
+    color: #111827;
+    border-bottom: 2px solid #111827;
+}
+
+.count-k {
+    color: #6B7280;
+    margin-top: 8px;
+}
+
+.empty-message-k {
+    color: #6B7280;
+    background-color: #F3F4F6;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* 정렬 옵션 */
+.sort-options-k {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.sort-k {
+    position: relative;
+    padding-bottom: 4px;
+    overflow: hidden;
+    transition: color 0.2s;
+}
+
+.sort-k:hover {
+    color: #111827;
+}
+
+/* 정렬 옵션 하단 보더 애니메이션 */
+.sort-k::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #111827;
+    transition: width 0.3s ease-in-out;
+}
+
+.sort-k:hover::after {
+    width: 100%;
+}
+
+/* 이미지 hover 시 확대 효과 */
+.msl-k img {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+    transition: transform 0.3s ease; /* 확대 애니메이션 */
+}
+
+.msl-k img:hover {
+    transform: scale(1.1); /* hover 시 이미지 확대 */
+}
+
+/* 기본 패널 스타일 */
+.purchase-history-panel,
+.sales-history-panel,
+.wishlist-panel,
+.account-panel,
+.review-panel,
+.withdrawal-panel {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 40%;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: right 0.8s ease;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.purchase-history-panel.active,
+.sales-history-panel.active,
+.wishlist-panel.active,
+.account-panel.active,
+.review-panel.active,
+.withdrawal-panel.active {
+  right: 0;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.close-button {
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.search-input {
+  width: 80%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.filter-button {
+  padding: 10px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.no-history-message {
+  text-align: center;
+  color: #888;
+  margin-top: 50px;
+}
+
+.wishlist-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.wishlist-img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.wishlist-title {
+  font-weight: bold;
+}
+
+.wishlist-price {
+  margin-left: auto;
+  color: #888;
+}
+
+.no-wishlist-message,
+.no-review-message {
+  text-align: center;
+  color: #888;
+  margin-top: 50px;
+}
+
+/* 내 상품 리스트 테이블 */
+.msl-k {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.msl-k tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.msl-k td:first-child {
+    width: 100px;
+}
+
+.msl-k td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.msl-k td:nth-child(2) a {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.msl-k td:nth-child(3) {
+    color: #666;
+}
+
+.withdrawal-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  color: #888;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}

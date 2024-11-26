@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/review.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <title>리뷰 작성</title>
+</head>
+<body>
+<div class="fix">
+    <div th:replace="~{nav.html::navbar}"></div>
+</div>
+<div class="main-container-e">
+    <form th:action="@{/item/review}" method="post">
+        <input type="hidden" name="itemId" th:value="${item.id}"/>
+        <input type="hidden" name="seller" th:value="${item.seller}">
+        <input type="hidden" name="userId" th:value="${user.id}"/>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> <!-- CSRF 토큰 추가 -->
+
+        <!-- 리뷰 평점 작성 -->
+        <div class="review-item-box">
+            <!-- 상품 이미지 -->
+            <div class="review-item-img">
+                <img th:src="${item.imgURL}" alt="">
+            </div>
+            <!--상품 -->
+            <div class="review-info-text">
+                <!-- 카테고리 -->
+                <div class="re-item-category">
+                    <p>카테고리: <span th:text="${item.category}">핸드폰</span></p> <!-- 카테고리 추가 -->
+                    <p><span>&#10095;</span></p>
+                    <p>서브 카테고리: <span th:text="${item.subcategory}"></span></p> <!-- 서브 카테고리 추가 -->
+                </div>
+                <!-- 아이템 이름 -->
+                <h3 th:text="${item.title}">아이템 이름</h3>
+                <!-- 가격  -->
+                <h4 th:text="${item.formattedPrice + '원'}">가격</h4>
+                <!-- 판매자 닉네임 -->
+                <span th:text="${user.name}">판매자</span>
+                <!-- 위치 -->
+                <span th:text="${item.location != null ? item.location : '부산광역시 동구 00동'}">위치</span>
+                <!-- 올린 날짜 혹은 시간 -->
+                <span class="re-item-date" th:text="${item.readableUploadTime}">2024.11.05</span>
+            </div>
+        </div>
+
+        <!-- 평점 -->
+        <div>
+            <label>평점:</label>
+            <span class="rating">
+            <input type="radio" id="rating5" name="rating" value="5">
+            <label for="rating5">★</label>
+
+            <input type="radio" id="rating4" name="rating" value="4">
+            <label for="rating4">★</label>
+
+            <input type="radio" id="rating3" name="rating" value="3">
+            <label for="rating3">★</label>
+
+            <input type="radio" id="rating2" name="rating" value="2">
+            <label for="rating2">★</label>
+
+            <input type="radio" id="rating1" name="rating" value="1">
+            <label for="rating1">★</label>
+        </span>
+        </div>
+
+        <!-- 리뷰 작성 칸 -->
+        <textarea name="content" id="content" required placeholder="해당 상품에 대한 리뷰를 작성해 주세요"></textarea>
+
+        <!--리뷰 등록 버튼-->
+        <button class="review-btn" type="submit">리뷰 등록</button>
+    </form>
+
+    <!--<h2>리뷰</h2>
+    <ul>
+        <c:forEach var="review" items="${reviews}">
+            <li>
+                ${review.content} - ${review.user.username}
+                <span>${review.rating}★</span> &lt;!&ndash; 평점 표시 &ndash;&gt;
+                <span>${review.createdAt}</span> &lt;!&ndash; 작성일 표시 &ndash;&gt;
+            </li>
+        </c:forEach>
+    </ul>-->
+
+
+</div>
+<footer th:replace="~{footer.html::footer}"></footer>
+<script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+        const ratingChecked = document.querySelector('input[name="rating"]:checked');
+        const content = document.querySelector('textarea[name="content"]').value.trim(); // 공백 제거 후 값 확인
+
+        // 평점이 선택되지 않았거나, 내용이 공백만 있을 경우
+        if (!ratingChecked) {
+            alert("평점을 선택해 주세요.");
+            e.preventDefault();  // 폼 제출을 막음
+        } else if (content === "") {
+            alert("리뷰 내용이 비어 있습니다. 내용을 입력해주세요.");
+            e.preventDefault();  // 폼 제출을 막음
+        }
+    });
+</script>
+
+</body>
+</html>
