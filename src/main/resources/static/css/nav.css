@@ -191,6 +191,9 @@ nav {
     padding: 10px;
     margin-left: 7rem;
     outline: none;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 5px;
 }
 
 .fas {

@@ -31,7 +31,7 @@ button{
 body{
   color: #333;
   width:100%;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: Arial, sans-serif;
 
   /* 헤더 크기 만큼 제외 */
 
