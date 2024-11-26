@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry){
         registry.addHandler(socketHandler, "/chatting");
 
-        registry.addHandler(roomListWebSocketHandler, "/chat/roomlist/socket").setAllowedOrigins("*");
+        registry.addHandler(roomListWebSocketHandler, "/roomlist");
     }
 }
 
