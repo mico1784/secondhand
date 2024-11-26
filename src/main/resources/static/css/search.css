@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+/* 전체 */
+*{
+  box-sizing: border-box;
+  margin: 0;
+}
+li{
+  list-style: none;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+img{
+  max-width: 100%;
+}
+
+button{
+  cursor: pointer;
+}
+
+body{
+  color: #333;
+  width:100%;
+  height: 100vh;
+  font-family: "Noto Sans KR", sans-serif;
+
+  /* 헤더 크기 만큼 제외 */
+
+}
+
+.nav{
+  border: 1px solid brown;
+}
+
+table{
+  width: 100%;
+}
+
+/* .noto-sans-kr-<uniquifier> {
+  font-family: "Noto Sans KR", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+} */
+
+
+.main-container-e{
+width: 1400px;
+margin: 0 auto;
+}
+
+/* colors - 영역*/
+
+section{
+border: 1px solid #9b59b6;
+}
+
+footer{
+border: 1px solid #e67e22;
+}
+
+/* 검색결과 페이지 */
+
+/* search-conteiner-e */
+.search-container-e{
+  width: 100%;
+  height: 100%;
+}
+
+/* searchForm */
+.search-Form{
+  width: 100%;
+}
+
+.search-Form > input[type="search"]{
+  width: 500px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-right: 10px;
+  border: 1px solid #F26B3B;
+}
+
+.search-Form > .search-page-btn{
+  padding: 10px 20px;
+  border: 1px solid #F26B3B;
+  background-color: white;
+  color: #F26B3B;
+}
+
+/* category */
+
+.search-category{
+  display: flex;
+  padding: 10px 0;
+  margin-bottom: 15px;
+  color: #888;
+}
+
+.search-category > li > span{
+  padding: 0 10px;
+}
+
+.search-category > li > a{
+  padding: 10px;
+}
+
+/* 해당 검색에 대한 결과 */
+
+.search-result{
+  width: 100%;
+  padding: 10px 0 20px 0;
+}
+
+/* search-item-box */
+.search-item-grid{
+  width: 100%;
+  justify-content: center;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 40px 20px;
+}
+
+.search-item-box{
+  border: 1px solid #ccc;
+  width: 214px;
+  height: 340px;
+  padding: 10px;
+  background-color: white;
+  text-decoration: none;
+  position: relative;
+  border-radius: 10px;
+}
+
+.search-item-img{
+  width: 194px;
+  height: 194px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.search-item-img > img{
+  width: 194px;
+  height: 194px;
+}
+
+/* 상품 정보 및 가격*/
+
+.search-item-text{
+  width: 194px;
+  height: 75px;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  padding: 0 5px;
+}
+
+.search-item-title{
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  font-weight: 500;
+  color: #666;
+}
+
+.search-item-price{
+  width: 100%;
+    font-size: 1.7rem;
+    font-weight:500;
+
+}
+
+
+/* 지도 */
+
+.search-location-pin{
+  width: 194px;
+  height: 30px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  margin-top: 10px;
+  text-align: center;
+  bottom: 8px;
+}
+
+.search-location-pin > img{
+  width: 12px;
+  height: 18px;
+  margin-right: 10px;
+}
+
+.search-location-pin > span{
+  font-size: 0.8rem;
+  color: #666;
+  text-align: center;
+}
+
+
+
+/* 페이징 */
+.pagination{
+  display:flex;
+  justify-content:center;
+  list-style-type:none;
+  padding: 10px 0;
+  margin:0;
+  margin-top: 20px;
+}
+
+.pagination > li{
+  margin: 0 4px;
+}
+
+.pagination > li > a{
+  padding: 10px 16px;
+  text-decoration: none;
+  border: 1px solid #ccc;
+  background-color:#f8f9fa;
+  color:#333;
+  transition: background-color 0.3s, color 0.3s;
+  font-size:15px;
+}
+
+.pagination > li.disabled > a{
+  background-color:#e9ecef;
+  color:#aaa;
+  cursor:not-allowed;
+}
+
+.pagination > li.active > a{
+  background-color:#F26B3B;
+  color:white;
+  font-weight:bold;
+}
