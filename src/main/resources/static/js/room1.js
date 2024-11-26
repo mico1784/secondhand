@@ -67,5 +67,5 @@ $(document).ready(function () {
     // 초기 로딩
     loadChatList();
     // n 초마다 업데이트
-    setInterval(loadChatList, 3000);
+    setInterval(loadChatList, 30000);
 });
