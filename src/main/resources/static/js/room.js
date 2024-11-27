@@ -27,7 +27,7 @@ function updateRoomList(rooms) {
     roomListContainer.innerHTML = ""; // 기존 목록 초기화
 
     if (rooms.length === 0) {
-        roomListContainer.innerHTML = "<p>참여 중인 채팅방이 업슬지도???</p>";
+        roomListContainer.innerHTML = "<p>참여 중인 채팅방이 없습니다.</p>";
         return;
     }
 
@@ -56,7 +56,7 @@ function updateRoomList(rooms) {
             <div class="chat-item" data-room-no="${room.roomNo}">
                 <img src="/images/logo.jpg" alt="프로필 이미지" class="profile-img">
                 <div class="chat-info">
-                    <h3>${otherPersonName}</h3> <!-- 상대방의 이름만 표시 -->
+                    <h3>${otherPersonName}</h3>
                     <p>${latestMessageContent}</p>
                     <span class="chat-time">${latestMessageTime}</span>
                 </div>

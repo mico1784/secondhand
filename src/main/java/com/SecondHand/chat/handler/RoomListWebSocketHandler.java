@@ -1,11 +1,14 @@
 package com.SecondHand.chat.handler;
 
+import com.SecondHand.user.User;
+import com.SecondHand.chat.chatMessage.ChatMessage;
+import com.SecondHand.chat.chatMessage.ChatMessageDTO;
+import com.SecondHand.chat.chatMessage.ChatMessageRepository;
 import com.SecondHand.chat.room.Room;
 import com.SecondHand.chat.room.RoomDTO;
 import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.user.UserRepository;
-import com.SecondHand.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,25 +29,22 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final ChatMessageRepository chatMessageRepository;  // 추가된 부분
     private final Set<WebSocketSession> sessions = new HashSet<>();
 
     @Autowired
-    public RoomListWebSocketHandler(RoomRepository roomRepository, ItemRepository itemRepository, UserRepository userRepository, ObjectMapper objectMapper) {
+    public RoomListWebSocketHandler(RoomRepository roomRepository, ItemRepository itemRepository, UserRepository userRepository, ObjectMapper objectMapper, ChatMessageRepository chatMessageRepository) {
         this.roomRepository = roomRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.chatMessageRepository = chatMessageRepository;  // 추가된 부분
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
         sendRoomListToSession(session); // 새 연결에 방 목록 전송
-    }
-
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 클라이언트에서 별도 메시지 처리 로직이 필요하면 추가
     }
 
     @Override
@@ -64,7 +64,11 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
             String buyerName = userRepository.findById(room.getBuyerId())
                     .map(User::getName).orElse("Unknown");
 
-            RoomDTO dto = new RoomDTO(room, null, sellerName, buyerName); // 최신 메시지는 null로 처리
+            // 최신 메시지 가져오기
+            ChatMessage latestMessage = chatMessageRepository.findTopByRoomOrderByTimestampDesc(room);
+            ChatMessageDTO latestMessageDTO = latestMessage != null ? new ChatMessageDTO(latestMessage) : null;
+
+            RoomDTO dto = new RoomDTO(room, latestMessageDTO, sellerName, buyerName); // 최신 채팅 추가
 
             roomDtos.add(dto);
         }
@@ -89,7 +93,11 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
             String buyerName = userRepository.findById(room.getBuyerId())
                     .map(User::getName).orElse("Unknown");
 
-            RoomDTO dto = new RoomDTO(room, null, sellerName, buyerName); // 최신 메시지는 null로 처리
+            // 최신 메시지 가져오기
+            ChatMessage latestMessage = chatMessageRepository.findTopByRoomOrderByTimestampDesc(room);
+            ChatMessageDTO latestMessageDTO = latestMessage != null ? new ChatMessageDTO(latestMessage) : null;
+
+            RoomDTO dto = new RoomDTO(room, latestMessageDTO, sellerName, buyerName); // 최신 채팅 추가
 
             roomDtos.add(dto);
         }
