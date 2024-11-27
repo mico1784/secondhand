@@ -161,44 +161,4 @@ public class MainController {
         }
         return sb.toString();
     }
-
-    @GetMapping("/roomlist")
-    @ResponseBody
-    public Map<String, Object> getRoomList(Principal principal) {
-        if (principal == null) {
-            throw new IllegalArgumentException("사용자가 로그인되어 있지 않습니다.");
-        }
-
-        String username = principal.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        Long userId = user.getId();
-
-        List<RoomDTO> roomListDTO = roomRepository.findByUserId(userId).stream()
-                .map(room -> {
-                    // 최신 채팅 메시지 가져오기
-                    ChatMessage latestMessage = chatMessageRepository
-                            .findFirstByRoomIdOrderByIdDesc(room.getId());
-
-                    // 채팅 메시지가 있다면 ChatMessageDTO로 변환
-                    ChatMessageDTO latestMessageDTO = latestMessage != null
-                            ? new ChatMessageDTO(latestMessage)
-                            : null;
-
-                    // 판매자와 구매자 이름 가져오기
-                    String sellerName = roomService.findUsernameById(room.getSellerId());
-                    String buyerName = roomService.findUsernameById(room.getBuyerId());
-
-                    // RoomDTO에 최신 메시지 포함
-                    return new RoomDTO(room, latestMessageDTO, sellerName, buyerName);
-                })
-                .collect(Collectors.toList());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("roomListDTO", roomListDTO);
-        System.out.println("Response: " + response);
-
-        return response;
-    }
-
 }
