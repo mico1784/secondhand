@@ -39,6 +39,8 @@ public class SocketHandler extends TextWebSocketHandler {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    private final RoomListWebSocketHandler roomListWebSocketHandler; // RoomListWebSocketHandler 주입
+
     private final Map<String, WebSocketSession> sessionMap = new HashMap<>();
     private final Map<String, Map<String, WebSocketSession>> roomSessionMap = new HashMap<>();
     private final Map<String, List<String>> userRoomMap = new HashMap<>();
@@ -91,6 +93,9 @@ public class SocketHandler extends TextWebSocketHandler {
             roomSessionMap.computeIfAbsent(room.getRoomNo(), k -> new HashMap<>())
                     .put(session.getId(), session);
 
+            // 채팅 기록을 클라이언트에게 전송
+            sendChatHistory(session, roomNo);
+
         } catch (Exception e) {
             sendErrorMessageToClient("Room join failed", "An error occurred: " + e.getMessage());
         }
@@ -120,6 +125,9 @@ public class SocketHandler extends TextWebSocketHandler {
             ChatMessage chatMessage = createChatMessage(obj, room, clientSessionId);
             saveChatMessage(chatMessage);
             sendMessageToRoom(room.getRoomNo(), obj, chatMessage, clientSessionId);
+
+            // 메시지 전송 후 방 목록 갱신
+            roomListWebSocketHandler.updateRoomListAfterMessageSent(chatMessage);
 
         } catch (Exception e) {
             sendErrorMessageToClient("Error processing message", "An error occurred while processing the message: " + e.getMessage());
@@ -163,6 +171,7 @@ public class SocketHandler extends TextWebSocketHandler {
         }
     }
 
+    // 이미지 메시지 처리
     private void handleImageMessage(WebSocketSession session, Map<String, Object> obj) {
         String base64Image = (String) obj.get("imageData");
         String userName = (String) obj.get("userName");
@@ -210,30 +219,22 @@ public class SocketHandler extends TextWebSocketHandler {
         // URI에서 roomNo 추출
         String roomNoStr = extractRoomNoFromUri(session.getUri().toString());
         if (roomNoStr == null) {
-            sendErrorMessageToClient("Room number missing", "No room number provided by client.");
+            sendErrorMessageToClient("Room not found", "Room information could not be found.");
             return;
         }
-
-        // 세션에 roomNo 설정
+        System.out.println("ROOM NUM : " + roomNoStr);
         session.getAttributes().put("roomNo", roomNoStr);
-        roomSessionMap.computeIfAbsent(roomNoStr, k -> new HashMap<>()).put(session.getId(), session);
-
-        // 클라이언트에서 sessionId를 보내지 않으면 새로 생성하여 반환
-        String clientSessionId = (String) session.getAttributes().get("sessionId");
-        if (clientSessionId == null) {
-            clientSessionId = session.getId();  // 서버의 WebSocketSession ID 사용
-            session.getAttributes().put("sessionId", clientSessionId);  // 세션에 sessionId 설정
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("type", "getId");
-        response.put("sessionId", clientSessionId);  // 새 sessionId를 클라이언트에 전송
-        sendMessage(session, response);
-
-        // 채팅 기록 전송
-        sendChatHistory(session, roomNoStr);
     }
 
+    private void sendErrorMessageToClient(String errorType, String errorMessage) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("type", "error");
+        errorResponse.put("errorType", errorType);
+        errorResponse.put("errorMessage", errorMessage);
+        // Send the error message to the client
+    }
+
+    // 채팅 기록을 클라이언트로 전송하는 메서드
     private void sendChatHistory(WebSocketSession session, String roomNoStr) {
         Room room = roomRepository.findByRoomNo(roomNoStr);
         if (room != null) {
@@ -250,46 +251,21 @@ public class SocketHandler extends TextWebSocketHandler {
         }
     }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessionMap.remove(session.getId());
-        roomSessionMap.values().forEach(sessions -> sessions.remove(session.getId()));
-        super.afterConnectionClosed(session, status);
-    }
-
+    // URI에서 roomNo를 추출하는 메서드
     private String extractRoomNoFromUri(String uri) {
         try {
-            URI url = new URI(uri);
-            Map<String, String> queryParams = URI.create(uri).getQuery().lines()
-                    .map(param -> param.split("="))
-                    .filter(parts -> parts.length == 2)
-                    .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1]));
-            return queryParams.get("roomNo");
+            URI fullUri = new URI(uri);
+            return fullUri.getPath().split("/")[2];
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    private Map<String, Object> parseJsonToMap(String jsonString) {
+    private Map<String, Object> parseJsonToMap(String msg) {
         try {
-            Object obj = new JSONParser().parse(jsonString);
-            if (obj instanceof Map) {
-                return new HashMap<>((Map<String, Object>) obj);
-            }
+            return (Map<String, Object>) new JSONParser().parse(msg);
         } catch (ParseException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
-    }
-
-    private void sendErrorMessageToClient(String errorMessage, String details) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("type", "error");
-        errorResponse.put("message", errorMessage);
-        errorResponse.put("details", details);
-
-        roomSessionMap.values().forEach(sessions -> sessions.values()
-                .forEach(session -> sendMessage(session, errorResponse)));
     }
 }
