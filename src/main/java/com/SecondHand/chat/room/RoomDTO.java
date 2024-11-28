@@ -14,8 +14,8 @@ public class RoomDTO {
     private String sellerName;
     private Long buyerId;
     private String buyerName;
-    private ChatMessageDTO latestMessage;  // ChatMessageDTO 타입
-    private String lastMessageTime;  // 추가된 lastMessageTime 필드
+    private ChatMessageDTO latestMessage;
+    private String lastMessageTime;
     private Long itemId;
 
     public RoomDTO(Room room, ChatMessageDTO latestMessage, String sellerName, String buyerName) {
