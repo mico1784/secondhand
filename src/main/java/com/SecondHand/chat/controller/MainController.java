@@ -1,19 +1,13 @@
 package com.SecondHand.chat.controller;
 
-import com.SecondHand.chat.chatMessage.ChatMessage;
-import com.SecondHand.chat.chatMessage.ChatMessageDTO;
 import com.SecondHand.chat.chatMessage.ChatMessageRepository;
-import com.SecondHand.chat.handler.SocketHandler;
 import com.SecondHand.chat.room.Room;
-import com.SecondHand.chat.room.RoomDTO;
 import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.chat.room.RoomService;
-import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.S3Service;
 import com.SecondHand.user.User;
 import com.SecondHand.user.UserRepository;
-import com.SecondHand.review.ReviewDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,11 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller

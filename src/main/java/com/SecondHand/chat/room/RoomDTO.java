@@ -1,9 +1,7 @@
 package com.SecondHand.chat.room;
 
-import com.SecondHand.chat.chatMessage.ChatMessage;
 import com.SecondHand.chat.chatMessage.ChatMessageDTO;
-import com.SecondHand.chat.chatMessage.DateUtils;  // DateUtils 임포트
-import com.SecondHand.item.Item;
+import com.SecondHand.chat.chatMessage.DateUtils;  // DateUtils 임포
 import lombok.Data;
 
 @Data

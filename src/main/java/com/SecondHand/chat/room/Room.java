@@ -2,7 +2,6 @@ package com.SecondHand.chat.room;
 
 import com.SecondHand.chat.chatMessage.ChatMessage;
 import com.SecondHand.item.Item;
-import com.SecondHand.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
