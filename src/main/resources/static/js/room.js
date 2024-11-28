@@ -54,7 +54,6 @@ function updateRoomList(rooms) {
         // 채팅 항목 HTML 생성
         const chatItem = `
             <div class="chat-item" data-room-no="${room.roomNo}">
-                <img src="/images/logo.jpg" alt="프로필 이미지" class="profile-img">
                 <div class="chat-info">
                     <h3>${otherPersonName}</h3>
                     <p>${latestMessageContent}</p>

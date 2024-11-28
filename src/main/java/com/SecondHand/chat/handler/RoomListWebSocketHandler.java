@@ -115,22 +115,5 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
             this.type = type;
             this.rooms = rooms;
         }
-
-        // Getters and Setters
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public List<RoomDTO> getRooms() {
-            return rooms;
-        }
-
-        public void setRooms(List<RoomDTO> rooms) {
-            this.rooms = rooms;
-        }
     }
 }
