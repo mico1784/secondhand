@@ -19,7 +19,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Set;
 public class RoomListWebSocketHandler extends TextWebSocketHandler {
 
     private final RoomRepository roomRepository;
-    private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final ChatMessageRepository chatMessageRepository;  // 채팅 메시지 리포지토리
@@ -38,7 +36,6 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     public RoomListWebSocketHandler(RoomRepository roomRepository, ItemRepository itemRepository, UserRepository userRepository, ObjectMapper objectMapper, ChatMessageRepository chatMessageRepository) {
         this.roomRepository = roomRepository;
-        this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
         this.chatMessageRepository = chatMessageRepository;

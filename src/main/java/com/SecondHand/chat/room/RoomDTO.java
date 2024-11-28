@@ -16,7 +16,6 @@ public class RoomDTO {
     private String buyerName;
     private ChatMessageDTO latestMessage;  // ChatMessageDTO 타입
     private String lastMessageTime;  // 추가된 lastMessageTime 필드
-    private String lastMessageTime2;
     private Long itemId;
 
     public RoomDTO(Room room, ChatMessageDTO latestMessage, String sellerName, String buyerName) {
@@ -32,7 +31,6 @@ public class RoomDTO {
             this.latestMessage = latestMessage;
             // timestamp를 포맷팅하여 lastMessageTime에 할당
             this.lastMessageTime = DateUtils.formatTimestamp(latestMessage.getTimestamp());
-            this.lastMessageTime2 = latestMessage.getTimestamp();
         } else {
             this.latestMessage = null;
             this.lastMessageTime = null;
