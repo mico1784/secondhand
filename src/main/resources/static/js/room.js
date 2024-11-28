@@ -31,7 +31,15 @@ function updateRoomList(rooms) {
         return;
     }
 
-    rooms.forEach(room => {
+    // 채팅 내용이 없는 방을 필터링
+    const filteredRooms = rooms.filter(room => room.latestMessage && room.latestMessage.content.trim() !== "");
+
+    if (filteredRooms.length === 0) {
+        roomListContainer.innerHTML = "<p>채팅 내용이 있는 방이 없습니다.</p>";
+        return;
+    }
+
+    filteredRooms.forEach(room => {
         // 현재 로그인된 사용자의 이름을 hidden input에서 가져오기
         const currentUsername = $("#myNameCheck").val();
         // 상대방의 닉네임 (현재 로그인된 사용자와 다른 사용자)

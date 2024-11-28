@@ -19,6 +19,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -75,7 +76,16 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
             roomDtos.add(dto);
         }
 
+        // 최신 메시지 시간을 기준으로 내림차순으로 정렬
+        roomDtos.sort((a, b) -> {
+            // 각 RoomDTO에서 최신 메시지 시간 추출 (String으로 저장된 시간 사용)
+            String timeA = a.getLatestMessage() != null ? a.getLatestMessage().getTimestamp() : "0000-01-01T00:00:00.000000000";
+            String timeB = b.getLatestMessage() != null ? b.getLatestMessage().getTimestamp() : "0000-01-01T00:00:00.000000000";
+            return timeB.compareTo(timeA); // 내림차순 정렬
+        });
+
         String payload = objectMapper.writeValueAsString(new RoomListResponse("updateRoomList", roomDtos));
+
         // 연결된 모든 세션에 채팅방 목록을 전송
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
@@ -83,6 +93,7 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
             }
         }
     }
+
 
     // 채팅방 생성, 메시지 전송, 상태 변경 시 호출하여 목록을 업데이트
     public void updateRoomListAfterMessageSent(ChatMessage chatMessage) throws Exception {
