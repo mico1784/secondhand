@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -53,43 +54,46 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
     }
 
     // 채팅방 목록을 전송하는 메서드
-    public void broadcastRoomList() throws Exception {
-        List<Room> rooms = roomRepository.findAll();
-        List<RoomDTO> roomDtos = new ArrayList<>();
-
-        for (Room room : rooms) {
-            // 각 방에 대해 RoomDTO 객체 생성
-            String sellerName = userRepository.findById(room.getSellerId())
-                    .map(User::getName).orElse("Unknown");
-            String buyerName = userRepository.findById(room.getBuyerId())
-                    .map(User::getName).orElse("Unknown");
-
-            // 최신 메시지 가져오기
-            ChatMessage latestMessage = chatMessageRepository.findTopByRoomOrderByTimestampDesc(room);
-            ChatMessageDTO latestMessageDTO = latestMessage != null ? new ChatMessageDTO(latestMessage) : null;
-
-            RoomDTO dto = new RoomDTO(room, latestMessageDTO, sellerName, buyerName); // 최신 채팅 추가
-
-            roomDtos.add(dto);
-        }
-
-        // 최신 메시지 시간을 기준으로 내림차순으로 정렬
-        roomDtos.sort((a, b) -> {
-            // 각 RoomDTO에서 최신 메시지 시간 추출 (String으로 저장된 시간 사용)
-            String timeA = a.getLatestMessage() != null ? a.getLatestMessage().getTimestamp() : "0000-01-01T00:00:00.000000000";
-            String timeB = b.getLatestMessage() != null ? b.getLatestMessage().getTimestamp() : "0000-01-01T00:00:00.000000000";
-            return timeB.compareTo(timeA); // 내림차순 정렬
-        });
-
-        String payload = objectMapper.writeValueAsString(new RoomListResponse("updateRoomList", roomDtos));
-
-        // 연결된 모든 세션에 채팅방 목록을 전송
+    private void broadcastRoomList() throws Exception {
         for (WebSocketSession session : sessions) {
-            if (session.isOpen()) {
+            try {
+                // 각 세션의 사용자 정보 가져오기
+                String username = session.getPrincipal().getName();
+                User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                Long userId = user.getId();
+
+                // 사용자와 관련된 방만 가져오기
+                List<Room> rooms = roomRepository.findByUserId(userId);
+                List<RoomDTO> roomDtos = new ArrayList<>();
+
+                for (Room room : rooms) {
+                    String sellerName = userRepository.findById(room.getSellerId())
+                            .map(User::getName).orElse("Unknown");
+                    String buyerName = userRepository.findById(room.getBuyerId())
+                            .map(User::getName).orElse("Unknown");
+
+                    ChatMessage latestMessage = chatMessageRepository.findTopByRoomOrderByTimestampDesc(room);
+                    ChatMessageDTO latestMessageDTO = latestMessage != null ? new ChatMessageDTO(latestMessage) : null;
+
+                    RoomDTO dto = new RoomDTO(room, latestMessageDTO, sellerName, buyerName);
+                    roomDtos.add(dto);
+                }
+
+                roomDtos.sort((a, b) -> {
+                    String timeA = a.getLatestMessage() != null ? a.getLatestMessage().getTimestamp() : "0000-01-01T00:00:00.000000000";
+                    String timeB = b.getLatestMessage() != null ? b.getLatestMessage().getTimestamp() : "0000-01-01T00:00:00.000000000";
+                    return timeB.compareTo(timeA);
+                });
+
+                String payload = objectMapper.writeValueAsString(new RoomListResponse("updateRoomList", roomDtos));
                 session.sendMessage(new TextMessage(payload));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
+
 
 
     // 채팅방 생성, 메시지 전송, 상태 변경 시 호출하여 목록을 업데이트
@@ -100,7 +104,13 @@ public class RoomListWebSocketHandler extends TextWebSocketHandler {
 
     // 새로운 연결이 있을 때 방 목록을 보내는 메서드
     private void sendRoomListToSession(WebSocketSession session) throws Exception {
-        List<Room> rooms = roomRepository.findAll();
+        // WebSocketSession에서 Principal 가져오기
+        String username = session.getPrincipal().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        Long userId = user.getId();
+
+        List<Room> rooms = roomRepository.findByUserId(userId);
         List<RoomDTO> roomDtos = new ArrayList<>();
 
         for (Room room : rooms) {
