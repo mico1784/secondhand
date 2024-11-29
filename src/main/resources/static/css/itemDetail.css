@@ -1,0 +1,591 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+/* 전체 */
+*{
+  box-sizing: border-box;
+  margin: 0;
+  font-family:"Noto Sans KR", sans-serif;
+}
+li{
+  list-style: none;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+img{
+  max-width: 100%;
+}
+
+button{
+  cursor: pointer;
+}
+
+body{
+  color: #333;
+  width:100%;
+  font-family: "Noto Sans KR", sans-serif;
+
+  /* 헤더 크기 만큼 제외 */
+
+}
+
+table{
+  width: 100%;
+}
+
+.main-container-e{
+width: 79%;
+margin: 0 auto;
+
+}
+
+.wrap-e{
+  width: 950px;
+  height: 100%;
+  margin: 0 auto;
+
+}
+
+.main-s{
+   width:79%;
+   margin:0 auto;
+}
+
+/* 상세페이지 */
+.item-detail-container{
+    width: 100%;
+    height: 100%;
+/*    padding: 0 0 50px 0;*/
+    margin: 0 auto;
+    margin-bottom: 50px;
+}
+
+/* 상세페이지 뒤로가기 버튼*/
+.list-back-btn{
+    padding: 12px;
+    background-color: white;
+    display: block;
+    width: 170px;
+    text-align: center;
+    color: #363636;
+
+}
+
+.list-back-btn > span:nth-of-type(1){
+  padding-right: 5px;
+}
+
+/* 상세페이지 컨텐츠 전체 */
+.detail-content{
+    width: 100%;
+    height: 100%;
+    border-top: 1px solid #ccc;
+    display: flex;
+    padding-top: 50px;
+    justify-content: center;
+
+}
+
+/* 상품 이미지 */
+
+.detail-img {
+    width: 450px;
+    height: 450px;
+    background-color: #333;
+    overflow: hidden;
+    border-radius: 20px;
+    position: relative;
+    margin-right: 90px;
+ }
+
+.detail-img > img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+
+
+
+/* 솔드아웃, 판매완료 */
+.detail-img > .de-soldout-text{
+  background-color: rgba(73, 73, 73, 0.404) ;
+  position: absolute;
+  color: white;
+  width: 100%;
+  height: 100%;
+}
+
+.de-soldout-text > strong{
+  font-size: 2.6rem;
+  position: absolute;
+    top: 45%;
+    left: 36%;
+}
+
+.detail-text-box{
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+}
+
+/* 컨텐츠 텍스트 */
+.d-text-content{
+    width: 650px;
+    background-color: white;
+    position: relative;
+    /* border: 1px solid; */
+}
+
+/* de-flex-box */
+.de-flex-box{
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1px;
+}
+
+.de-flex-box > .detail-situation{
+  /* float: left; */
+  margin-bottom: 5px;
+}
+
+/* 현재상태 추가 */
+.detail-situation > span{
+    padding: 10px 20px;
+    text-align: center;
+    border: solid black;
+    background-color: white;
+    border-radius: 5px;
+    color: black;
+    font-size: 1rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+
+.de-item-title{
+    width: 90%;
+    height: auto;
+    font-size: 1.7rem;
+    font-weight: 500;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.de-item-price{
+  font-size: 2.3rem;
+}
+
+/*등록일, 거래지역 */
+.item-desc-box{
+    width: 100%;
+    height: 100px;
+    font-size: 1.2rem;
+}
+
+.item-desc-box > .item-upload-date{
+  padding-bottom: 10px;
+}
+
+/*판매중-판매완료 셀렉트 추가*/
+.de-select-flex{
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    height: 100px;
+/*    margin-bottom: 30px;*/
+}
+.detail-select{
+    width: 150px;
+    height: 50px;
+    padding: 10px 5px;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+/* 카테고리 */
+.item-category{
+    display: flex;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.item-category > p > span:nth-of-type(1){
+  padding-right: 10px;
+}
+
+/* btn */
+.detail-actions-btn{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-btn-left{
+  display: flex;
+}
+
+
+.detail-btn-right{
+  display: flex;
+}
+
+.detail-btn{
+      padding: 10px 20px;
+      font-size: 15px;
+}
+
+.point-btn, .chat-btn,.review-btn{
+  color: #e67e22;
+  background-color: white;
+  border: 1px solid #e67e22;
+}
+
+.point-btn:hover, .chat-btn:hover,.review-btn:hover{
+  background-color: #e67e22;
+  color: white;
+}
+
+.del-btn, .edit-btn{
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+
+.del-btn:hover, .edit-btn:hover {
+  background-color: black;
+  color: white;
+  border: 1px solid black;
+}
+
+/* 상품 정보 및 회원의 상품 */
+
+.detail-content-bot{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 30px;
+    border-top: 1px solid #ccc;
+    margin-bottom: 50px;
+    border-bottom: 1px solid #ccc;
+}
+
+/*상품정보 부분 */
+.de-text-left{
+    width: 860px;
+    height: 100%;
+    padding-top: 20px;
+    padding-right: 40px;
+}
+
+/* 상품설명 나오는 곳 */
+.left-text-box{
+    width:100%;
+    height: 500px;
+}
+
+
+
+
+.de-text-left > h4{
+  font-size: 1.2rem;
+  padding-bottom: 15px;
+  border-bottom: 1px #ccc solid;
+}
+
+/* 등록일 */
+.item-upload-date{
+  padding-bottom: 10px;
+}
+
+.line {
+    border-right: 1px solid #ccc;
+}
+
+
+/*회원정보 부분*/
+.de-text-right{
+    width: 500px;
+    height: 100%;
+    float: right;
+    padding-left: 40px;
+    padding-top: 20px;
+    margin-bottom: 35px;
+}
+
+.de-text-right > h4{
+  font-size: 1.2rem;
+  padding-bottom: 15px;
+}
+
+/* 우측 하단의 판매 회원 정보 */
+.member-box{
+  width: 100%;
+  height: 110px;
+  border-top: 1px solid #ccc;
+  padding:15px 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.member-img{
+  border-radius: 50px;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+}
+
+.member-img > img{
+  width: 80px;
+  height: 80px;
+  object-fit:cover;
+  text-align: center;
+}
+
+.member-text{
+    width: 280px;
+
+}
+
+.member-text > span:not(:nth-of-type(2), :nth-of-type(3)),
+.member-a{
+  display: block;
+}
+
+.member-text > a{
+    margin-right: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.user-id{
+    margin-bottom: 10px;
+    font-weight: 900;
+    color: #888;
+}
+
+.member-text > span:nth-of-type(3){
+  margin-left: 5px;
+}
+
+/* 구매자 리뷰 */
+
+.review-box{
+  width: 100%;
+  border: 1px solid #b3b3b3;
+  padding: 10px;
+  margin: 0px;
+  }
+
+  .detail-item-review{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+
+  .rev-profile-content{
+    display: flex;
+    align-items: flex-start;
+    padding: 5px;
+    border-bottom: 1px solid #b3b3b3;
+    margin-bottom: 10px;
+  }
+
+  .review-writer{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .rev-profile-box{
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .review-profile-img{
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    border-radius: 50px;
+    margin-right: 10px;
+  }
+
+  .review-profile-img > img{
+    object-fit: cover;
+    width: 60px;
+    height: 60px;
+  }
+
+  .d-add-review-btn{
+    width: 100%;
+    padding: 5px 0;
+    background-color: white;
+    border: 1px solid #b3b3b3;
+    color: #b3b3b3;
+  }
+
+  /* 광고 ad */
+
+
+  .slider-container {
+      position: relative;
+      width: 100%; /* 전체 너비 */
+      overflow: hidden; /* 넘치는 부분 숨기기 */
+      padding: 0 20px; /* 좌우 여백 */
+  }
+
+  .item-slider {
+      display: flex;
+      transition: transform 0.4s ease-in-out; /* 더 부드러운 슬라이드 전환 */
+      gap: 27.5px; /* 카드 간격 */
+  }
+
+  .card {
+      flex: 0 0 auto;
+      max-width: 200px;
+      min-width: 190px; /* 최소 너비 */
+      background-color: #fff; /* 배경색 */
+      border-radius: 10px; /* 둥근 모서리 */
+      overflow: hidden; /* 넘치는 내용 숨김 */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 그림자 */
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 애니메이션 */
+      display: flex; /* 카드 내용을 플렉스로 정렬 */
+      flex-direction: column; /* 세로로 정렬 */
+      justify-content: space-between; /* 위아래 내용 균등 배치 */
+      height: 99%; /* 카드 높이 균일 */
+  }
+
+
+
+  /* 카드 이미지 */
+  .card > a > img {
+      width: 190px; /* 너비 */
+      height: 180px; /* 높이 */
+      border-radius: 8px 8px 0 0; /* 상단 둥근 모서리 */
+      transition: transform 0.3s ease; /* 부드러운 확대 */
+  }
+
+  .card > a > img:hover {
+      transform: scale(1.05); /* 확대 효과 */
+  }
+
+  /* 텍스트 박스 */
+  .text-box {
+      padding: 10px; /* 내부 여백 */
+      display: flex; /* 플렉스 */
+      flex-direction: column; /* 세로 배치 */
+      gap: 20px; /* 요소 간 간격 */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+  }
+
+  /* 텍스트 스타일 */
+  .text-box h5 {
+      font-size: 16px; /* 폰트 크기 */
+      font-weight: bold; /* 굵은 글씨 */
+      margin: 4px 0; /* 마진 */
+      color: #333; /* 색상 */
+  }
+
+  .text-box span {
+      font-size: 12px; /* 폰트 크기 */
+      font-weight: 500; /* 폰트 굵기 */
+      color: black; /* 강조된 색상 */
+  }
+
+  .text-box > .upload-time {
+      font-size: 10px; /* 작은 폰트 */
+  }
+
+  /* 슬라이드 버튼 스타일 */
+  .slide-prev, .slide-next {
+      position: absolute; /* 위치 절대적 */
+      top: 50%; /* 중간 정렬 */
+      transform: translateY(-50%); /* 정렬 보정 */
+      font-size: 2rem; /* 폰트 크기 */
+      color: #888; /* 색상 */
+      background: none; /* 배경 없음 */
+      border: none; /* 테두리 없음 */
+      cursor: pointer; /* 클릭 가능 커서 */
+      transition: color 0.3s ease; /* 색상 전환 */
+      z-index: 10; /* 우선순위 높음 */
+  }
+
+  .slide-prev {
+      left: 0%; /* 왼쪽 위치 */
+  }
+
+  .slide-next {
+      right: 0%; /* 오른쪽 위치 */
+  }
+
+  .slide-prev:hover, .slide-next:hover {
+      color: #333; /* hover 시 색상 */
+  }
+
+ .ctbox {
+     display: flex; /* 플렉스 컨테이너 */
+     justify-content: space-between; /* 좌우 분배 */
+     margin: 20px auto;
+     width: 97%;
+ }
+
+ .ctbox > a {
+     font-size:11px;
+     color: gray;
+ }
+
+ /* 상품 박스 텍스트 */
+ .ptbox {
+     display: flex; /* 플렉스 */
+     justify-content: space-between; /* 좌우 분배 */
+      align-items: center; /* 세로 정렬 추가 */
+      gap: 10px; /* 요소 간격 추가 */
+      margin-top: 5px; /* 약간의 위 여백 추가 */
+ }
+
+.hidden-review {
+    display: none;
+}
+
+.plus {
+   text-align: center;
+}
+
+#review-toggle-text {
+   font-size: 14px;
+   font-weight:bold;
+}
+
+#heart-icon {
+    transition: color 0.3s ease;
+    color: white;
+
+}
+#heart-icon.active {
+    color: red; /* 찜하기 완료 상태 */
+}
+
+
+
+
+

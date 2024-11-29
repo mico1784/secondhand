@@ -1,0 +1,85 @@
+<div th:fragment="navbar" class="navbar">
+  <nav>
+    <!-- 로그인 및 회원가입 링크 -->
+    <div class="lpbox">
+      <li th:if="${isLoggedIn == null || !isLoggedIn}"><a th:href="@{/login}">로그인</a></li> <!-- 비로그인 상태에서 로그인 링크 표시 -->
+      <li th:if="${isLoggedIn == null || !isLoggedIn}"><a th:href="@{/register}">회원가입</a></li> <!-- 비로그인 상태에서 회원가입 링크 표시 -->
+      <li th:if="${isLoggedIn}">
+        <!-- 로그인 상태에서 사용자 이름 표시 -->
+        <strong><span th:text="${isGoogleUser} ? ${name + ' 님'} : ${user.name + ' 님'}"></span></strong> <!-- 구글 로그인 여부에 따라 사용자 이름 표시 -->
+        <a th:href="@{/logout}">로그아웃</a> <!-- 로그아웃 링크 -->
+      </li>
+    </div>
+
+    <!-- 네비게이션 메뉴 -->
+    <div class="menu-top">
+      <!-- 로고 -->
+      <div class="logo">
+        <img src="/images/logo.jpg"> <!-- 로고 이미지 -->
+        <a href="/home" class="logo">SecondHand</a> <!-- 메인 페이지로 이동하는 로고 링크 -->
+      </div>
+
+      <!-- 검색창 -->
+      <form class="search-btn" method="POST">
+        <input type="search" id="searchText" name="searchText" placeholder="상품을 검색해주세요@" th:value="${searchText}"> <!-- 검색 입력 필드 -->
+        <i class="fas fa-search"></i> <!-- 검색 아이콘 -->
+      </form>
+      <script src="/js/search.js" defer></script> <!-- 검색 스크립트 -->
+
+      <!-- 네비게이션 링크 -->
+      <div class="join" id="#">
+        <li><a href="/item">판매</a><i class="fa-solid fa-store"></i></li> <!-- 판매하기 페이지 링크 -->
+        <li><a href="/list?category=">구매</a><i class="fa-solid fa-store"></i></li> <!-- 구매하기 페이지 링크 -->
+        <li><a href="/chat">채팅</a><i class="fa-brands fa-line"></i></li>
+        <li><a href="/mypage">마이</a><i class="fa-regular fa-user"></i></li> <!-- 마이페이지 링크 -->
+
+      </div>
+    </div>
+
+    <!-- 메뉴 하단 (현재 주석 처리됨) -->
+    <div class="menu-bot">
+      <!-- 주석된 코드 영역, 필요시 활성화 가능 -->
+      <!--
+      <div class="Category">
+        <div class="hamburger-button">
+          <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        <a>안녕하세요</a>
+      </div>
+      -->
+    </div>
+  </nav>
+
+  <!-- 드롭다운 메뉴 -->
+  <div class="dropdown-menu" id="dropdownMenu">
+    <!-- 첫 번째 컬럼: 패션잡화 -->
+    <div class="column">
+      <h3>패션잡화</h3>
+      <a href="#">뷰티</a>
+      <a href="#">출산/유아동</a>
+      <a href="#">모바일/네트워크</a>
+      <a href="#">가전제품</a>
+      <a href="#">노트북/PC</a>
+    </div>
+
+    <!-- 두 번째 컬럼: 운동화 -->
+    <div class="column">
+      <h3>운동화</h3>
+      <a href="#">런닝화/워킹화</a>
+      <a href="#">단화/캐주얼화</a>
+      <a href="#">기타 운동화/관련 용품</a>
+    </div>
+
+    <!-- 세 번째 컬럼: 가방/핸드백 -->
+    <div class="column">
+      <h3>가방/핸드백</h3>
+      <a href="#">숄더백</a>
+      <a href="#">크로스백</a>
+      <a href="#">토트백</a>
+    </div>
+  </div>
+</div>
