@@ -23,8 +23,8 @@ public class WIshListService {
                              Authentication auth){
         WishList wishlist = new WishList();
 
-        CustomUser user = (CustomUser)auth.getPrincipal();
-        var userdata = userRepository.findByUsername(user.getUsername());
+        String userTest = auth.getName();
+        var userdata = userRepository.findByUsername(userTest);
         wishlist.setUser(userdata.get());
 
         wishlist.setItemId(itemId);

@@ -36,11 +36,12 @@ public class WIshListController {
             }
 
             if (itemId == null || itemTitle == null || itemImgURL == null || itemPrice == null || itemUploadedDate == null) {
-                return "redirect:/item"; // 잘못된 값이 있을 경우 상품 목록 페이지로 리다이렉트
+                return "redirect:/item/" + itemId; // 잘못된 값이 있을 경우 상품 목록 페이지로 리다이렉트
             }
 
-            CustomUser user = (CustomUser) auth.getPrincipal();
-            var userdata = userRepository.findByUsername(user.getUsername());
+            String userTest = auth.getName();
+            System.out.println(userTest);
+            var userdata = userRepository.findByUsername(userTest);
             Optional<WishList> existingItem = wishListRepository.findByItemIdAndUser(itemId, userdata.get());
 
             if (existingItem.isPresent()) {
@@ -53,7 +54,7 @@ public class WIshListController {
         } catch (Exception e) {
             // 오류 발생 시 사용자에게는 아무 메시지나 페이지를 보내지 않고, 콘솔에만 출력
             e.printStackTrace();
-            return "redirect:/item"; // 상품 목록 페이지로 리다이렉트
+            return "redirect:/item/" + itemId; // 상품 목록 페이지로 리다이렉트
         }
     }
 

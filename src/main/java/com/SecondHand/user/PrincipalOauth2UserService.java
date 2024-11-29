@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
@@ -50,6 +52,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .password(password)
                     .email(email)
                     .role(role)
+                    .phoneNumber(generateRandomPhoneNumber())
+                    .gender("")
+                    .address("")
                     .isGoogleUser(true) // 구글 사용자 여부 설정
                     .googleId(googleId) // 구글 ID 설정
                     .name(username) // 이름 설정
@@ -89,5 +94,17 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             suffix++;
         }
         return username;
+    }
+
+    private String generateRandomPhoneNumber() {
+        Random random = new Random();
+        StringBuilder phoneNumber = new StringBuilder("0"); // 첫 번째 자리는 0으로 고정
+
+        // 나머지 10자리는 랜덤 숫자
+        for (int i = 0; i < 10; i++) {
+            phoneNumber.append(random.nextInt(10)); // 0~9 사이의 숫자 추가
+        }
+
+        return phoneNumber.toString();
     }
 }
