@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
+
+    void deleteByRoom(Room room);
     List<ChatMessage> findByRoomOrderByTimestampAsc(Room room);
     ChatMessage findFirstByRoomIdOrderByIdDesc(Long roomId);
 }

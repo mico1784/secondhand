@@ -1,7 +1,11 @@
 package com.SecondHand.user;
 
+import com.SecondHand.chat.chatMessage.ChatMessageRepository;
+import org.springframework.transaction.annotation.Transactional;
+import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.Purchase.PurchaseDTO;
 import com.SecondHand.Purchase.PurchaseRepository;
+import com.SecondHand.chat.room.Room;
 import com.SecondHand.item.Item;
 import com.SecondHand.item.ItemRepository;
 import com.SecondHand.item.ItemService;
@@ -13,6 +17,7 @@ import com.SecondHand.wishList.WishListRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +50,12 @@ public class UserController {
     private final ReviewRepository reviewRepository;
     private final PurchaseRepository purchaseRepository;
     private final S3Service s3Service;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
     // 홈 페이지로 리다이렉트
     @GetMapping("/")
@@ -436,6 +447,7 @@ public class UserController {
 
     // 회원 탈퇴 처리
     @PostMapping("/deleteAccount")
+    @Transactional  // 트랜잭션 처리
     public String deleteAccount(Principal principal, HttpSession session, RedirectAttributes redirectAttributes) {
         if (principal == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "로그인 후에 회원탈퇴를 진행할 수 있습니다.");
@@ -452,6 +464,18 @@ public class UserController {
             purchaseRepository.deleteByBuyer(user);
             wishListRepository.deleteByUser(user);
             itemRepository.deleteBySeller(user);
+
+            // 사용자 참여한 채팅방 및 채팅 메시지 삭제
+            List<Room> userRooms = roomRepository.findByUserId(user.getId());
+            for (Room room : userRooms) {
+                // 해당 채팅방의 모든 메시지 삭제
+                chatMessageRepository.deleteByRoom(room);  // 채팅 메시지 삭제
+            }
+
+            // 채팅방 삭제
+            for (Room room : userRooms) {
+                roomRepository.delete(room);  // 채팅방 삭제
+            }
 
             // 사용자 삭제
             userRepository.delete(user);
