@@ -5,7 +5,7 @@
 *{
   box-sizing: border-box;
   margin: 0;
-  font-family:"Noto Sans KR", sans-serif;
+  font-family: Arial, sans-serif;
 }
 li{
   list-style: none;
@@ -28,7 +28,7 @@ button{
 body{
   color: #333;
   width:100%;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: Arial, sans-serif;
 
   /* 헤더 크기 만큼 제외 */
 
@@ -39,7 +39,7 @@ table{
 }
 
 .main-container-e{
-    width: 60%;
+    width: 80%;
     margin: 0 auto;
 
 }
@@ -91,7 +91,7 @@ border: 1px solid #9b59b6;
 
 /* 리뷰 상품 박스 */
 .review-item-box{
-    width: 120%;
+    width: 100%;
     height: auto;
     display: flex;
     border-radius: 15px;

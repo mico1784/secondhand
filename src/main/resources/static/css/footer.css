@@ -7,7 +7,7 @@
 }
 
 .container {
-    max-width: 1200px; /* 최대 너비 설정 */
+    max-width: 80%; /* 최대 너비 설정 */
     margin: 0 auto; /* 중앙 정렬 */
     padding: 0 1rem; /* 좌우 여백 */
     display: flex; /* 플렉스 박스 사용 */

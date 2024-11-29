@@ -18,7 +18,7 @@ document.getElementById("imgFile").addEventListener("change", function(event) {
 
       // 새 이미지 선택 시 previewBox 숨기기
       if (previewBox) {
-        previewBox.style.display = "none"; 
+        previewBox.style.display = "none";
       }
 
       // 수정 페이지에서는 기존 이미지 숨기기
@@ -40,7 +40,7 @@ document.getElementById("imgFile").addEventListener("change", function(event) {
 
     // 미리보기 박스가 있으면 다시 표시
     if (previewBox) {
-      previewBox.style.display = "block";
+      previewBox.style.display = "flex"; // flex로 설정하여 기존 스타일에 맞게 표시
     }
   }
 });

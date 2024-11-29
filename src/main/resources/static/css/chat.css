@@ -19,6 +19,11 @@ body {
     height: 100vh;
 }
 
+.date-line{
+    border: 0.1px solid #0000001f;
+    width: 100%;
+}
+
 /* 전체 채팅 컨테이너 */
 .chat-container {
     display: flex;

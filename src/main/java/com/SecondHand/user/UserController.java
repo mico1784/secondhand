@@ -1,7 +1,7 @@
 package com.SecondHand.user;
 
-
 import com.SecondHand.chat.chatMessage.ChatMessageRepository;
+import org.springframework.transaction.annotation.Transactional;
 import com.SecondHand.chat.room.RoomRepository;
 import com.SecondHand.Purchase.PurchaseDTO;
 import com.SecondHand.Purchase.PurchaseRepository;
@@ -25,7 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,8 +50,12 @@ public class UserController {
     private final ReviewRepository reviewRepository;
     private final PurchaseRepository purchaseRepository;
     private final S3Service s3Service;
-    private final ChatMessageRepository chatMessageRepository;
-    private final RoomRepository roomRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
     // 홈 페이지로 리다이렉트
     @GetMapping("/")
