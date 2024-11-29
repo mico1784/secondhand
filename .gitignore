@@ -40,9 +40,8 @@ out/
 #환경 변수 파일
 .env
 application-aws.properties
-
+application.properties
+src/main/resources/templates/item.html
+src/main/resources/templates/itemEdit.html
 # 개인정보 파일
 hi.p12
-
-item.html
-itemEdit.html

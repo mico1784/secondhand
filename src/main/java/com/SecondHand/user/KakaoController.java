@@ -26,6 +26,9 @@ public class KakaoController {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     @Qualifier("principalDetailsService")
     private UserDetailsService userDetailsService;
 
@@ -59,15 +62,7 @@ public class KakaoController {
             System.out.println("Kakao User Info - ID: " + kakaoId + ", Username: " + kakaoUsername);
 
             // 카카오 ID로 사용자 조회, 없으면 새로 생성
-            User kakaoUser = userRepository.findByKakaoId(kakaoId)
-                    .orElseGet(() -> {
-                        User newUser = new User();
-                        newUser.setUsername(kakaoUsername); // 사용자 이름 설정
-                        newUser.setName(kakaoUsername); // 사용자 이름 설정
-                        newUser.setKakaoId(kakaoId); // 카카오 ID 설정
-                        newUser.setRole("USER"); // 기본 역할 설정
-                        return userRepository.save(newUser); // 저장
-                    });
+            User kakaoUser = userService.saveOrUpdateKakaoUser(kakaoId, kakaoUsername);
 
             // SecurityContext에 인증 정보 설정
             CustomUser customUser = new CustomUser(

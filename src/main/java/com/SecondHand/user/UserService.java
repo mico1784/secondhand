@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -98,7 +99,11 @@ public class UserService {
             User newUser = new User();
             newUser.setUsername("kakao_" + kakaoId); // 고유한 카카오 ID를 username으로 설정
             newUser.setName(nickname);
+            newUser.setEmail(generateRandomPhoneNumber()+ "@kakao.com");
             newUser.setPassword(""); // 소셜 로그인 사용자는 비밀번호를 비워둠
+            newUser.setPhoneNumber(generateRandomPhoneNumber());
+            newUser.setGender("");
+            newUser.setAddress("");
             newUser.setCreatedAt(LocalDateTime.now());
             userRepository.save(newUser);
             return newUser;
@@ -116,30 +121,6 @@ public class UserService {
         return passwordEncoder.encode(rawPassword);
     }
 
-    // 구글 사용자 저장 또는 업데이트 메서드
-    public User saveOrUpdateGoogleUser(String googleId, String name, String email) {
-        Optional<User> existingUser = userRepository.findByGoogleId(googleId);
-
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            user.setName(name);
-            user.setEmail(email);
-            userRepository.save(user); // 업데이트된 사용자 정보 저장
-            return user;
-        } else {
-            // 새로운 구글 사용자 생성 및 저장
-            User newUser = new User();
-            newUser.setGoogleId(googleId); // 고유한 구글 ID를 저장
-            newUser.setUsername("google_" + googleId); // 구글 ID를 포함한 username 설정
-            newUser.setName(name);
-            newUser.setEmail(email);
-            newUser.setPassword(""); // 소셜 로그인 사용자는 비밀번호를 비워둠
-            newUser.setGoogleUser(true);
-            newUser.setCreatedAt(LocalDateTime.now());
-            userRepository.save(newUser);
-            return newUser;
-        }
-    }
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -203,5 +184,16 @@ public class UserService {
 
         // 사용자가 판매한 아이템 삭제
         itemRepository.deleteBySeller(user);
+    }
+    private String generateRandomPhoneNumber() {
+        Random random = new Random();
+        StringBuilder phoneNumber = new StringBuilder("0"); // 첫 번째 자리는 0으로 고정
+
+        // 나머지 10자리는 랜덤 숫자
+        for (int i = 0; i < 10; i++) {
+            phoneNumber.append(random.nextInt(10)); // 0~9 사이의 숫자 추가
+        }
+
+        return phoneNumber.toString();
     }
 }
