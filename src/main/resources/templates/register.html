@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link href="/css/register.css" rel="stylesheet">
+    <link rel="icon" type="image/jpg" href="/images/logo.jpg" />
+</head>
+<body>
+
+<div class="logo">
+    <a href="/home" class="logo">SecondHand</a>
+</div>
+
+<div class="register-container">
+    <h2>회원가입</h2>
+
+    <!-- 에러 메시지를 표시하는 부분 추가 -->
+    <div class="error-message" style="color: red;">
+        <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    </div>
+
+    <form action="/add" method="POST" class="register-form" onsubmit="return validateForm()">
+        <label for="name">닉네임</label>
+        <input type="text" id="name" name="name" required placeholder="닉네임을 입력하세요" pattern=".{2,20}" title="닉네임은 2자 이상 20자 이하여야 합니다.">
+
+        <label for="username">아이디</label>
+        <input type="text" id="username" name="username" required placeholder="아이디를 입력하세요" maxlength="8" title="아이디는 8자리 이하로 입력해야 합니다.">
+        <span id="username-error" style="color: red;"></span>
+        <button class="id-check-btn"  type="button" onclick="checkUsername()">아이디 중복 확인</button>
+
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" name="password" required placeholder="비밀번호 (8자리 이상)" minlength="8" oninput="validatePasswordMatch()">
+        <span id="password-strength" style="color: red;"></span> <!-- 비밀번호 강도 메시지 추가 -->
+
+        <label for="confirm-password">비밀번호 확인</label>
+        <input type="password" id="confirm-password" name="confirm-password" required placeholder="비밀번호를 다시 입력하세요" oninput="validatePasswordMatch()">
+        <span id="password-error" style="color: red;"></span>
+
+        <label for="email">이메일</label>
+        <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="유효한 이메일 주소를 입력하세요.">
+
+        <label for="age">나이</label>
+        <input type="number" id="age" name="age" required placeholder="생년월일 ex) 19950430" min="19000101" max="20231231">
+
+        <label for="phoneNumber">전화번호</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required
+               placeholder="전화번호를 입력하세요 (숫자만)"
+               pattern="^010\d{7,8}$"
+               title="전화번호는 010으로 시작하고 10자리 또는 11자리 숫자여야 합니다. 예: 01012345678">
+
+
+        <label for="gender">성별</label>
+        <select id="gender" name="gender" required>
+            <option value="male">남성</option>
+            <option value="female">여성</option>
+            <option value="other">기타</option>
+        </select>
+
+        <label for="address">주소</label>
+        <input type="text" id="address" name="address" required placeholder="주소를 입력하세요">
+
+        <input type="submit" id="submit-button" value="회원가입" class="submit-button">
+    </form>
+</div>
+
+<div class="footer-links">
+    <p>Copyright © SecondHand Corp. All Rights Reserved.</p>
+</div>
+
+<script>
+    // 아이디 중복 확인 함수는 그대로 유지
+    function checkUsername() {
+        const username = document.getElementById('username').value;
+        const errorMessage = document.getElementById('username-error');
+        if (!username) {
+            errorMessage.textContent = "아이디를 입력해주세요.";
+            return;
+        }
+
+        fetch(`/check-username?username=${username}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.available) {
+                errorMessage.textContent = "사용 가능한 아이디입니다.";
+                errorMessage.style.color = "green";
+            } else {
+                errorMessage.textContent = "이미 사용 중인 아이디입니다.";
+                errorMessage.style.color = "red";
+            }
+        })
+        .catch(error => {
+            console.error("아이디 중복 검사 중 오류 발생:", error);
+            errorMessage.textContent = "서버 오류. 다시 시도해주세요.";
+            errorMessage.style.color = "red";
+        });
+    }
+
+    // 비밀번호 강도 검사 함수
+    function checkPasswordStrength(password) {
+        const passwordStrength = document.getElementById('password-strength');
+        if (password.length < 8) {
+            passwordStrength.textContent = "비밀번호가 너무 짧습니다. (최소 8자리)";
+            passwordStrength.style.color = "red";
+        } else if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+            passwordStrength.textContent = "비밀번호는 대문자, 소문자, 숫자가 각각 하나 이상 포함되어야 합니다.";
+            passwordStrength.style.color = "orange";
+        } else {
+            passwordStrength.textContent = "안전한 비밀번호입니다.";
+            passwordStrength.style.color = "green";
+        }
+    }
+
+    // 비밀번호 일치 여부 실시간 검사 함수
+    function validatePasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const passwordError = document.getElementById('password-error');
+        checkPasswordStrength(password);
+
+        if (password && confirmPassword) {
+            if (password === confirmPassword) {
+                passwordError.textContent = "비밀번호가 일치합니다.";
+                passwordError.style.color = "green";
+            } else {
+                passwordError.textContent = "비밀번호가 일치하지 않습니다.";
+                passwordError.style.color = "red";
+            }
+        } else {
+            passwordError.textContent = "";
+        }
+    }
+
+    // 전체 폼 유효성 검사 함수
+    function validateForm() {
+        // 폼 제출 전에 비밀번호 및 다른 필드가 유효한지 검사
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (password !== confirmPassword) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return false; // 폼 제출 방지
+        }
+        return true; // 폼 제출 허용
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> <!-- 페이지 인코딩 설정 -->
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"> <!-- 반응형 웹 설정 -->
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"> <!-- Internet Explorer 호환성 설정 -->
+  <title>List</title> <!-- 페이지 제목 -->
+  <link href="/css/list1.css" rel="stylesheet"> <!-- 리스트 페이지 전용 스타일시트 -->
+  <link rel="stylesheet" href="/css/nav.css"> <!-- 네비게이션 스타일시트 -->
+  <link rel="stylesheet" href="/css/footer.css"> <!-- 네비게이션 스타일시트 -->
+  <script src="/js/nav.js" defer></script> <!-- 네비게이션 관련 JavaScript -->
+  <link rel="icon" type="image/jpg" href="/images/logo.jpg" /> <!-- 브라우저 탭 아이콘 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome 아이콘 -->
+</head>
+<body>
+<div class="main-container-e">
+  <div class="fix">
+    <div class="nav" th:replace="~{nav.html::navbar}"></div> <!-- 네비게이션 바 삽입 -->
+  </div>
+
+  <!-- 리스트 필터 -->
+  <div th:replace="~{listcg.html::listcg}"></div> <!-- 외부 템플릿을 불러와 리스트 필터를 삽입 -->
+
+  <!-- 아이템 목록 컨테이너 -->
+  <div th:fragment="list1" class="list-container">
+    <h1 id="header-title"></h1> <!-- 페이지 제목 -->
+
+    <!-- 아이템 목록 -->
+    <div id="item-list-box" class="item-list-box">
+      <!-- 각 아이템 박스 -->
+      <a th:href="@{/item/{id}(id=${i.id})}" id="item-link" class="item-list-box-test" th:each="i : ${items}">
+        <div id="item-list" class="item-list">
+          <!-- 아이템 이미지 -->
+          <div class="item-list-img">
+            <img th:src="${i.imgURL}" alt="이미지"> <!-- 아이템 이미지 경로 -->
+          </div>
+          <div class="list-text-box">
+            <!-- 아이템 제목 -->
+            <h4 class="list-title" th:text="${i.title}" id="item-title">타이틀 타이틀텀블러텀블러</h4>
+            <!-- 아이템 가격 -->
+            <h4 th:text="${i.formattedPrice + '원'}" id="item-price">4500원</h4>
+            <!-- 업로드 시간 -->
+            <h4 class="upload-time" th:text="${i.readableUploadTime}">업로드 시간입니다</h4>
+          </div>
+          <!-- 거래 지역 표시 -->
+          <span id="" class="location-pin">
+            <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0yRxr%2FbtsKmL5rJa7%2FkUXcovSEN2t6dSziK95FTk%2Fimg.png" alt="지도 핀">
+            <p id="location" th:text="${i.location != null ? i.location : '부산광역시 동구 00동'}">부산광역시 동구 00동</p> <!-- 지역 정보 -->
+          </span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 페이지 네비게이션 -->
+  <div th:if="${totalPage > 1}" id="pagination-container" class="pagination-container">
+    <nav>
+      <ul class="pagination" id="pagination">
+        <!-- 이전 페이지 버튼 -->
+        <li th:class="${currentPage == 1} ? 'disabled'" id="prev-page">
+          <a th:href="${currentPage == 1 ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage - 1) : '/list?page=' + (currentPage - 1))}">
+            prev
+          </a>
+        </li>
+        <!-- 페이지 번호 -->
+        <li th:each="page : ${#numbers.sequence(1, totalPage)}"
+            th:class="${page == currentPage} ? 'active'" id="page-item">
+          <a th:href="${category != null ? '/list?category=' + category + '&page=' + page : '/list?page=' + page}" th:text="${page}"></a>
+        </li>
+        <!-- 다음 페이지 버튼 -->
+        <li th:class="${currentPage >= totalPage} ? 'disabled'" id="next-page">
+          <a th:href="${currentPage >= totalPage ? 'javascript:void(0);' : (category != null ? '/list?category=' + category + '&page=' + (currentPage + 1) : '/list?page=' + (currentPage + 1))}">
+            next
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+<script src="/js/listcg.js" defer></script> <!-- 리스트 필터 관련 JavaScript -->
+
+<div class="ad"> <!-- 광고 이미지 영역 -->
+  <img src="/images/엉덩이.png"> <!-- 광고 이미지 삽입 -->
+</div>
+
+<footer th:replace="~{footer.html::footer}"></footer> <!-- 외부 푸터 템플릿을 삽입 -->
+</body>
+</html>

@@ -1,0 +1,111 @@
+<section th:fragment="recentItems" class="main-s">
+  <!-- '최근 게시물' 카테고리 섹션 -->
+  <div class="ctbox">
+    <h2 class="category-title">최근 올라온 게시물</h2>
+    <a href="/list?category=">더 알아보기</a> <!-- 전체 최신 목록 페이지로 이동하는 링크 -->
+  </div>
+  <div class="slider-container">
+    <div class="item-slider" id="recentSlider">
+      <!-- recentItems 리스트에 있는 각 item에 대해 카드 생성 -->
+      <div class="card" th:each="item : ${recentItems}">
+        <a th:href="@{/item/{id}(id=${item.id})}"> <!-- 각 아이템의 상세 페이지 링크 -->
+          <img th:src="${item.imgURL}" alt="상품 이미지"> <!-- 아이템 이미지 -->
+          <div class="text-box">
+            <h5 th:text="${item.title}">상품이름입니다</h5> <!-- 아이템 제목 -->
+            <div class="ptbox">
+              <span th:text="${item.formattedPrice+'원'}">가격입니다</span> <!-- 아이템 가격 -->
+              <span class="upload-time" th:text="${item.readableUploadTime}">업로드 시간입니다</span> <!-- 업로드 시간 -->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- 슬라이드 이동 버튼 -->
+    <button class="slide-prev" onclick="moveSlide('recentSlider', -1)">❮</button>
+    <button class="slide-next" onclick="moveSlide('recentSlider', 1)">❯</button>
+  </div>
+</section>
+
+<section th:fragment="phoneItems" class="main-s">
+  <!-- '휴대폰' 카테고리 섹션 -->
+  <div class="ctbox">
+    <h2 class="category-title">휴대폰</h2>
+    <a href="/list?category=">더 알아보기</a> <!-- 전체 목록 페이지로 이동하는 링크 -->
+  </div>
+  <div class="slider-container">
+    <div class="item-slider" id="phoneSlider">
+      <!-- phoneItems 리스트에 있는 각 item에 대해 카드 생성 -->
+      <div class="card" th:each="item : ${phoneItems}">
+        <a th:href="@{/item/{id}(id=${item.id})}"> <!-- 각 아이템의 상세 페이지 링크 -->
+          <img th:src="${item.imgURL}" alt="상품 이미지"> <!-- 아이템 이미지 -->
+          <div class="text-box">
+            <h5 th:text="${item.title}">상품이름입니다</h5> <!-- 아이템 제목 -->
+            <div class="ptbox">
+              <span th:text="${item.formattedPrice+'원'}">가격입니다</span> <!-- 아이템 가격 -->
+              <span class="upload-time" th:text="${item.readableUploadTime}">업로드 시간입니다</span> <!-- 업로드 시간 -->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- 슬라이드 이동 버튼 -->
+    <button class="slide-prev" onclick="moveSlide('phoneSlider', -1)">❮</button>
+    <button class="slide-next" onclick="moveSlide('phoneSlider', 1)">❯</button>
+  </div>
+</section>
+
+<section th:fragment="padItems" class="main-s">
+  <!-- '패드' 카테고리 섹션 -->
+  <div class="ctbox">
+    <h2 class="category-title">패드</h2>
+    <a href="/list?category=">더 알아보기</a> <!-- 전체 목록 페이지로 이동하는 링크 -->
+  </div>
+  <div class="slider-container">
+    <div class="item-slider" id="padSlider">
+      <!-- padItems 리스트에 있는 각 item에 대해 카드 생성 -->
+      <div class="card" th:each="item : ${padItems}">
+        <a th:href="@{/item/{id}(id=${item.id})}"> <!-- 각 아이템의 상세 페이지 링크 -->
+          <img th:src="${item.imgURL}" alt="상품 이미지"> <!-- 아이템 이미지 -->
+          <div class="text-box">
+            <h5 th:text="${item.title}">상품이름입니다</h5> <!-- 아이템 제목 -->
+            <div class="ptbox">
+              <span th:text="${item.formattedPrice+'원'}">가격입니다</span> <!-- 아이템 가격 -->
+              <span class="upload-time" th:text="${item.readableUploadTime}">업로드 시간입니다</span> <!-- 업로드 시간 -->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- 슬라이드 이동 버튼 -->
+    <button class="slide-prev" onclick="moveSlide('padSlider', -1)">❮</button>
+    <button class="slide-next" onclick="moveSlide('padSlider', 1)">❯</button>
+  </div>
+</section>
+
+<section th:fragment="watchItems" class="main-s">
+  <!-- '워치' 카테고리 섹션 -->
+  <div class="ctbox">
+    <h2 class="category-title">워치</h2>
+    <a href="/list?category=">더 알아보기</a> <!-- 전체 목록 페이지로 이동하는 링크 -->
+  </div>
+  <div class="slider-container">
+    <div class="item-slider" id="watchSlider">
+      <!-- watchItems 리스트에 있는 각 item에 대해 카드 생성 -->
+      <div class="card" th:each="item : ${watchItems}">
+        <a th:href="@{/item/{id}(id=${item.id})}"> <!-- 각 아이템의 상세 페이지 링크 -->
+          <img th:src="${item.imgURL}" alt="상품 이미지"> <!-- 아이템 이미지 -->
+          <div class="text-box">
+            <h5 th:text="${item.title}">상품이름입니다</h5> <!-- 아이템 제목 -->
+            <div class="ptbox">
+              <span th:text="${item.formattedPrice+'원'}">가격입니다</span> <!-- 아이템 가격 -->
+              <span class="upload-time" th:text="${item.readableUploadTime}">업로드 시간입니다</span> <!-- 업로드 시간 -->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- 슬라이드 이동 버튼 -->
+    <button class="slide-prev" onclick="moveSlide('watchSlider', -1)">❮</button>
+    <button class="slide-next" onclick="moveSlide('watchSlider', 1)">❯</button>
+  </div>
+</section>
