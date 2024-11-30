@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"> <!-- 페이지 문자 인코딩 설정 -->
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"> <!-- 반응형 웹 설정 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> <!-- 브라우저 호환성 설정 -->
+    <link rel="stylesheet" href="/css/main.css"> <!-- 메인 CSS 파일 연결 -->
+    <link rel="stylesheet" href="/css/footer.css"> <!-- 푸터 CSS 파일 연결 -->
+    <link rel="stylesheet" href="/css/nav.css"> <!-- 네비게이션 CSS 파일 연결 -->
+    <link rel="stylesheet" href="/css/slide.css"> <!-- 슬라이드 CSS 파일 연결 -->
+    <link rel="icon" type="image/jpg" href="/images/logo.jpg" /> <!-- 브라우저 탭에 표시될 아이콘 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome 아이콘 라이브러리 -->
+    <title>SecondHand</title> <!-- 페이지 제목 -->
+</head>
+<body>
+<div class="fix"> <!-- 고정된 네비게이션 바를 감싸는 컨테이너 -->
+    <div th:replace="~{nav.html::navbar}"></div> <!-- 외부 네비게이션 템플릿을 삽입 -->
+</div>
+<div class="slide-wrap"> <!-- 슬라이드 영역을 감싸는 컨테이너 -->
+    <div th:replace="~{slider.html::slider}"></div> <!-- 외부 슬라이드 템플릿을 삽입 -->
+</div>
+
+<div class="main"> <!-- 메인 콘텐츠 영역 -->
+    <!-- 최신 게시물 섹션-->
+    <section th:replace="~{content.html::recentItems}"></section>
+    <!-- 휴대폰 아이템 섹션 -->
+    <section th:replace="~{content.html::phoneItems}"></section> <!-- 외부 템플릿으로부터 휴대폰 아이템 섹션을 삽입 -->
+    <!-- 패드 아이템 섹션 -->
+    <section th:replace="~{content.html::padItems}"></section> <!-- 외부 템플릿으로부터 패드 아이템 섹션을 삽입 -->
+    <!-- 워치 아이템 섹션 -->
+    <section th:replace="~{content.html::watchItems}"></section> <!-- 외부 템플릿으로부터 워치 아이템 섹션을 삽입 -->
+</div>
+
+<div class="ad"> <!-- 광고 이미지 영역 -->
+    <img src="/images/엉덩이.png"> <!-- 광고 이미지 삽입 -->
+</div>
+
+<footer th:replace="~{footer.html::footer}"></footer> <!-- 외부 푸터 템플릿을 삽입 -->
+<script src="/js/slide.js" defer></script> <!-- 슬라이드 기능 스크립트 -->
+<script src="/js/search.js" defer></script> <!-- 검색 기능 스크립트 -->
+<script src="/js/nav.js" defer></script> <!-- 네비게이션 기능 스크립트 -->
+<script src="/js/content.js" defer></script> <!-- 콘텐츠 관련 스크립트 -->
+</body>
+</html>

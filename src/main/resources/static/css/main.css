@@ -1,0 +1,327 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900&display=swap');
+
+/* 전체 스타일 초기화 */
+* {
+    list-style: none; /* 리스트 스타일 제거 */
+    margin: 0; /* 마진 초기화 */
+    padding: 0; /* 패딩 초기화 */
+    box-sizing: border-box; /* 테두리 및 패딩 포함하여 크기 계산 */
+    font-family: Arial, sans-serif; /* 기본 폰트 설정 */
+}
+
+/* 링크 기본 스타일 */
+a {
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+/* 배너 섹션 */
+.wrap {
+    width: 79%; /* 중앙 정렬 */
+    margin: 0 auto; /* 자동 여백 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    position: relative; /* 위치 상대적 */
+}
+
+.slide-box {
+    position: relative; /* 위치 상대적 */
+}
+
+/* 배너 이미지 스타일 */
+.banner-image {
+    width: 100%; /* 전체 너비 */
+    height: 400px; /* 고정 높이 */
+    object-fit: cover; /* 이미지 크기 조정 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+/* 배너 버튼 스타일 */
+.slide-box .prev, .slide-box .next {
+    position: absolute; /* 위치 절대적 */
+    top: 50%; /* 중간 정렬 */
+    transform: translateY(-50%); /* Y축 정렬 보정 */
+    color: white; /* 버튼 색상 */
+    border: none; /* 테두리 없음 */
+    font-size: 2rem; /* 큰 버튼 크기 */
+    padding: 10px; /* 패딩 */
+    cursor: pointer; /* 클릭 가능 커서 */
+    z-index: 10; /* 우선순위 높음 */
+    border-radius: 50%; /* 둥근 버튼 */
+}
+
+/* 배너 버튼 위치 */
+.slide-box .prev {
+    left: 10px; /* 왼쪽 위치 */
+}
+
+.slide-box .next {
+    right: 10px; /* 오른쪽 위치 */
+}
+
+/* 메인 섹션 */
+.main-s {
+    width: 79%; /* 너비 설정 */
+    margin: 50px auto; /* 여백 및 중앙 정렬 */
+    padding: 20px 0; /* 상하 패딩 */
+    text-align: left; /* 왼쪽 정렬 */
+}
+
+.category-title {
+    margin-bottom: 40px; /* 아래 여백 */
+    font-size: 24px; /* 폰트 크기 */
+    font-weight: bold; /* 굵은 글씨 */
+}
+
+.ctbox {
+    display: flex; /* 플렉스 컨테이너 */
+    justify-content: space-between; /* 좌우 분배 */
+}
+
+.ctbox > a {
+    font-size:11px;
+    color: gray;
+}
+
+/* 상품 박스 텍스트 */
+.ptbox {
+    display: flex; /* 플렉스 */
+    justify-content: space-between; /* 좌우 분배 */
+     align-items: center; /* 세로 정렬 추가 */
+     gap: 10px; /* 요소 간격 추가 */
+     margin-top: 5px; /* 약간의 위 여백 추가 */
+}
+
+.slider-container {
+    position: relative;
+    width: 100%; /* 전체 너비 */
+    overflow: hidden; /* 넘치는 부분 숨기기 */
+    padding: 0 20px; /* 좌우 여백 */
+}
+
+.item-slider {
+    display: flex;
+    transition: transform 0.4s ease-in-out; /* 더 부드러운 슬라이드 전환 */
+    gap: 27.5px; /* 카드 간격 */
+}
+
+.card {
+    flex: 0 0 auto;
+    max-width: 200px;
+    min-width: 190px; /* 최소 너비 */
+    background-color: #fff; /* 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 그림자 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 애니메이션 */
+    display: flex; /* 카드 내용을 플렉스로 정렬 */
+    flex-direction: column; /* 세로로 정렬 */
+    justify-content: space-between; /* 위아래 내용 균등 배치 */
+    height: 99%; /* 카드 높이 균일 */
+}
+
+
+
+/* 카드 이미지 */
+.card > a > img {
+    width: 190px; /* 너비 */
+    height: 180px; /* 높이 */
+    border-radius: 8px 8px 0 0; /* 상단 둥근 모서리 */
+    transition: transform 0.3s ease; /* 부드러운 확대 */
+}
+
+.card > a > img:hover {
+    transform: scale(1.05); /* 확대 효과 */
+}
+
+/* 텍스트 박스 */
+.text-box {
+    padding: 10px; /* 내부 여백 */
+    display: flex; /* 플렉스 */
+    flex-direction: column; /* 세로 배치 */
+    gap: 20px; /* 요소 간 간격 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 텍스트 스타일 */
+.text-box h5 {
+    font-size: 16px; /* 폰트 크기 */
+    font-weight: bold; /* 굵은 글씨 */
+    margin: 4px 0; /* 마진 */
+    color: #333; /* 색상 */
+}
+
+.text-box span {
+    font-size: 12px; /* 폰트 크기 */
+    font-weight: 500; /* 폰트 굵기 */
+    color: black; /* 강조된 색상 */
+}
+
+.text-box > .upload-time {
+    font-size: 10px; /* 작은 폰트 */
+}
+
+/* 슬라이드 버튼 스타일 */
+.slide-prev, .slide-next {
+    position: absolute; /* 위치 절대적 */
+    top: 50%; /* 중간 정렬 */
+    transform: translateY(-50%); /* 정렬 보정 */
+    font-size: 2rem; /* 폰트 크기 */
+    color: #888; /* 색상 */
+    background: none; /* 배경 없음 */
+    border: none; /* 테두리 없음 */
+    cursor: pointer; /* 클릭 가능 커서 */
+    transition: color 0.3s ease; /* 색상 전환 */
+    z-index: 10; /* 우선순위 높음 */
+}
+
+.slide-prev {
+    left: 0%; /* 왼쪽 위치 */
+}
+
+.slide-next {
+    right: 0%; /* 오른쪽 위치 */
+}
+
+.slide-prev:hover, .slide-next:hover {
+    color: #333; /* hover 시 색상 */
+}
+
+/* 광고 섹션 */
+.ad {
+    margin: 0 auto; /* 가운데 정렬 */
+    width: 100%; /* 너비 설정 */
+    margin-top: 10rem; /* 위쪽 여백 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 애니메이션 */
+}
+
+.ad > img {
+    width: 100%; /* 너비 */
+    cursor: pointer; /* 클릭 가능 커서 */
+}
+
+
+/* 반응형 디자인 */
+
+/* 노트북 화면 크기 (1519px × 1289px) 맞춤 */
+@media screen and (max-width: 1519px) and (min-width: 1200px) {
+    .main-s, .slider-container, .wrap {
+        width: 96.3%;
+        margin-right: 20px;
+        padding: 0 20px;
+        height: 400px;
+    }
+    .item-slider {
+        gap: 22px; /* 카드 간격 조정 */
+    }
+    .card {
+        max-width: 190px; /* 카드 최대 너비 */
+        min-width: 160px; /* 카드 최소 너비 */
+        height: 270px; /* 카드 높이 조정 */
+    }
+    .text-box h5 {
+        font-size: 15px; /* 폰트 크기 조정 */
+    }
+    .text-box span {
+        font-size: 11px; /* 폰트 크기 조정 */
+    }
+
+.slide-prev, .slide-next {
+       position: absolute;
+       top: 33%;
+       transform: translateY(-50%);
+       font-size: 2rem;
+       color: #888;
+       background: none;
+       border: none;
+       cursor: pointer;
+       transition: color 0.3s ease;
+       z-index: 10;
+}
+}
+
+
+@media screen and (max-width: 1199px) and (min-width: 1024px) {
+    .main-s, .slider-container, .wrap {
+        width: 90%; /* 너비 조정 */
+        padding: 0 15px; /* 좌우 여백 조정 */
+    }
+    .item-slider {
+        gap: 20px; /* 카드 간격 조정 */
+    }
+    .card {
+        max-width: 180px; /* 카드 최대 너비 줄이기 */
+        min-width: 150px; /* 카드 최소 너비 줄이기 */
+        height: 280px; /* 카드 높이 조정 */
+    }
+}
+
+@media screen and (max-width: 1023px) and (min-width: 768px) {
+    .main-s, .slider-container, .wrap {
+        width: 92%; /* 너비 조정 */
+        padding: 0 10px; /* 좌우 여백 조정 */
+    }
+    .item-slider {
+        gap: 15px; /* 카드 간격 조정 */
+    }
+    .card {
+        max-width: 160px; /* 카드 최대 너비 조정 */
+        min-width: 140px; /* 카드 최소 너비 조정 */
+        height: 260px; /* 카드 높이 조정 */
+    }
+    .text-box h5 {
+        font-size: 14px; /* 폰트 크기 조정 */
+    }
+    .text-box span {
+        font-size: 11px; /* 폰트 크기 조정 */
+    }
+}
+
+@media screen and (max-width: 767px) and (min-width: 576px) {
+    .main-s, .slider-container, .wrap {
+        width: 95%; /* 너비 조정 */
+        padding: 0 5px; /* 좌우 여백 조정 */
+    }
+    .item-slider {
+        gap: 10px; /* 카드 간격 조정 */
+    }
+    .card {
+        max-width: 150px; /* 카드 최대 너비 줄이기 */
+        min-width: 130px; /* 카드 최소 너비 줄이기 */
+        height: 240px; /* 카드 높이 조정 */
+    }
+    .card > a > img {
+        height: 140px; /* 이미지 높이 조정 */
+    }
+    .text-box h5 {
+        font-size: 13px; /* 폰트 크기 조정 */
+    }
+    .text-box span {
+        font-size: 10px; /* 폰트 크기 조정 */
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .main-s, .slider-container, .wrap {
+        width: 98%; /* 너비 조정 */
+        padding: 0 2px; /* 좌우 여백 최소화 */
+    }
+    .item-slider {
+        gap: 5px; /* 카드 간격 최소화 */
+    }
+    .card {
+        max-width: 130px; /* 카드 최대 너비 줄이기 */
+        min-width: 120px; /* 카드 최소 너비 줄이기 */
+        height: 220px; /* 카드 높이 조정 */
+        margin: 5px 0; /* 카드 간격 조정 */
+    }
+    .card > a > img {
+        height: 120px; /* 이미지 높이 조정 */
+    }
+    .text-box h5 {
+        font-size: 12px; /* 폰트 크기 조정 */
+    }
+    .text-box span {
+        font-size: 9px; /* 폰트 크기 조정 */
+    }
+}
